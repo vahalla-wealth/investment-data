@@ -40,16 +40,6 @@ enum CollateralType {
   GENERAL_COLLATERAL
 }
 
-enum CreditQualityStep {
-  STEP_1
-  STEP_2
-  STEP_3
-  STEP_4
-  STEP_5
-  STEP_6
-  NOT_RATED
-}
-
 enum RegulatoryClassification {
   ELIGIBLE_COLLATERAL_ECB
   ELIGIBLE_COLLATERAL_FED

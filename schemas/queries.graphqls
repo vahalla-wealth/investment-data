@@ -58,4 +58,26 @@ type Query {
   # Price and valuation queries
   assetPrice(assetId: ID!): AssetPrice @auth
   assetValuation(assetId: ID!, valuationDate: Time): AssetValuation @auth
+  
+  # Wealth Management queries
+  client(id: ID!): Client @auth
+  clients(relationshipManagerId: ID, status: ClientStatus, limit: Int, offset: Int): [Client!]! @auth
+  
+  relationshipManager(id: ID!): RelationshipManager @auth
+  relationshipManagers(region: String, limit: Int, offset: Int): [RelationshipManager!]! @auth
+  
+  account(id: ID!): Account @auth
+  accounts(clientId: ID!, status: AccountStatus, limit: Int, offset: Int): [Account!]! @auth
+  
+  portfolio(id: ID!): Portfolio @auth
+  portfolios(accountId: ID!, limit: Int, offset: Int): [Portfolio!]! @auth
+  
+  position(id: ID!): Position @auth
+  positions(accountId: ID, portfolioId: ID, assetClass: AssetClass, limit: Int, offset: Int): [Position!]! @auth
+  
+  transaction(id: ID!): Transaction @auth
+  transactions(accountId: ID!, transactionType: TransactionType, status: TransactionStatus, fromDate: Time, toDate: Time, limit: Int, offset: Int): [Transaction!]! @auth
+  
+  order(id: ID!): Order @auth
+  orders(accountId: ID!, status: OrderStatus, limit: Int, offset: Int): [Order!]! @auth
 }

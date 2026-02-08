@@ -16,27 +16,6 @@ enum DerivativeType {
   VARIANCE_SWAP
 }
 
-enum OptionType {
-  CALL
-  PUT
-}
-
-enum OptionStyle {
-  AMERICAN
-  EUROPEAN
-  BERMUDAN
-  ASIAN
-  BARRIER
-  BINARY
-}
-
-enum SettlementType {
-  CASH
-  PHYSICAL
-  NET_CASH
-  ELECTION
-}
-
 enum ExerciseType {
   AUTOMATIC
   MANUAL
@@ -60,44 +39,6 @@ enum PaymentLegType {
   FLOATING
   VARIABLE
   ZERO_COUPON
-}
-
-enum ClearingType {
-  BILATERAL
-  CLEARED
-  CENTRAL_COUNTERPARTY
-}
-
-enum ActionType {
-  NEW
-  MODIFY
-  CANCEL
-  CORRECT
-  TERMINATE
-  REVIVE
-  ERROR
-  VALUATION_UPDATE
-  POSITION_COMPONENT
-}
-
-enum MasterAgreementType {
-  ISDA
-  ISDA_2002
-  ISDA_1992
-  GMRA
-  GMSLA
-  EMA
-  FBF
-  DERIV_SEE
-  OTHER
-}
-
-enum ValuationMethod {
-  MARK_TO_MARKET
-  MARK_TO_MODEL
-  MARK_TO_MANAGEMENT
-  THEORETICAL_PRICING
-  VENDOR_PRICING
 }
 
 enum LifecycleEventType {

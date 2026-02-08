@@ -1,0 +1,564 @@
+# GraphQL Schema for Investment Service - Wealth Management Domain
+# This file contains Client, RelationshipManager, Portfolio, Account,
+# Position, Transaction, and Order types (ISO20022 compliant)
+
+# ============================================================================
+# Wealth Management Enums
+# ============================================================================
+
+enum ClientType {
+  INDIVIDUAL
+  CORPORATE
+  INSTITUTIONAL
+  TRUST
+  JOINT
+  MINOR
+  NON_PROFIT
+}
+
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  CLOSED
+  PENDING_APPROVAL
+  DORMANT
+}
+
+enum ClientRiskProfile {
+  CONSERVATIVE
+  MODERATELY_CONSERVATIVE
+  MODERATE
+  MODERATELY_AGGRESSIVE
+  AGGRESSIVE
+}
+
+enum KYCStatus {
+  VERIFIED
+  PENDING
+  EXPIRED
+  REJECTED
+  UNDER_REVIEW
+}
+
+enum AccountType {
+  CASH
+  MARGIN
+  CUSTODY
+  DISCRETIONARY
+  ADVISORY
+  EXECUTION_ONLY
+  TRUST
+  RETIREMENT
+  JOINT
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  CLOSED
+  FROZEN
+  PENDING_APPROVAL
+}
+
+enum PortfolioStrategy {
+  GROWTH
+  INCOME
+  BALANCED
+  CAPITAL_PRESERVATION
+  AGGRESSIVE_GROWTH
+  INDEX_TRACKING
+  ABSOLUTE_RETURN
+}
+
+enum PositionSide {
+  LONG
+  SHORT
+}
+
+enum PositionStatus {
+  OPEN
+  CLOSED
+  PARTIALLY_CLOSED
+}
+
+enum TransactionType {
+  BUY
+  SELL
+  TRANSFER_IN
+  TRANSFER_OUT
+  DIVIDEND
+  INTEREST
+  COUPON
+  REDEMPTION
+  SUBSCRIPTION
+  FEE
+  TAX
+  CORPORATE_ACTION
+  FX_CONVERSION
+  MARGIN_CALL
+}
+
+enum TransactionStatus {
+  PENDING
+  EXECUTED
+  SETTLED
+  FAILED
+  CANCELLED
+  PARTIALLY_FILLED
+  AWAITING_SETTLEMENT
+}
+
+enum OrderSide {
+  BUY
+  SELL
+}
+
+enum OrderType {
+  MARKET
+  LIMIT
+  STOP
+  STOP_LIMIT
+  TRAILING_STOP
+  FILL_OR_KILL
+  GOOD_TILL_CANCELLED
+  GOOD_TILL_DATE
+  IMMEDIATE_OR_CANCEL
+}
+
+enum OrderStatus {
+  PENDING
+  SUBMITTED
+  PARTIALLY_FILLED
+  FILLED
+  CANCELLED
+  REJECTED
+  EXPIRED
+}
+
+enum TimeInForce {
+  DAY
+  GTC # Good Till Cancelled
+  GTD # Good Till Date
+  IOC # Immediate Or Cancel
+  FOK # Fill Or Kill
+  OPG # At The Opening
+  CLO # At The Close
+}
+
+# ============================================================================
+# Client Type (ISO20022 Party Identification)
+# ============================================================================
+
+type Client {
+  id: ID!
+  
+  # ISO20022 Party Identification
+  clientType: ClientType!
+  status: ClientStatus!
+  lei: String # Legal Entity Identifier (corporate)
+  bic: String # Bank Identifier Code
+  nationalId: String # National identification number
+  taxId: String # Tax identification number
+  
+  # ISO20022 Name & Contact
+  firstName: String
+  lastName: String
+  fullName: String!
+  dateOfBirth: Time
+  nationality: String # ISO 3166 country code
+  countryOfResidence: String # ISO 3166
+  language: String # ISO 639
+  
+  # ISO20022 Address
+  addressLine1: String
+  addressLine2: String
+  city: String
+  postalCode: String
+  country: String # ISO 3166
+  
+  # ISO20022 Contact
+  email: String
+  phone: String
+  
+  # ISO20022 KYC & Compliance
+  kycStatus: KYCStatus
+  kycVerificationDate: Time
+  kycExpiryDate: Time
+  riskProfile: ClientRiskProfile
+  fatcaStatus: String
+  crsReportable: Boolean
+  pepStatus: Boolean # Politically Exposed Person
+  sanctionsScreeningDate: Time
+  
+  # ISO20022 Classification
+  investorClassification: String # RETAIL, PROFESSIONAL, ELIGIBLE_COUNTERPARTY
+  mifidClassification: String # MiFID II classification
+  
+  # Relationships
+  relationshipManagerId: ID!
+  accounts: [Account!]
+  
+  # Metadata
+  onboardingDate: Time
+  lastReviewDate: Time
+  nextReviewDate: Time
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+# ============================================================================
+# Relationship Manager Type
+# ============================================================================
+
+type RelationshipManager {
+  id: ID!
+  
+  # Identification
+  employeeId: String!
+  firstName: String!
+  lastName: String!
+  fullName: String!
+  email: String!
+  phone: String
+  
+  # Role & Organization
+  title: String
+  department: String
+  branch: String
+  region: String
+  supervisorId: ID
+  
+  # Licensing & Compliance
+  licenseNumber: String
+  licenseType: String
+  licenseExpiryDate: Time
+  certifications: [String!]
+  
+  # Portfolio Summary
+  totalClientsManaged: Int
+  totalAum: Decimal # Assets Under Management
+  aumCurrency: String
+  
+  # Relationships
+  clients: [Client!]
+  
+  # Status
+  active: Boolean!
+  startDate: Time
+  
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+# ============================================================================
+# Account Type (ISO20022 Account Identification)
+# ============================================================================
+
+type Account {
+  id: ID!
+  
+  # ISO20022 Account Identification
+  accountNumber: String!
+  accountName: String
+  accountType: AccountType!
+  status: AccountStatus!
+  
+  # ISO20022 Account Details
+  baseCurrency: String! # ISO 4217
+  openingDate: Time!
+  closingDate: Time
+  lastActivityDate: Time
+  
+  # ISO20022 Account Servicing
+  custodian: String
+  custodianLei: String
+  custodianBic: String
+  servicingInstitution: String
+  servicingInstitutionLei: String
+  
+  # ISO20022 Account Balance
+  cashBalance: Decimal
+  cashCurrency: String
+  marketValue: Decimal
+  totalValue: Decimal # cash + market value
+  valuationDate: Time
+  valuationCurrency: String
+  
+  # ISO20022 Margin (if margin account)
+  marginLimit: Decimal
+  marginUsed: Decimal
+  marginAvailable: Decimal
+  marginCurrency: String
+  
+  # ISO20022 Restrictions
+  tradingRestricted: Boolean
+  withdrawalRestricted: Boolean
+  restrictionReason: String
+  
+  # ISO20022 Tax
+  taxStatus: TaxStatus
+  taxCountry: String
+  withholdingTaxRate: Decimal
+  
+  # ISO20022 Settlement
+  defaultSettlementCurrency: String
+  defaultSettlementCycle: SettlementCycle
+  settlementInstructions: String
+  
+  # Relationships
+  clientId: ID!
+  portfolios: [Portfolio!]
+  positions: [Position!]
+  
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+# ============================================================================
+# Portfolio Type (ISO20022 Portfolio Identification)
+# ============================================================================
+
+type Portfolio {
+  id: ID!
+  
+  # ISO20022 Portfolio Identification
+  portfolioName: String!
+  portfolioCode: String
+  baseCurrency: String! # ISO 4217
+  strategy: PortfolioStrategy
+  benchmark: String
+  benchmarkIsin: String
+  
+  # ISO20022 Valuation
+  marketValue: Decimal
+  costBasis: Decimal
+  unrealizedPnL: Decimal
+  realizedPnL: Decimal
+  totalReturn: Decimal
+  valuationDate: Time
+  valuationCurrency: String
+  
+  # ISO20022 Risk Metrics
+  volatility: Decimal
+  sharpeRatio: Decimal
+  beta: Decimal
+  maxDrawdown: Decimal
+  valueAtRisk: Decimal
+  
+  # ISO20022 Asset Allocation
+  equityWeight: Decimal
+  fixedIncomeWeight: Decimal
+  cashWeight: Decimal
+  alternativesWeight: Decimal
+  
+  # ISO20022 Investment Guidelines
+  targetReturn: Decimal
+  riskBudget: Decimal
+  maxSinglePositionWeight: Decimal
+  maxSectorWeight: Decimal
+  maxCountryWeight: Decimal
+  
+  # ISO20022 Compliance
+  investmentPolicyCompliant: Boolean
+  lastComplianceCheckDate: Time
+  complianceBreaches: Int
+  
+  # Relationships
+  accountId: ID!
+  positions: [Position!]
+  
+  # Metadata
+  inceptionDate: Time
+  lastRebalanceDate: Time
+  nextRebalanceDate: Time
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+# ============================================================================
+# Position Type (ISO20022 Position)
+# ============================================================================
+
+type Position {
+  id: ID!
+  
+  # ISO20022 Position Identification
+  assetId: ID!
+  assetClass: AssetClass!
+  isin: String
+  ticker: String
+  assetName: String!
+  
+  # ISO20022 Quantity
+  quantity: Decimal!
+  side: PositionSide!
+  status: PositionStatus!
+  
+  # ISO20022 Cost & Valuation
+  averageCost: Decimal!
+  costBasis: Decimal! # quantity * averageCost
+  costCurrency: String!
+  currentPrice: Decimal
+  marketValue: Decimal
+  valuationCurrency: String
+  valuationDate: Time
+  
+  # ISO20022 P&L
+  unrealizedPnL: Decimal
+  unrealizedPnLPercent: Decimal
+  realizedPnL: Decimal
+  totalPnL: Decimal
+  
+  # ISO20022 Income
+  accruedInterest: Decimal
+  accruedDividend: Decimal
+  
+  # ISO20022 Weight & Exposure
+  portfolioWeight: Decimal # % of portfolio
+  
+  # ISO20022 Settlement
+  settledQuantity: Decimal
+  unsettledQuantity: Decimal
+  
+  # ISO20022 Dates
+  openDate: Time!
+  lastTradeDate: Time
+  maturityDate: Time
+  
+  # Relationships
+  accountId: ID!
+  portfolioId: ID
+  
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+# ============================================================================
+# Transaction Type (ISO20022 Securities Transaction)
+# ============================================================================
+
+type Transaction {
+  id: ID!
+  
+  # ISO20022 Transaction Identification
+  transactionReference: String!
+  instructionReference: String
+  tradeId: String
+  
+  # ISO20022 Transaction Details
+  transactionType: TransactionType!
+  status: TransactionStatus!
+  
+  # ISO20022 Instrument
+  assetId: ID
+  assetClass: AssetClass
+  isin: String
+  assetName: String
+  
+  # ISO20022 Quantity & Price
+  quantity: Decimal
+  price: Decimal
+  priceCurrency: String
+  grossAmount: Decimal!
+  netAmount: Decimal!
+  currency: String!
+  exchangeRate: Decimal
+  
+  # ISO20022 Fees & Charges
+  commission: Decimal
+  brokerageFee: Decimal
+  stampDuty: Decimal
+  tax: Decimal
+  otherFees: Decimal
+  totalFees: Decimal
+  feeCurrency: String
+  
+  # ISO20022 Dates
+  tradeDate: Time!
+  settlementDate: Time
+  valueDate: Time
+  bookingDate: Time
+  
+  # ISO20022 Settlement
+  settlementStatus: String # PENDING, SETTLED, FAILED
+  settlementType: SettlementType
+  settlementCurrency: String
+  settlementAmount: Decimal
+  
+  # ISO20022 Counterparty
+  counterparty: String
+  counterpartyLei: String
+  broker: String
+  brokerLei: String
+  executionVenue: String
+  mic: String
+  
+  # Relationships
+  accountId: ID!
+  portfolioId: ID
+  positionId: ID
+  orderId: ID
+  
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+# ============================================================================
+# Order Type (ISO20022 Securities Order)
+# ============================================================================
+
+type Order {
+  id: ID!
+  
+  # ISO20022 Order Identification
+  orderReference: String!
+  clientOrderId: String
+  
+  # ISO20022 Order Details
+  side: OrderSide!
+  orderType: OrderType!
+  status: OrderStatus!
+  timeInForce: TimeInForce!
+  
+  # ISO20022 Instrument
+  assetId: ID!
+  assetClass: AssetClass!
+  isin: String
+  assetName: String!
+  
+  # ISO20022 Quantity & Price
+  quantity: Decimal!
+  filledQuantity: Decimal
+  remainingQuantity: Decimal
+  limitPrice: Decimal
+  stopPrice: Decimal
+  averageFilledPrice: Decimal
+  currency: String!
+  
+  # ISO20022 Validity
+  expiryDate: Time
+  
+  # ISO20022 Execution
+  executionVenue: String
+  mic: String
+  
+  # ISO20022 Dates
+  orderDate: Time!
+  submittedDate: Time
+  lastFilledDate: Time
+  cancelledDate: Time
+  
+  # Relationships
+  accountId: ID!
+  portfolioId: ID
+  requestedBy: ID # RM or Client ID
+  approvedBy: ID
+  
+  # Resulting transactions
+  transactions: [Transaction!]
+  
+  createdAt: Time!
+  updatedAt: Time!
+}

@@ -73,14 +73,6 @@ enum FundStatus {
   TERMINATED
 }
 
-enum TaxStatus {
-  TAXABLE
-  TAX_EXEMPT
-  TAX_DEFERRED
-  QUALIFIED
-  NON_QUALIFIED
-}
-
 enum InvestorType {
   RETAIL
   PROFESSIONAL

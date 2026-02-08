@@ -213,6 +213,83 @@ enum UnderlyingAssetType {
   HYBRID
 }
 
+enum SettlementType {
+  CASH
+  PHYSICAL
+  NET_CASH
+  ELECTION
+}
+
+enum OptionType {
+  CALL
+  PUT
+}
+
+enum OptionStyle {
+  AMERICAN
+  EUROPEAN
+  BERMUDAN
+  ASIAN
+  BARRIER
+  BINARY
+}
+
+enum ClearingType {
+  BILATERAL
+  CLEARED
+  CENTRAL_COUNTERPARTY
+}
+
+enum ActionType {
+  NEW
+  MODIFY
+  CANCEL
+  CORRECT
+  TERMINATE
+  REVIVE
+  ERROR
+  VALUATION_UPDATE
+  POSITION_COMPONENT
+}
+
+enum MasterAgreementType {
+  ISDA
+  ISDA_2002
+  ISDA_1992
+  GMRA
+  GMSLA
+  EMA
+  FBF
+  DERIV_SEE
+  OTHER
+}
+
+enum ValuationMethod {
+  MARK_TO_MARKET
+  MARK_TO_MODEL
+  MARK_TO_MANAGEMENT
+  THEORETICAL_PRICING
+  VENDOR_PRICING
+}
+
+enum CreditQualityStep {
+  STEP_1
+  STEP_2
+  STEP_3
+  STEP_4
+  STEP_5
+  STEP_6
+  NOT_RATED
+}
+
+enum TaxStatus {
+  TAXABLE
+  TAX_EXEMPT
+  TAX_DEFERRED
+  QUALIFIED
+  NON_QUALIFIED
+}
+
 # ============================================================================
 # Core Interfaces
 # ============================================================================
