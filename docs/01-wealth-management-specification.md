@@ -366,65 +366,66 @@ graph TD
 | 1 | `id` | ID | Required | Unique position identifier | `"POS-001234"` | semt.003 — `BalForAcct/SfkpgPlc/Id` |
 | 2 | `assetId` | ID | Required | Reference to security/asset record | `"SEC-EQ-001"` | semt.003 — `FinInstrmId/OthrId/Id` |
 | 3 | `assetClass` | Enum | Required | Asset class | `"SECURITIES"` | semt.003 — `FinInstrmId/ClssfctnTp` |
-| 4 | `isin` | String | Optional | ISIN of the held asset | `"US0378331005"` | semt.003 — `FinInstrmId/ISIN` |
-| 5 | `ticker` | String | Optional | Ticker symbol | `"AAPL"` | semt.003 — `FinInstrmId/TckrSymb` |
-| 6 | `assetName` | String | Required | Asset name | `"Apple Inc. Common Stock"` | semt.003 — `FinInstrmId/Nm` |
+| 4 | `securityType` | Enum | Required | Security type (from security master) | `"EQUITY"` | semt.003 — `FinInstrmAttrbts/ClssfctnTp` |
+| 5 | `isin` | String | Optional | ISIN of the held asset | `"US0378331005"` | semt.003 — `FinInstrmId/ISIN` |
+| 6 | `ticker` | String | Optional | Ticker symbol | `"AAPL"` | semt.003 — `FinInstrmId/TckrSymb` |
+| 7 | `assetName` | String | Required | Asset name | `"Apple Inc. Common Stock"` | semt.003 — `FinInstrmId/Nm` |
 
 ### 8.2 Position Quantity
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 7 | `quantity` | Decimal | Required | Holding quantity | `10000` | semt.003 — `BalForAcct/AggtBal/ShrtLngPos/Qty` |
-| 8 | `side` | Enum | Required | Position side | See [Appendix A.8](#a8-positionside) | semt.003 — `BalForAcct/AggtBal/ShrtLngPos/Ind` |
-| 9 | `status` | Enum | Required | Position status | See [Appendix A.9](#a9-positionstatus) | — (supplementary) |
+| 8 | `quantity` | Decimal | Required | Holding quantity | `10000` | semt.003 — `BalForAcct/AggtBal/ShrtLngPos/Qty` |
+| 9 | `side` | Enum | Required | Position side | See [Appendix A.8](#a8-positionside) | semt.003 — `BalForAcct/AggtBal/ShrtLngPos/Ind` |
+| 10 | `status` | Enum | Required | Position status | See [Appendix A.9](#a9-positionstatus) | — (supplementary) |
 
 ### 8.3 Position Cost & Valuation
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 10 | `averageCost` | Decimal | Required | Average cost per unit | `165.00` | semt.003 — `BalForAcct/AvrgCostPricPerUnit` |
-| 11 | `costBasis` | Decimal | Required | Total cost basis (quantity × averageCost) | `1650000.00` | semt.003 — `BalForAcct/AcqstnDt/CostVal` |
-| 12 | `costCurrency` | String | Required | Cost currency per ISO 4217 | `"USD"` | semt.003 — `BalForAcct/AcqstnDt/CostVal/@Ccy` |
-| 13 | `currentPrice` | Decimal | Optional | Current market price | `185.50` | semt.003 — `BalForAcct/PricDtls/MktPric/Val` |
-| 14 | `marketValue` | Decimal | Optional | Current market value | `1855000.00` | semt.003 — `BalForAcct/HldgVal/Amt` |
-| 15 | `valuationCurrency` | String | Optional | Valuation currency per ISO 4217 | `"USD"` | semt.003 — `BalForAcct/HldgVal/Amt/@Ccy` |
-| 16 | `valuationDate` | DateTime | Optional | Valuation date | `"2026-02-08T16:00:00Z"` | semt.003 — `BalForAcct/PricDtls/PricDt` |
+| 11 | `averageCost` | Decimal | Required | Average cost per unit | `165.00` | semt.003 — `BalForAcct/AvrgCostPricPerUnit` |
+| 12 | `costBasis` | Decimal | Required | Total cost basis (quantity × averageCost) | `1650000.00` | semt.003 — `BalForAcct/AcqstnDt/CostVal` |
+| 13 | `costCurrency` | String | Required | Cost currency per ISO 4217 | `"USD"` | semt.003 — `BalForAcct/AcqstnDt/CostVal/@Ccy` |
+| 14 | `currentPrice` | Decimal | Optional | Current market price | `185.50` | semt.003 — `BalForAcct/PricDtls/MktPric/Val` |
+| 15 | `marketValue` | Decimal | Optional | Current market value | `1855000.00` | semt.003 — `BalForAcct/HldgVal/Amt` |
+| 16 | `valuationCurrency` | String | Optional | Valuation currency per ISO 4217 | `"USD"` | semt.003 — `BalForAcct/HldgVal/Amt/@Ccy` |
+| 17 | `valuationDate` | DateTime | Optional | Valuation date | `"2026-02-08T16:00:00Z"` | semt.003 — `BalForAcct/PricDtls/PricDt` |
 
 ### 8.4 Position P&L
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 17 | `unrealizedPnL` | Decimal | Optional | Unrealized profit/loss | `205000.00` | semt.003 — `BalForAcct/UnrlsdGnOrLoss` |
-| 18 | `unrealizedPnLPercent` | Decimal | Optional | Unrealized P&L (%) | `12.42` | — (supplementary) |
-| 19 | `realizedPnL` | Decimal | Optional | Realized profit/loss | `45000.00` | — (supplementary) |
-| 20 | `totalPnL` | Decimal | Optional | Total P&L | `250000.00` | — (supplementary) |
+| 18 | `unrealizedPnL` | Decimal | Optional | Unrealized profit/loss | `205000.00` | semt.003 — `BalForAcct/UnrlsdGnOrLoss` |
+| 19 | `unrealizedPnLPercent` | Decimal | Optional | Unrealized P&L (%) | `12.42` | — (supplementary) |
+| 20 | `realizedPnL` | Decimal | Optional | Realized profit/loss | `45000.00` | — (supplementary) |
+| 21 | `totalPnL` | Decimal | Optional | Total P&L | `250000.00` | — (supplementary) |
 
 ### 8.5 Position Income
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 21 | `accruedInterest` | Decimal | Optional | Accrued interest | `0.00` | semt.003 — `BalForAcct/AccrdIntrstAmt` |
-| 22 | `accruedDividend` | Decimal | Optional | Accrued dividend | `550.00` | — (supplementary) |
+| 22 | `accruedInterest` | Decimal | Optional | Accrued interest | `0.00` | semt.003 — `BalForAcct/AccrdIntrstAmt` |
+| 23 | `accruedDividend` | Decimal | Optional | Accrued dividend | `550.00` | — (supplementary) |
 
 ### 8.6 Position Weight & Settlement
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 23 | `portfolioWeight` | Decimal | Optional | Weight in portfolio (%) | `15.50` | — (supplementary) |
-| 24 | `settledQuantity` | Decimal | Optional | Settled quantity | `10000` | semt.003 — `BalForAcct/AvlblBal/Qty` |
-| 25 | `unsettledQuantity` | Decimal | Optional | Unsettled quantity | `0` | semt.003 — `BalForAcct/NotAvlblBal/Qty` |
+| 24 | `portfolioWeight` | Decimal | Optional | Weight in portfolio (%) | `15.50` | — (supplementary) |
+| 25 | `settledQuantity` | Decimal | Optional | Settled quantity | `10000` | semt.003 — `BalForAcct/AvlblBal/Qty` |
+| 26 | `unsettledQuantity` | Decimal | Optional | Unsettled quantity | `0` | semt.003 — `BalForAcct/NotAvlblBal/Qty` |
 
 ### 8.7 Position Dates & Relationships
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 26 | `openDate` | DateTime | Required | Position open date | `"2024-06-15T10:30:00Z"` | — (supplementary) |
-| 27 | `lastTradeDate` | DateTime | Optional | Last trade date | `"2026-01-20T14:00:00Z"` | — (supplementary) |
-| 28 | `maturityDate` | DateTime | Optional | Maturity date (bonds) | `null` | semt.003 — `FinInstrmAttrbts/MtrtyDt` |
-| 29 | `accountId` | ID | Required | Parent account identifier | `"ACC-001234"` | semt.003 — `SfkpgAcct/Id` |
-| 30 | `portfolioId` | ID | Optional | Parent portfolio identifier | `"PF-001234"` | semt.003 — `SfkpgAcct/Dsgnt` |
-| 31 | `createdAt` | DateTime | Required | Record creation timestamp | `"2024-06-15T10:30:00Z"` | — (supplementary) |
-| 32 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-08T16:00:00Z"` | — (supplementary) |
+| 27 | `openDate` | DateTime | Required | Position open date | `"2024-06-15T10:30:00Z"` | — (supplementary) |
+| 28 | `lastTradeDate` | DateTime | Optional | Last trade date | `"2026-01-20T14:00:00Z"` | — (supplementary) |
+| 29 | `maturityDate` | DateTime | Optional | Maturity date (bonds) | `null` | semt.003 — `FinInstrmAttrbts/MtrtyDt` |
+| 30 | `accountId` | ID | Required | Parent account identifier | `"ACC-001234"` | semt.003 — `SfkpgAcct/Id` |
+| 31 | `portfolioId` | ID | Optional | Parent portfolio identifier | `"PF-001234"` | semt.003 — `SfkpgAcct/Dsgnt` |
+| 32 | `createdAt` | DateTime | Required | Record creation timestamp | `"2024-06-15T10:30:00Z"` | — (supplementary) |
+| 33 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-08T16:00:00Z"` | — (supplementary) |
 
 ---
 
@@ -452,72 +453,73 @@ graph TD
 |---|---|---|---|---|---|---|
 | 7 | `assetId` | ID | Optional | Reference to security/asset record | `"SEC-EQ-001"` | sese.023 — `FinInstrmId/OthrId/Id` |
 | 8 | `assetClass` | Enum | Optional | Asset class | `"SECURITIES"` | sese.023 — `FinInstrmId/ClssfctnTp` |
-| 9 | `isin` | String | Optional | ISIN of the traded asset | `"US0378331005"` | sese.023 — `FinInstrmId/ISIN` |
-| 10 | `assetName` | String | Optional | Asset name | `"Apple Inc. Common Stock"` | sese.023 — `FinInstrmId/Nm` |
+| 9 | `securityType` | Enum | Optional | Security type (from security master) | `"EQUITY"` | sese.023 — `FinInstrmAttrbts/ClssfctnTp` |
+| 10 | `isin` | String | Optional | ISIN of the traded asset | `"US0378331005"` | sese.023 — `FinInstrmId/ISIN` |
+| 11 | `assetName` | String | Optional | Asset name | `"Apple Inc. Common Stock"` | sese.023 — `FinInstrmId/Nm` |
 
 ### 9.4 Transaction Quantity & Price
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 11 | `quantity` | Decimal | Optional | Quantity traded | `500` | sese.023 — `QtyAndAcctDtls/SttldQty` |
-| 12 | `price` | Decimal | Optional | Execution price | `185.50` | sese.023 — `TradDtls/DealPric/Val` |
-| 13 | `priceCurrency` | String | Optional | Price currency per ISO 4217 | `"USD"` | sese.023 — `TradDtls/DealPric/Val/@Ccy` |
-| 14 | `grossAmount` | Decimal | Required | Gross amount | `92750.00` | sese.023 — `AmtDtls/TradAmt/Amt` |
-| 15 | `netAmount` | Decimal | Required | Net amount (after fees) | `92700.00` | sese.023 — `AmtDtls/SttlmAmt/Amt` |
-| 16 | `currency` | String | Required | Transaction currency per ISO 4217 | `"USD"` | sese.023 — `AmtDtls/TradAmt/Amt/@Ccy` |
-| 17 | `exchangeRate` | Decimal | Optional | FX exchange rate (if cross-currency) | `1.00` | sese.023 — `OthrAmts/FXRate` |
+| 12 | `quantity` | Decimal | Optional | Quantity traded | `500` | sese.023 — `QtyAndAcctDtls/SttldQty` |
+| 13 | `price` | Decimal | Optional | Execution price | `185.50` | sese.023 — `TradDtls/DealPric/Val` |
+| 14 | `priceCurrency` | String | Optional | Price currency per ISO 4217 | `"USD"` | sese.023 — `TradDtls/DealPric/Val/@Ccy` |
+| 15 | `grossAmount` | Decimal | Required | Gross amount | `92750.00` | sese.023 — `AmtDtls/TradAmt/Amt` |
+| 16 | `netAmount` | Decimal | Required | Net amount (after fees) | `92700.00` | sese.023 — `AmtDtls/SttlmAmt/Amt` |
+| 17 | `currency` | String | Required | Transaction currency per ISO 4217 | `"USD"` | sese.023 — `AmtDtls/TradAmt/Amt/@Ccy` |
+| 18 | `exchangeRate` | Decimal | Optional | FX exchange rate (if cross-currency) | `1.00` | sese.023 — `OthrAmts/FXRate` |
 
 ### 9.5 Transaction Fees & Charges
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 18 | `commission` | Decimal | Optional | Commission | `25.00` | sese.023 — `OthrAmts/ExctgBrkrCmmssn` |
-| 19 | `brokerageFee` | Decimal | Optional | Brokerage fee | `15.00` | sese.023 — `OthrAmts/BrkrgFees` |
-| 20 | `stampDuty` | Decimal | Optional | Stamp duty | `0.00` | sese.023 — `OthrAmts/StmpDty` |
-| 21 | `tax` | Decimal | Optional | Tax | `10.00` | sese.023 — `OthrAmts/TaxAmt` |
-| 22 | `otherFees` | Decimal | Optional | Other fees | `0.00` | sese.023 — `OthrAmts/OthrFees` |
-| 23 | `totalFees` | Decimal | Optional | Total fees | `50.00` | sese.023 — `OthrAmts/TtlFeesAndTaxes` |
-| 24 | `feeCurrency` | String | Optional | Fee currency per ISO 4217 | `"USD"` | sese.023 — `OthrAmts/ExctgBrkrCmmssn/@Ccy` |
+| 19 | `commission` | Decimal | Optional | Commission | `25.00` | sese.023 — `OthrAmts/ExctgBrkrCmmssn` |
+| 20 | `brokerageFee` | Decimal | Optional | Brokerage fee | `15.00` | sese.023 — `OthrAmts/BrkrgFees` |
+| 21 | `stampDuty` | Decimal | Optional | Stamp duty | `0.00` | sese.023 — `OthrAmts/StmpDty` |
+| 22 | `tax` | Decimal | Optional | Tax | `10.00` | sese.023 — `OthrAmts/TaxAmt` |
+| 23 | `otherFees` | Decimal | Optional | Other fees | `0.00` | sese.023 — `OthrAmts/OthrFees` |
+| 24 | `totalFees` | Decimal | Optional | Total fees | `50.00` | sese.023 — `OthrAmts/TtlFeesAndTaxes` |
+| 25 | `feeCurrency` | String | Optional | Fee currency per ISO 4217 | `"USD"` | sese.023 — `OthrAmts/ExctgBrkrCmmssn/@Ccy` |
 
 ### 9.6 Transaction Dates
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 25 | `tradeDate` | DateTime | Required | Trade date | `"2026-02-08T14:30:00Z"` | sese.023 — `TradDtls/TradDt` |
-| 26 | `settlementDate` | DateTime | Optional | Settlement date | `"2026-02-10T00:00:00Z"` | sese.023 — `SttlmParams/SttlmDt/Dt` |
-| 27 | `valueDate` | DateTime | Optional | Value date | `"2026-02-10T00:00:00Z"` | sese.023 — `SttlmParams/ValDt` |
-| 28 | `bookingDate` | DateTime | Optional | Booking date | `"2026-02-08T16:00:00Z"` | sese.023 — `SttlmParams/BookgDt` |
+| 26 | `tradeDate` | DateTime | Required | Trade date | `"2026-02-08T14:30:00Z"` | sese.023 — `TradDtls/TradDt` |
+| 27 | `settlementDate` | DateTime | Optional | Settlement date | `"2026-02-10T00:00:00Z"` | sese.023 — `SttlmParams/SttlmDt/Dt` |
+| 28 | `valueDate` | DateTime | Optional | Value date | `"2026-02-10T00:00:00Z"` | sese.023 — `SttlmParams/ValDt` |
+| 29 | `bookingDate` | DateTime | Optional | Booking date | `"2026-02-08T16:00:00Z"` | sese.023 — `SttlmParams/BookgDt` |
 
 ### 9.7 Transaction Settlement
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 29 | `settlementStatus` | String | Optional | Settlement status | `"SETTLED"` | sese.023 — `PrcgSts/SttlmSts` |
-| 30 | `settlementType` | Enum | Optional | Settlement type | See [Appendix A.16](#a16-settlementtype) | sese.023 — `SttlmParams/SttlmTp` |
-| 31 | `settlementCurrency` | String | Optional | Settlement currency per ISO 4217 | `"USD"` | sese.023 — `AmtDtls/SttlmAmt/Amt/@Ccy` |
-| 32 | `settlementAmount` | Decimal | Optional | Settlement amount | `92700.00` | sese.023 — `AmtDtls/SttlmAmt/Amt` |
+| 30 | `settlementStatus` | String | Optional | Settlement status | `"SETTLED"` | sese.023 — `PrcgSts/SttlmSts` |
+| 31 | `settlementType` | Enum | Optional | Settlement type | See [Appendix A.16](#a16-settlementtype) | sese.023 — `SttlmParams/SttlmTp` |
+| 32 | `settlementCurrency` | String | Optional | Settlement currency per ISO 4217 | `"USD"` | sese.023 — `AmtDtls/SttlmAmt/Amt/@Ccy` |
+| 33 | `settlementAmount` | Decimal | Optional | Settlement amount | `92700.00` | sese.023 — `AmtDtls/SttlmAmt/Amt` |
 
 ### 9.8 Transaction Counterparty
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 33 | `counterparty` | String | Optional | Counterparty name | `"Goldman Sachs"` | sese.023 — `DlvrgSttlmPties/Pty1/Nm` |
-| 34 | `counterpartyLei` | String | Optional | Counterparty LEI per ISO 17442 | `"784F5XWPLTWKTBV3E584"` | sese.023 — `DlvrgSttlmPties/Pty1/LEI` |
-| 35 | `broker` | String | Optional | Broker name | `"Morgan Stanley"` | sese.023 — `DlvrgSttlmPties/Brkr/Nm` |
-| 36 | `brokerLei` | String | Optional | Broker LEI per ISO 17442 | `"IGJSJL3JD5P30I6NJZ34"` | sese.023 — `DlvrgSttlmPties/Brkr/LEI` |
-| 37 | `executionVenue` | String | Optional | Execution venue | `"NASDAQ"` | sese.023 — `TradDtls/PlcOfTrad/Nm` |
-| 38 | `mic` | String | Optional | Market Identifier Code per ISO 10383 | `"XNAS"` | sese.023 — `TradDtls/PlcOfTrad/MIC` |
+| 34 | `counterparty` | String | Optional | Counterparty name | `"Goldman Sachs"` | sese.023 — `DlvrgSttlmPties/Pty1/Nm` |
+| 35 | `counterpartyLei` | String | Optional | Counterparty LEI per ISO 17442 | `"784F5XWPLTWKTBV3E584"` | sese.023 — `DlvrgSttlmPties/Pty1/LEI` |
+| 36 | `broker` | String | Optional | Broker name | `"Morgan Stanley"` | sese.023 — `DlvrgSttlmPties/Brkr/Nm` |
+| 37 | `brokerLei` | String | Optional | Broker LEI per ISO 17442 | `"IGJSJL3JD5P30I6NJZ34"` | sese.023 — `DlvrgSttlmPties/Brkr/LEI` |
+| 38 | `executionVenue` | String | Optional | Execution venue | `"NASDAQ"` | sese.023 — `TradDtls/PlcOfTrad/Nm` |
+| 39 | `mic` | String | Optional | Market Identifier Code per ISO 10383 | `"XNAS"` | sese.023 — `TradDtls/PlcOfTrad/MIC` |
 
 ### 9.9 Transaction Relationships & Metadata
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 39 | `accountId` | ID | Required | Parent account identifier | `"ACC-001234"` | sese.023 — `QtyAndAcctDtls/SfkpgAcct/Id` |
-| 40 | `portfolioId` | ID | Optional | Portfolio identifier | `"PF-001234"` | sese.023 — `QtyAndAcctDtls/SfkpgAcct/Dsgnt` |
-| 41 | `positionId` | ID | Optional | Related position identifier | `"POS-001234"` | — (supplementary) |
-| 42 | `orderId` | ID | Optional | Originating order identifier | `"ORD-001234"` | — (supplementary) |
-| 43 | `createdAt` | DateTime | Required | Record creation timestamp | `"2026-02-08T14:30:00Z"` | — (supplementary) |
-| 44 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-10T16:00:00Z"` | — (supplementary) |
+| 40 | `accountId` | ID | Required | Parent account identifier | `"ACC-001234"` | sese.023 — `QtyAndAcctDtls/SfkpgAcct/Id` |
+| 41 | `portfolioId` | ID | Optional | Portfolio identifier | `"PF-001234"` | sese.023 — `QtyAndAcctDtls/SfkpgAcct/Dsgnt` |
+| 42 | `positionId` | ID | Optional | Related position identifier | `"POS-001234"` | — (supplementary) |
+| 43 | `orderId` | ID | Optional | Originating order identifier | `"ORD-001234"` | — (supplementary) |
+| 44 | `createdAt` | DateTime | Required | Record creation timestamp | `"2026-02-08T14:30:00Z"` | — (supplementary) |
+| 45 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-10T16:00:00Z"` | — (supplementary) |
 
 ---
 
@@ -645,48 +647,49 @@ graph TD
 |---|---|---|---|---|---|---|
 | 8 | `assetId` | ID | Required | Reference to security/asset record | `"SEC-EQ-001"` | setr.001 — `FinInstrmId/OthrId/Id` |
 | 9 | `assetClass` | Enum | Required | Asset class | `"SECURITIES"` | setr.001 — `FinInstrmId/ClssfctnTp` |
-| 10 | `isin` | String | Optional | ISIN of the ordered asset | `"US0378331005"` | setr.001 — `FinInstrmId/ISIN` |
-| 11 | `assetName` | String | Required | Asset name | `"Apple Inc. Common Stock"` | setr.001 — `FinInstrmId/Nm` |
+| 10 | `securityType` | Enum | Required | Security type (from security master) | `"EQUITY"` | setr.001 — `FinInstrmAttrbts/ClssfctnTp` |
+| 11 | `isin` | String | Optional | ISIN of the ordered asset | `"US0378331005"` | setr.001 — `FinInstrmId/ISIN` |
+| 12 | `assetName` | String | Required | Asset name | `"Apple Inc. Common Stock"` | setr.001 — `FinInstrmId/Nm` |
 
 ### 11.4 Order Quantity & Price
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 12 | `quantity` | Decimal | Required | Order quantity | `500` | setr.001 — `OrdrDtls/OrdrQty` |
-| 13 | `filledQuantity` | Decimal | Optional | Filled quantity | `500` | setr.001 — `OrdrDtls/ExctdQty` |
-| 14 | `remainingQuantity` | Decimal | Optional | Remaining quantity | `0` | setr.001 — `OrdrDtls/RmngQty` |
-| 15 | `limitPrice` | Decimal | Optional | Limit price | `186.00` | setr.001 — `OrdrDtls/LmtPric/Val` |
-| 16 | `stopPrice` | Decimal | Optional | Stop price | `null` | setr.001 — `OrdrDtls/StopPric/Val` |
-| 17 | `averageFilledPrice` | Decimal | Optional | Average filled price | `185.50` | setr.001 — `OrdrDtls/AvrgPric/Val` |
-| 18 | `currency` | String | Required | Order currency per ISO 4217 | `"USD"` | setr.001 — `OrdrDtls/OrdrQty/@Ccy` |
+| 13 | `quantity` | Decimal | Required | Order quantity | `500` | setr.001 — `OrdrDtls/OrdrQty` |
+| 14 | `filledQuantity` | Decimal | Optional | Filled quantity | `500` | setr.001 — `OrdrDtls/ExctdQty` |
+| 15 | `remainingQuantity` | Decimal | Optional | Remaining quantity | `0` | setr.001 — `OrdrDtls/RmngQty` |
+| 16 | `limitPrice` | Decimal | Optional | Limit price | `186.00` | setr.001 — `OrdrDtls/LmtPric/Val` |
+| 17 | `stopPrice` | Decimal | Optional | Stop price | `null` | setr.001 — `OrdrDtls/StopPric/Val` |
+| 18 | `averageFilledPrice` | Decimal | Optional | Average filled price | `185.50` | setr.001 — `OrdrDtls/AvrgPric/Val` |
+| 19 | `currency` | String | Required | Order currency per ISO 4217 | `"USD"` | setr.001 — `OrdrDtls/OrdrQty/@Ccy` |
 
 ### 11.5 Order Validity & Execution
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 19 | `expiryDate` | DateTime | Optional | Order expiry date | `"2026-02-08T16:00:00Z"` | setr.001 — `OrdrDtls/XpryDtTm` |
-| 20 | `executionVenue` | String | Optional | Execution venue | `"NASDAQ"` | setr.001 — `OrdrDtls/PlcOfTrad/Nm` |
-| 21 | `mic` | String | Optional | Market Identifier Code per ISO 10383 | `"XNAS"` | setr.001 — `OrdrDtls/PlcOfTrad/MIC` |
+| 20 | `expiryDate` | DateTime | Optional | Order expiry date | `"2026-02-08T16:00:00Z"` | setr.001 — `OrdrDtls/XpryDtTm` |
+| 21 | `executionVenue` | String | Optional | Execution venue | `"NASDAQ"` | setr.001 — `OrdrDtls/PlcOfTrad/Nm` |
+| 22 | `mic` | String | Optional | Market Identifier Code per ISO 10383 | `"XNAS"` | setr.001 — `OrdrDtls/PlcOfTrad/MIC` |
 
 ### 11.6 Order Dates
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 22 | `orderDate` | DateTime | Required | Order creation date | `"2026-02-08T14:00:00Z"` | setr.001 — `OrdrDtls/OrdrDtTm` |
-| 23 | `submittedDate` | DateTime | Optional | Order submission date | `"2026-02-08T14:00:05Z"` | setr.001 — `OrdrDtls/SbmttdDtTm` |
-| 24 | `lastFilledDate` | DateTime | Optional | Last fill date | `"2026-02-08T14:30:00Z"` | setr.001 — `OrdrDtls/LstExctdDtTm` |
-| 25 | `cancelledDate` | DateTime | Optional | Cancellation date | `null` | setr.001 — `OrdrDtls/CxlDtTm` |
+| 23 | `orderDate` | DateTime | Required | Order creation date | `"2026-02-08T14:00:00Z"` | setr.001 — `OrdrDtls/OrdrDtTm` |
+| 24 | `submittedDate` | DateTime | Optional | Order submission date | `"2026-02-08T14:00:05Z"` | setr.001 — `OrdrDtls/SbmttdDtTm` |
+| 25 | `lastFilledDate` | DateTime | Optional | Last fill date | `"2026-02-08T14:30:00Z"` | setr.001 — `OrdrDtls/LstExctdDtTm` |
+| 26 | `cancelledDate` | DateTime | Optional | Cancellation date | `null` | setr.001 — `OrdrDtls/CxlDtTm` |
 
 ### 11.7 Order Relationships & Metadata
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 26 | `accountId` | ID | Required | Parent account identifier | `"ACC-001234"` | setr.001 — `InvstmtAcctDtls/AcctId` |
-| 27 | `portfolioId` | ID | Optional | Portfolio identifier | `"PF-001234"` | setr.001 — `InvstmtAcctDtls/AcctDsgnt` |
-| 28 | `requestedBy` | ID | Optional | Requester (RM or Client ID) | `"RM-001"` | — (supplementary) |
-| 29 | `approvedBy` | ID | Optional | Approver identifier | `"RM-000"` | — (supplementary) |
-| 30 | `createdAt` | DateTime | Required | Record creation timestamp | `"2026-02-08T14:00:00Z"` | — (supplementary) |
-| 31 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-08T14:30:00Z"` | — (supplementary) |
+| 27 | `accountId` | ID | Required | Parent account identifier | `"ACC-001234"` | setr.001 — `InvstmtAcctDtls/AcctId` |
+| 28 | `portfolioId` | ID | Optional | Portfolio identifier | `"PF-001234"` | setr.001 — `InvstmtAcctDtls/AcctDsgnt` |
+| 29 | `requestedBy` | ID | Optional | Requester (RM or Client ID) | `"RM-001"` | — (supplementary) |
+| 30 | `approvedBy` | ID | Optional | Approver identifier | `"RM-000"` | — (supplementary) |
+| 31 | `createdAt` | DateTime | Required | Record creation timestamp | `"2026-02-08T14:00:00Z"` | — (supplementary) |
+| 32 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-08T14:30:00Z"` | — (supplementary) |
 
 ---
 
