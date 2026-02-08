@@ -367,7 +367,7 @@ type Note implements Security & Asset {
   defaultStatus: Boolean
   businessDayConvention: BusinessDayConvention
   subordinationType: SubordinationType
-  rankingType: RankingType
+  rankingType: SeniorityType
   
   # Additional Data from External Sources
   additional: AdditionalNoteData

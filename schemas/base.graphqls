@@ -89,6 +89,7 @@ enum SeniorityType {
   SUBORDINATED
   JUNIOR
   MEZZANINE
+  PARI_PASSU
 }
 
 enum SecuredType {
@@ -112,12 +113,6 @@ enum SettlementCycle {
   IMMEDIATE
 }
 
-enum RankingType {
-  PARI_PASSU
-  SENIOR
-  JUNIOR
-  SUBORDINATED
-}
 
 enum PaymentFrequency {
   ANNUAL
@@ -361,6 +356,6 @@ type AssetValuation {
   marketValue: Decimal!
   bookValue: Decimal
   currency: String!
-  valuationMethod: String
+  valuationMethod: ValuationMethod
   pricingSource: String
 }

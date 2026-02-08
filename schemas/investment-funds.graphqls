@@ -100,7 +100,7 @@ enum ReportingFrequency {
   ANNUAL
 }
 
-enum OrderType {
+enum FundOrderType {
   SUBSCRIPTION
   REDEMPTION
   SWITCH_IN
