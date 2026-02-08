@@ -764,4 +764,71 @@ For questions regarding this specification, please contact:
 
 ---
 
+## 11. Required Data Files from Bank
+
+The following table lists all data files that the bank must provide to the Vahalla Wealth Management System. Files are grouped by specification document and delivery frequency.
+
+### 11.1 Equity & Bond Data Files (this document)
+
+| # | File Name | Description | Frequency | Format | ISO 20022 Reference |
+|---|---|---|---|---|---|
+| 1 | `equity_master.csv` | Equity security master data — all fields from §4 and §5 | Daily | CSV / JSON | reda.041 |
+| 2 | `bond_master.csv` | Bond security master data — all fields from §4 and §6 | Daily | CSV / JSON | reda.041 |
+| 3 | `equity_pricing.csv` | End-of-day equity pricing & valuation data (§7) | Daily | CSV / JSON | semt.002 |
+| 4 | `bond_pricing.csv` | End-of-day bond pricing & valuation data (§7) | Daily | CSV / JSON | semt.002 |
+| 5 | `equity_analytics.csv` | Analyst ratings, financials, technicals (§5 additional) | Daily / Weekly | CSV / JSON | — (supplementary) |
+| 6 | `bond_analytics.csv` | Credit metrics, spread data, risk analytics (§6 additional) | Daily / Weekly | CSV / JSON | — (supplementary) |
+
+### 11.2 Wealth Management Data Files ([01 — Wealth Management Specification](01-wealth-management-specification.md))
+
+| # | File Name | Description | Frequency | Format | ISO 20022 Reference |
+|---|---|---|---|---|---|
+| 7 | `client.csv` | Client master data — identification, KYC, classification | Daily | CSV / JSON | acmt.001 |
+| 8 | `relationship_manager.csv` | Relationship manager data | As needed | CSV / JSON | — (supplementary) |
+| 9 | `account.csv` | Account master data — identification, balance, margin, tax | Daily | CSV / JSON | acmt.001 |
+| 10 | `portfolio.csv` | Portfolio data — valuation, risk metrics, allocation | Daily | CSV / JSON | semt.003 |
+| 11 | `position.csv` | Position data — holdings, cost, valuation, P&L | Daily | CSV / JSON | semt.003 |
+| 12 | `transaction.csv` | Transaction data — trades, fees, settlement, counterparty | Daily | CSV / JSON | sese.023 |
+| 13 | `order.csv` | Order data — order details, quantity, price, execution | Daily | CSV / JSON | setr.001 |
+| 14 | `fx_deposit.csv` | FX deposit data — interest, term, maturity, rollover | Daily | CSV / JSON | camt.052 |
+
+### 11.3 Delivery Schedule
+
+| Delivery Type | Cutoff Time | Description |
+|---|---|---|
+| **End-of-Day (EOD)** | T+0 22:00 UTC | Full snapshot of all master data, positions, and balances |
+| **Intraday** | Real-time / Hourly | Transaction and order updates (preferred via API) |
+| **Weekly** | Monday 06:00 UTC | Analytics and supplementary data (if not daily) |
+| **As Needed** | On change | Relationship manager updates, client onboarding |
+
+### 11.4 File Naming Convention
+
+```
+{entity}_{date}_{sequence}.{format}
+```
+
+| Component | Format | Example |
+|---|---|---|
+| `entity` | Lowercase entity name | `equity_master`, `position`, `transaction` |
+| `date` | ISO 8601 date `YYYYMMDD` | `20260208` |
+| `sequence` | Zero-padded sequence number | `001`, `002` |
+| `format` | File extension | `csv`, `json`, `xml` |
+
+**Examples:**
+- `equity_master_20260208_001.csv`
+- `position_20260208_001.csv`
+- `transaction_20260208_001.json`
+
+### 11.5 Delivery Method
+
+| Method | Protocol | Description |
+|---|---|---|
+| **SFTP** | SFTP over SSH | Primary — bank pushes files to designated SFTP directory |
+| **API** | REST / GraphQL over HTTPS | Real-time and intraday updates |
+| **Message Queue** | ISO 20022 MX (XML) | Optional — for banks supporting ISO 20022 native messaging |
+
+> **Note:** For CSV formatting rules and sample data rows, refer to [02.1 — CSV Sample Data](02.1-sample-data-csv-equity-bond.md).
+
+---
+
 *End of Document*
