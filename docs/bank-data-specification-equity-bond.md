@@ -1,6 +1,4 @@
-# Bank Data Preparation Specification
-
-## Securities: Equity & Fixed Income (Bond)
+# Vahalla Wealth Data Specification
 
 | | |
 |---|---|
@@ -674,9 +672,9 @@ For questions regarding this specification, please contact:
 
 | Role | Contact |
 |---|---|
-| **Technical Integration** | _[To be provided]_ |
-| **Data Quality** | _[To be provided]_ |
-| **Business Requirements** | _[To be provided]_ |
+| **Technical Integration** | it@codefin.io |
+| **Data Quality** | kanawat@codefin.io |
+| **Business Requirements** | kanawat@codefin.io |
 
 ---
 
