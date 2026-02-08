@@ -1,6 +1,6 @@
 # 02 — Vahalla Wealth Data Specification
 
-> **Document Index:** [00-index.md](00-index.md) | **Related:** [02.1 — CSV Sample Data](02.1-sample-data-csv-equity-bond.md)
+> **Document Index:** [00-index.md](00-index.md) | **Related:** [02.1 — CSV Sample Data](02.1-sample-data-csv-equity-bond.md) | [02.2 — Position CSV](02.2-sample-data-csv-position.md) | [02.3 — Transaction & Order CSV](02.3-sample-data-csv-transaction-order.md)
 
 | | |
 |---|---|
@@ -827,7 +827,10 @@ The following table lists all data files that the bank must provide to the Vahal
 | **API** | REST / GraphQL over HTTPS | Real-time and intraday updates |
 | **Message Queue** | ISO 20022 MX (XML) | Optional — for banks supporting ISO 20022 native messaging |
 
-> **Note:** For CSV formatting rules and sample data rows, refer to [02.1 — CSV Sample Data](02.1-sample-data-csv-equity-bond.md).
+> **Note:** For CSV formatting rules and sample data rows, refer to:
+> - [02.1 — CSV Sample Data — Equity & Bond](02.1-sample-data-csv-equity-bond.md)
+> - [02.2 — CSV Sample Data — Position](02.2-sample-data-csv-position.md)
+> - [02.3 — CSV Sample Data — Transaction & Order](02.3-sample-data-csv-transaction-order.md)
 
 ---
 
