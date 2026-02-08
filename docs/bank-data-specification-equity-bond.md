@@ -527,6 +527,8 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 ### A.1 SecurityType
 
+ISO 20022: `FinancialInstrumentProductType1Code` — reda.041 — `FinInstrmAttrbts/ClssfctnTp`
+
 | Value | Description |
 |---|---|
 | `EQUITY` | Common or preferred equity shares |
@@ -539,6 +541,8 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 ### A.2 TradingStatus
 
+ISO 20022: `SecurityStatus2Code` — reda.041 — `TradgDtls/TradgSts`
+
 | Value | Description |
 |---|---|
 | `ACTIVE` | Currently trading |
@@ -549,6 +553,8 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 ### A.3 FormOfSecurity
 
+ISO 20022: `FormOfSecurity1Code` — reda.041 — `FinInstrmAttrbts/SctiesForm`
+
 | Value | Description |
 |---|---|
 | `REGISTERED` | Registered in owner's name |
@@ -556,6 +562,8 @@ Provided as separate data feeds, linked to securities via `assetId`.
 | `BOOK_ENTRY` | Electronic book-entry form |
 
 ### A.4 SettlementCycle
+
+ISO 20022: `SettlementDate1Code` — reda.041 — `TradgDtls/SttlmCycl`
 
 | Value | Description |
 |---|---|
@@ -566,6 +574,8 @@ Provided as separate data feeds, linked to securities via `assetId`.
 | `IMMEDIATE` | Immediate settlement |
 
 ### A.5 EquityType
+
+ISO 20022: `EquityType1Code` — reda.041 — `Eqty/EqtyTp`
 
 | Value | Description |
 |---|---|
@@ -580,6 +590,8 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 ### A.6 PaymentFrequency
 
+ISO 20022: `Frequency1Code` — reda.041 — `Debt/IntrstPmtFrqcy`
+
 | Value | Description |
 |---|---|
 | `ANNUAL` | Once per year |
@@ -593,6 +605,8 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 ### A.7 RestrictionType
 
+ISO 20022: `SecurityRestrictionType2Code` — reda.041 — `TradgDtls/RstrctnTp`
+
 | Value | Description |
 |---|---|
 | `RESTRICTED` | Subject to trading restrictions |
@@ -602,6 +616,8 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 ### A.8 PaymentStatus
 
+ISO 20022: `SecuritiesPaymentStatus1Code` — reda.041 — `Eqty/PmtSts`
+
 | Value | Description |
 |---|---|
 | `FULLY_PAID` | Shares are fully paid |
@@ -609,6 +625,8 @@ Provided as separate data feeds, linked to securities via `assetId`.
 | `NIL_PAID` | No payment made (rights issue) |
 
 ### A.9 BondType
+
+ISO 20022: `DebtType1Code` — reda.041 — `Debt/DebtTp`
 
 | Value | Description |
 |---|---|
@@ -626,6 +644,8 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 ### A.10 DayCountBasis
 
+ISO 20022: `InterestComputationMethod2Code` — reda.041 — `Debt/DayCntBsis`
+
 | Value | Description |
 |---|---|
 | `ACT_360` | Actual/360 |
@@ -635,6 +655,8 @@ Provided as separate data feeds, linked to securities via `assetId`.
 | `THIRTY_E_360` | 30E/360 (Eurobond Basis) |
 
 ### A.11 BusinessDayConvention
+
+ISO 20022: `BusinessDayConventionType1Code` — reda.041 — `Debt/BizDayCnvtn`
 
 | Value | Description |
 |---|---|
@@ -646,6 +668,8 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 ### A.12 SeniorityType
 
+ISO 20022: `DebtSeniority1Code` — reda.041 — `Debt/SnrtyTp`
+
 | Value | Description |
 |---|---|
 | `SENIOR` | Senior unsecured debt |
@@ -656,6 +680,8 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 ### A.13 SecuredType
 
+ISO 20022: `CollateralType1Code` — reda.041 — `Debt/ScrdTp`
+
 | Value | Description |
 |---|---|
 | `SECURED` | Backed by specific collateral |
@@ -663,6 +689,8 @@ Provided as separate data feeds, linked to securities via `assetId`.
 | `PARTIALLY_SECURED` | Partially backed by collateral |
 
 ### A.14 ValuationMethod
+
+ISO 20022: `ValuationBasis1Code` — semt.002 — `ValtnMtd`
 
 | Value | Description |
 |---|---|
