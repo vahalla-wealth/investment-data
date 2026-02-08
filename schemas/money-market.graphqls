@@ -114,6 +114,7 @@ type MoneyMarketInstrument implements Asset {
   lei: String
   fisn: String
   cfi: String
+  documentUrl: String
   
   # ISO20022 Money Market Identification
   instrumentType: MoneyMarketInstrumentType!

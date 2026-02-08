@@ -213,6 +213,7 @@ type Equity implements Security & Asset {
   lei: String
   fisn: String
   cfi: String
+  documentUrl: String
   
   # Equity-specific fields (ISO20022 compliant)
   sector: String
@@ -269,6 +270,7 @@ type Bond implements Security & Asset {
   lei: String
   fisn: String
   cfi: String
+  documentUrl: String
   
   # Bond-specific fields (ISO20022 compliant)
   faceValue: Decimal!
@@ -340,6 +342,7 @@ type Note implements Security & Asset {
   lei: String
   fisn: String
   cfi: String
+  documentUrl: String
   
   # Note-specific fields (ISO20022 compliant)
   faceValue: Decimal!

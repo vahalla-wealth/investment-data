@@ -122,6 +122,7 @@ type ForeignExchangeInstrument implements Asset {
   lei: String
   fisn: String
   cfi: String
+  documentUrl: String
   
   # ISO20022 FX Identification
   instrumentType: ForeignExchangeInstrumentType!

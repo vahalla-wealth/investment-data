@@ -122,27 +122,28 @@ These fields apply to **all securities** (Equity and Bond). Every record must in
 | 12 | `currency` | String | Required | Trading/denomination currency per ISO 4217 (3 chars) | `"USD"` | reda.041 — `FinInstrmAttrbts/DnmtnCcy` |
 | 13 | `country` | String | Optional | Country of issuance per ISO 3166-1 alpha-2 | `"US"` | reda.041 — `FinInstrmAttrbts/CtryOfIsse` |
 | 14 | `description` | String | Optional | Free-text description of the security | `"Common shares of Apple Inc."` | reda.041 — `FinInstrmAttrbts/Desc` |
+| 15 | `documentUrl` | String | Optional | URL to fund fact sheet, prospectus, or key information document (KID) | `"https://bank.com/docs/AAPL-factsheet.pdf"` | reda.041 — `AddtlInf/InfURL` |
 
 ### 4.3 Security Common Fields
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 15 | `securityType` | Enum | Required | Top-level security classification | See [Appendix A.1](#a1-securitytype) | reda.041 — `FinInstrmAttrbts/ClssfctnTp` |
-| 16 | `exchange` | String | Optional | Primary exchange name | `"NASDAQ"` | reda.041 — `TradgDtls/PlcOfListg/Nm` |
-| 17 | `mic` | String | Optional | Market Identifier Code per ISO 10383 (4 chars) | `"XNAS"` | reda.041 — `TradgDtls/PlcOfListg/MktIdCd` |
-| 18 | `tradingStatus` | Enum | Optional | Current trading status | See [Appendix A.2](#a2-tradingstatus) | reda.041 — `TradgDtls/TradgSts` |
-| 19 | `formOfSecurity` | Enum | Optional | Form of security holding | See [Appendix A.3](#a3-formofsecurity) | reda.041 — `FinInstrmAttrbts/SctiesForm` |
-| 20 | `settlementCycle` | Enum | Optional | Standard settlement cycle | See [Appendix A.4](#a4-settlementcycle) | reda.041 — `TradgDtls/SttlmCycl` |
-| 21 | `minimumDenomination` | Decimal | Optional | Minimum tradeable denomination | `1000.00` | reda.041 — `FinInstrmAttrbts/MinDnmtn` |
-| 22 | `listingDate` | Date | Optional | Date the security was listed on the exchange | `"2024-03-15"` | reda.041 — `TradgDtls/ListgDt` |
-| 23 | `maturityDate` | Date | Optional | Maturity date (applicable to bonds/notes) | `"2034-03-15"` | reda.041 — `FinInstrmAttrbts/MtrtyDt` |
+| 16 | `securityType` | Enum | Required | Top-level security classification | See [Appendix A.1](#a1-securitytype) | reda.041 — `FinInstrmAttrbts/ClssfctnTp` |
+| 17 | `exchange` | String | Optional | Primary exchange name | `"NASDAQ"` | reda.041 — `TradgDtls/PlcOfListg/Nm` |
+| 18 | `mic` | String | Optional | Market Identifier Code per ISO 10383 (4 chars) | `"XNAS"` | reda.041 — `TradgDtls/PlcOfListg/MktIdCd` |
+| 19 | `tradingStatus` | Enum | Optional | Current trading status | See [Appendix A.2](#a2-tradingstatus) | reda.041 — `TradgDtls/TradgSts` |
+| 20 | `formOfSecurity` | Enum | Optional | Form of security holding | See [Appendix A.3](#a3-formofsecurity) | reda.041 — `FinInstrmAttrbts/SctiesForm` |
+| 21 | `settlementCycle` | Enum | Optional | Standard settlement cycle | See [Appendix A.4](#a4-settlementcycle) | reda.041 — `TradgDtls/SttlmCycl` |
+| 22 | `minimumDenomination` | Decimal | Optional | Minimum tradeable denomination | `1000.00` | reda.041 — `FinInstrmAttrbts/MinDnmtn` |
+| 23 | `listingDate` | Date | Optional | Date the security was listed on the exchange | `"2024-03-15"` | reda.041 — `TradgDtls/ListgDt` |
+| 24 | `maturityDate` | Date | Optional | Maturity date (applicable to bonds/notes) | `"2034-03-15"` | reda.041 — `FinInstrmAttrbts/MtrtyDt` |
 
 ### 4.4 Timestamps
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 24 | `createdAt` | DateTime | Required | Record creation timestamp | `"2026-01-15T09:30:00Z"` | reda.041 — `CreDtTm` |
-| 25 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-01T14:00:00Z"` | reda.041 — `UpdDtTm` |
+| 25 | `createdAt` | DateTime | Required | Record creation timestamp | `"2026-01-15T09:30:00Z"` | reda.041 — `CreDtTm` |
+| 26 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-01T14:00:00Z"` | reda.041 — `UpdDtTm` |
 
 ---
 
@@ -154,24 +155,24 @@ For records where `securityType` = `EQUITY`, `PREFERRED_STOCK`, `CONVERTIBLE_BON
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 26 | `equityType` | Enum | Required | Specific equity sub-type | See [Appendix A.5](#a5-equitytype) | reda.041 — `Eqty/EqtyTp` |
-| 27 | `sector` | String | Optional | GICS or ICB sector classification | `"Information Technology"` | reda.041 — `Eqty/Sctr` |
-| 28 | `industry` | String | Optional | Industry sub-classification | `"Consumer Electronics"` | reda.041 — `Eqty/Indstry` |
-| 29 | `marketCap` | Decimal | Optional | Market capitalization in trading currency | `2850000000000.00` | reda.041 — `Eqty/MktCptlstn` |
-| 30 | `sharesOutstanding` | Decimal | Optional | Total shares outstanding | `15500000000` | reda.041 — `Eqty/ShrsOutstndg` |
-| 31 | `dividendYield` | Decimal | Optional | Annual dividend yield (percentage, e.g. 1.5 = 1.5%) | `0.55` | reda.041 — `Eqty/DvddYld` |
-| 32 | `beta` | Decimal | Optional | Beta coefficient vs. benchmark | `1.28` | — (supplementary) |
-| 33 | `eps` | Decimal | Optional | Earnings per share (trailing 12 months) | `6.42` | reda.041 — `Eqty/ErngsPerShr` |
-| 34 | `peRatio` | Decimal | Optional | Price-to-earnings ratio | `29.50` | reda.041 — `Eqty/PricErngsRatio` |
-| 35 | `votingRights` | Boolean | Optional | Whether shares carry voting rights | `true` | reda.041 — `Eqty/VtngRghts` |
-| 36 | `dividendFrequency` | Enum | Optional | Dividend payment frequency | See [Appendix A.6](#a6-paymentfrequency) | reda.041 — `Eqty/DvddPmtFrqcy` |
-| 37 | `parValue` | Decimal | Optional | Par/nominal value per share | `0.00001` | reda.041 — `FinInstrmAttrbts/ParVal` |
-| 38 | `delistingDate` | Date | Optional | Date the security was/will be delisted | `"2026-12-31"` | reda.041 — `TradgDtls/DlstgDt` |
-| 39 | `lotSize` | Int | Optional | Standard trading lot size | `100` | reda.041 — `TradgDtls/LotSz` |
-| 40 | `boardLot` | Int | Optional | Board lot size (if different from lot size) | `100` | reda.041 — `TradgDtls/BrdLotSz` |
-| 41 | `priceMultiplier` | Decimal | Optional | Contract/price multiplier | `1.00` | reda.041 — `TradgDtls/PricMltplr` |
-| 42 | `restrictionType` | Enum | Optional | Trading restriction classification | See [Appendix A.7](#a7-restrictiontype) | reda.041 — `TradgDtls/RstrctnTp` |
-| 43 | `paymentStatus` | Enum | Optional | Share payment status | See [Appendix A.8](#a8-paymentstatus) | reda.041 — `Eqty/PmtSts` |
+| 27 | `equityType` | Enum | Required | Specific equity sub-type | See [Appendix A.5](#a5-equitytype) | reda.041 — `Eqty/EqtyTp` |
+| 28 | `sector` | String | Optional | GICS or ICB sector classification | `"Information Technology"` | reda.041 — `Eqty/Sctr` |
+| 29 | `industry` | String | Optional | Industry sub-classification | `"Consumer Electronics"` | reda.041 — `Eqty/Indstry` |
+| 30 | `marketCap` | Decimal | Optional | Market capitalization in trading currency | `2850000000000.00` | reda.041 — `Eqty/MktCptlstn` |
+| 31 | `sharesOutstanding` | Decimal | Optional | Total shares outstanding | `15500000000` | reda.041 — `Eqty/ShrsOutstndg` |
+| 32 | `dividendYield` | Decimal | Optional | Annual dividend yield (percentage, e.g. 1.5 = 1.5%) | `0.55` | reda.041 — `Eqty/DvddYld` |
+| 33 | `beta` | Decimal | Optional | Beta coefficient vs. benchmark | `1.28` | — (supplementary) |
+| 34 | `eps` | Decimal | Optional | Earnings per share (trailing 12 months) | `6.42` | reda.041 — `Eqty/ErngsPerShr` |
+| 35 | `peRatio` | Decimal | Optional | Price-to-earnings ratio | `29.50` | reda.041 — `Eqty/PricErngsRatio` |
+| 36 | `votingRights` | Boolean | Optional | Whether shares carry voting rights | `true` | reda.041 — `Eqty/VtngRghts` |
+| 37 | `dividendFrequency` | Enum | Optional | Dividend payment frequency | See [Appendix A.6](#a6-paymentfrequency) | reda.041 — `Eqty/DvddPmtFrqcy` |
+| 38 | `parValue` | Decimal | Optional | Par/nominal value per share | `0.00001` | reda.041 — `FinInstrmAttrbts/ParVal` |
+| 39 | `delistingDate` | Date | Optional | Date the security was/will be delisted | `"2026-12-31"` | reda.041 — `TradgDtls/DlstgDt` |
+| 40 | `lotSize` | Int | Optional | Standard trading lot size | `100` | reda.041 — `TradgDtls/LotSz` |
+| 41 | `boardLot` | Int | Optional | Board lot size (if different from lot size) | `100` | reda.041 — `TradgDtls/BrdLotSz` |
+| 42 | `priceMultiplier` | Decimal | Optional | Contract/price multiplier | `1.00` | reda.041 — `TradgDtls/PricMltplr` |
+| 43 | `restrictionType` | Enum | Optional | Trading restriction classification | See [Appendix A.7](#a7-restrictiontype) | reda.041 — `TradgDtls/RstrctnTp` |
+| 44 | `paymentStatus` | Enum | Optional | Share payment status | See [Appendix A.8](#a8-paymentstatus) | reda.041 — `Eqty/PmtSts` |
 
 ### 5.2 Equity Additional Data — Analyst Ratings
 
@@ -179,13 +180,13 @@ Provide if available. Used for RM advisory dashboards.
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 44 | `consensusRating` | String | Optional | Consensus analyst recommendation | `"BUY"`, `"HOLD"`, `"SELL"` | — (supplementary) |
-| 45 | `numberOfAnalysts` | Int | Optional | Number of analysts covering | `42` | — (supplementary) |
-| 46 | `buyRatings` | Int | Optional | Number of buy recommendations | `30` | — (supplementary) |
-| 47 | `holdRatings` | Int | Optional | Number of hold recommendations | `10` | — (supplementary) |
-| 48 | `sellRatings` | Int | Optional | Number of sell recommendations | `2` | — (supplementary) |
-| 49 | `targetPrice` | Decimal | Optional | Consensus target price | `210.00` | — (supplementary) |
-| 50 | `priceTarget12M` | Decimal | Optional | 12-month forward target price | `225.00` | — (supplementary) |
+| 45 | `consensusRating` | String | Optional | Consensus analyst recommendation | `"BUY"`, `"HOLD"`, `"SELL"` | — (supplementary) |
+| 46 | `numberOfAnalysts` | Int | Optional | Number of analysts covering | `42` | — (supplementary) |
+| 47 | `buyRatings` | Int | Optional | Number of buy recommendations | `30` | — (supplementary) |
+| 48 | `holdRatings` | Int | Optional | Number of hold recommendations | `10` | — (supplementary) |
+| 49 | `sellRatings` | Int | Optional | Number of sell recommendations | `2` | — (supplementary) |
+| 50 | `targetPrice` | Decimal | Optional | Consensus target price | `210.00` | — (supplementary) |
+| 51 | `priceTarget12M` | Decimal | Optional | 12-month forward target price | `225.00` | — (supplementary) |
 
 ### 5.3 Equity Additional Data — Financial Metrics
 
@@ -193,59 +194,59 @@ Provide if available. Sourced from latest financial statements.
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 51 | `revenue` | Decimal | Optional | Total revenue (trailing 12 months) | `394328000000.00` | — (supplementary) |
-| 52 | `revenueGrowth` | Decimal | Optional | Year-over-year revenue growth (%) | `8.10` | — (supplementary) |
-| 53 | `netIncome` | Decimal | Optional | Net income (trailing 12 months) | `96995000000.00` | — (supplementary) |
-| 54 | `netIncomeGrowth` | Decimal | Optional | Year-over-year net income growth (%) | `10.20` | — (supplementary) |
-| 55 | `ebitda` | Decimal | Optional | EBITDA | `130541000000.00` | — (supplementary) |
-| 56 | `ebitdaMargin` | Decimal | Optional | EBITDA margin (%) | `33.10` | — (supplementary) |
-| 57 | `operatingMargin` | Decimal | Optional | Operating margin (%) | `30.74` | — (supplementary) |
-| 58 | `profitMargin` | Decimal | Optional | Net profit margin (%) | `24.60` | — (supplementary) |
-| 59 | `roe` | Decimal | Optional | Return on equity (%) | `160.09` | — (supplementary) |
-| 60 | `roa` | Decimal | Optional | Return on assets (%) | `28.30` | — (supplementary) |
-| 61 | `debtToEquity` | Decimal | Optional | Debt-to-equity ratio | `1.87` | — (supplementary) |
-| 62 | `currentRatio` | Decimal | Optional | Current ratio | `0.99` | — (supplementary) |
-| 63 | `quickRatio` | Decimal | Optional | Quick ratio | `0.94` | — (supplementary) |
-| 64 | `freeCashFlow` | Decimal | Optional | Free cash flow | `111443000000.00` | — (supplementary) |
+| 52 | `revenue` | Decimal | Optional | Total revenue (trailing 12 months) | `394328000000.00` | — (supplementary) |
+| 53 | `revenueGrowth` | Decimal | Optional | Year-over-year revenue growth (%) | `8.10` | — (supplementary) |
+| 54 | `netIncome` | Decimal | Optional | Net income (trailing 12 months) | `96995000000.00` | — (supplementary) |
+| 55 | `netIncomeGrowth` | Decimal | Optional | Year-over-year net income growth (%) | `10.20` | — (supplementary) |
+| 56 | `ebitda` | Decimal | Optional | EBITDA | `130541000000.00` | — (supplementary) |
+| 57 | `ebitdaMargin` | Decimal | Optional | EBITDA margin (%) | `33.10` | — (supplementary) |
+| 58 | `operatingMargin` | Decimal | Optional | Operating margin (%) | `30.74` | — (supplementary) |
+| 59 | `profitMargin` | Decimal | Optional | Net profit margin (%) | `24.60` | — (supplementary) |
+| 60 | `roe` | Decimal | Optional | Return on equity (%) | `160.09` | — (supplementary) |
+| 61 | `roa` | Decimal | Optional | Return on assets (%) | `28.30` | — (supplementary) |
+| 62 | `debtToEquity` | Decimal | Optional | Debt-to-equity ratio | `1.87` | — (supplementary) |
+| 63 | `currentRatio` | Decimal | Optional | Current ratio | `0.99` | — (supplementary) |
+| 64 | `quickRatio` | Decimal | Optional | Quick ratio | `0.94` | — (supplementary) |
+| 65 | `freeCashFlow` | Decimal | Optional | Free cash flow | `111443000000.00` | — (supplementary) |
 
 ### 5.4 Equity Additional Data — Valuation Metrics
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 65 | `priceToBook` | Decimal | Optional | Price-to-book ratio | `47.20` | — (supplementary) |
-| 66 | `priceToSales` | Decimal | Optional | Price-to-sales ratio | `7.50` | — (supplementary) |
-| 67 | `evToEbitda` | Decimal | Optional | Enterprise value to EBITDA | `22.30` | — (supplementary) |
-| 68 | `evToSales` | Decimal | Optional | Enterprise value to sales | `7.40` | — (supplementary) |
-| 69 | `pegRatio` | Decimal | Optional | Price/earnings-to-growth ratio | `2.80` | — (supplementary) |
-| 70 | `dividendPayoutRatio` | Decimal | Optional | Dividend payout ratio (%) | `15.40` | — (supplementary) |
-| 71 | `earningsYield` | Decimal | Optional | Earnings yield (%) | `3.39` | — (supplementary) |
+| 66 | `priceToBook` | Decimal | Optional | Price-to-book ratio | `47.20` | — (supplementary) |
+| 67 | `priceToSales` | Decimal | Optional | Price-to-sales ratio | `7.50` | — (supplementary) |
+| 68 | `evToEbitda` | Decimal | Optional | Enterprise value to EBITDA | `22.30` | — (supplementary) |
+| 69 | `evToSales` | Decimal | Optional | Enterprise value to sales | `7.40` | — (supplementary) |
+| 70 | `pegRatio` | Decimal | Optional | Price/earnings-to-growth ratio | `2.80` | — (supplementary) |
+| 71 | `dividendPayoutRatio` | Decimal | Optional | Dividend payout ratio (%) | `15.40` | — (supplementary) |
+| 72 | `earningsYield` | Decimal | Optional | Earnings yield (%) | `3.39` | — (supplementary) |
 
 ### 5.5 Equity Additional Data — Technical Indicators
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 72 | `rsi` | Decimal | Optional | Relative Strength Index (0–100) | `58.30` | — (supplementary) |
-| 73 | `macd` | Decimal | Optional | MACD value | `2.15` | — (supplementary) |
-| 74 | `sma50` | Decimal | Optional | 50-day Simple Moving Average | `182.50` | — (supplementary) |
-| 75 | `sma200` | Decimal | Optional | 200-day Simple Moving Average | `175.20` | — (supplementary) |
-| 76 | `ema50` | Decimal | Optional | 50-day Exponential Moving Average | `183.10` | — (supplementary) |
-| 77 | `ema200` | Decimal | Optional | 200-day Exponential Moving Average | `176.00` | — (supplementary) |
-| 78 | `bollingerUpper` | Decimal | Optional | Bollinger Band upper | `195.00` | — (supplementary) |
-| 79 | `bollingerLower` | Decimal | Optional | Bollinger Band lower | `170.00` | — (supplementary) |
-| 80 | `atr` | Decimal | Optional | Average True Range | `3.45` | — (supplementary) |
-| 81 | `volume` | Decimal | Optional | Latest trading volume | `54230000` | reda.041 — `TradgDtls/Vol` |
-| 82 | `averageVolume` | Decimal | Optional | Average daily trading volume (30-day) | `62100000` | reda.041 — `TradgDtls/AvrgVol` |
+| 73 | `rsi` | Decimal | Optional | Relative Strength Index (0–100) | `58.30` | — (supplementary) |
+| 74 | `macd` | Decimal | Optional | MACD value | `2.15` | — (supplementary) |
+| 75 | `sma50` | Decimal | Optional | 50-day Simple Moving Average | `182.50` | — (supplementary) |
+| 76 | `sma200` | Decimal | Optional | 200-day Simple Moving Average | `175.20` | — (supplementary) |
+| 77 | `ema50` | Decimal | Optional | 50-day Exponential Moving Average | `183.10` | — (supplementary) |
+| 78 | `ema200` | Decimal | Optional | 200-day Exponential Moving Average | `176.00` | — (supplementary) |
+| 79 | `bollingerUpper` | Decimal | Optional | Bollinger Band upper | `195.00` | — (supplementary) |
+| 80 | `bollingerLower` | Decimal | Optional | Bollinger Band lower | `170.00` | — (supplementary) |
+| 81 | `atr` | Decimal | Optional | Average True Range | `3.45` | — (supplementary) |
+| 82 | `volume` | Decimal | Optional | Latest trading volume | `54230000` | reda.041 — `TradgDtls/Vol` |
+| 83 | `averageVolume` | Decimal | Optional | Average daily trading volume (30-day) | `62100000` | reda.041 — `TradgDtls/AvrgVol` |
 
 ### 5.6 Equity Additional Data — Ownership
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 83 | `institutionalOwnership` | Decimal | Optional | Institutional ownership (%) | `60.50` | — (supplementary) |
-| 84 | `insiderOwnership` | Decimal | Optional | Insider ownership (%) | `0.07` | — (supplementary) |
-| 85 | `publicFloat` | Decimal | Optional | Public float (%) | `99.93` | — (supplementary) |
-| 86 | `sharesShort` | Decimal | Optional | Number of shares sold short | `120000000` | — (supplementary) |
-| 87 | `shortRatio` | Decimal | Optional | Short ratio (days to cover) | `1.90` | — (supplementary) |
-| 88 | `shortPercentOfFloat` | Decimal | Optional | Short interest as % of float | `0.80` | — (supplementary) |
+| 84 | `institutionalOwnership` | Decimal | Optional | Institutional ownership (%) | `60.50` | — (supplementary) |
+| 85 | `insiderOwnership` | Decimal | Optional | Insider ownership (%) | `0.07` | — (supplementary) |
+| 86 | `publicFloat` | Decimal | Optional | Public float (%) | `99.93` | — (supplementary) |
+| 87 | `sharesShort` | Decimal | Optional | Number of shares sold short | `120000000` | — (supplementary) |
+| 88 | `shortRatio` | Decimal | Optional | Short ratio (days to cover) | `1.90` | — (supplementary) |
+| 89 | `shortPercentOfFloat` | Decimal | Optional | Short interest as % of float | `0.80` | — (supplementary) |
 
 ---
 
@@ -257,54 +258,54 @@ For records where `securityType` = `BOND`, `CONVERTIBLE_BOND`, or `DEBENTURE`.
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 89 | `bondType` | Enum | Required | Bond sub-type classification | See [Appendix A.9](#a9-bondtype) | reda.041 — `Debt/DebtTp` |
-| 90 | `faceValue` | Decimal | Required | Par/face value per unit | `1000.00` | reda.041 — `Debt/FaceAmt` |
-| 91 | `couponRate` | Decimal | Required | Annual coupon rate (%, e.g. 5.25 = 5.25%) | `5.25` | reda.041 — `Debt/IntrstRate` |
-| 92 | `issueDate` | Date | Required | Original issuance date | `"2024-03-15"` | reda.041 — `Debt/IsseDt` |
-| 93 | `issuePrice` | Decimal | Optional | Price at issuance (% of face value) | `99.50` | reda.041 — `Debt/IssePric` |
-| 94 | `redemptionPrice` | Decimal | Optional | Redemption price (% of face value) | `100.00` | reda.041 — `Debt/RedPric` |
-| 95 | `paymentFrequency` | Enum | Optional | Coupon payment frequency | See [Appendix A.6](#a6-paymentfrequency) | reda.041 — `Debt/IntrstPmtFrqcy` |
-| 96 | `dayCountBasis` | Enum | Optional | Day count convention for interest calculation | See [Appendix A.10](#a10-daycountbasis) | reda.041 — `Debt/DayCntBsis` |
-| 97 | `accrualStartDate` | Date | Optional | Interest accrual start date | `"2024-03-15"` | reda.041 — `Debt/AcrlStrtDt` |
-| 98 | `firstCouponDate` | Date | Optional | First coupon payment date | `"2024-09-15"` | reda.041 — `Debt/FrstCpnDt` |
-| 99 | `lastCouponDate` | Date | Optional | Last coupon payment date before maturity | `"2034-03-15"` | reda.041 — `Debt/LastCpnDt` |
-| 100 | `businessDayConvention` | Enum | Optional | Business day adjustment rule | See [Appendix A.11](#a11-businessdayconvention) | reda.041 — `Debt/BizDayCnvtn` |
-| 101 | `interestComputationMethod` | String | Optional | Interest computation method description | `"30/360"` | reda.041 — `Debt/IntrstCmptnMtd` |
+| 90 | `bondType` | Enum | Required | Bond sub-type classification | See [Appendix A.9](#a9-bondtype) | reda.041 — `Debt/DebtTp` |
+| 91 | `faceValue` | Decimal | Required | Par/face value per unit | `1000.00` | reda.041 — `Debt/FaceAmt` |
+| 92 | `couponRate` | Decimal | Required | Annual coupon rate (%, e.g. 5.25 = 5.25%) | `5.25` | reda.041 — `Debt/IntrstRate` |
+| 93 | `issueDate` | Date | Required | Original issuance date | `"2024-03-15"` | reda.041 — `Debt/IsseDt` |
+| 94 | `issuePrice` | Decimal | Optional | Price at issuance (% of face value) | `99.50` | reda.041 — `Debt/IssePric` |
+| 95 | `redemptionPrice` | Decimal | Optional | Redemption price (% of face value) | `100.00` | reda.041 — `Debt/RedPric` |
+| 96 | `paymentFrequency` | Enum | Optional | Coupon payment frequency | See [Appendix A.6](#a6-paymentfrequency) | reda.041 — `Debt/IntrstPmtFrqcy` |
+| 97 | `dayCountBasis` | Enum | Optional | Day count convention for interest calculation | See [Appendix A.10](#a10-daycountbasis) | reda.041 — `Debt/DayCntBsis` |
+| 98 | `accrualStartDate` | Date | Optional | Interest accrual start date | `"2024-03-15"` | reda.041 — `Debt/AcrlStrtDt` |
+| 99 | `firstCouponDate` | Date | Optional | First coupon payment date | `"2024-09-15"` | reda.041 — `Debt/FrstCpnDt` |
+| 100 | `lastCouponDate` | Date | Optional | Last coupon payment date before maturity | `"2034-03-15"` | reda.041 — `Debt/LastCpnDt` |
+| 101 | `businessDayConvention` | Enum | Optional | Business day adjustment rule | See [Appendix A.11](#a11-businessdayconvention) | reda.041 — `Debt/BizDayCnvtn` |
+| 102 | `interestComputationMethod` | String | Optional | Interest computation method description | `"30/360"` | reda.041 — `Debt/IntrstCmptnMtd` |
 
 ### 6.2 Bond Credit & Seniority
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 102 | `creditRating` | String | Optional | Primary credit rating | `"AA+"` | reda.041 — `Debt/CdtRtg/Rtg` |
-| 103 | `ratingAgency` | String | Optional | Rating agency name | `"S&P"`, `"Moody's"`, `"Fitch"` | reda.041 — `Debt/CdtRtg/RtgAgncy` |
-| 104 | `seniority` | Enum | Optional | Debt seniority ranking | See [Appendix A.12](#a12-senioritytype) | reda.041 — `Debt/SnrtyTp` |
-| 105 | `securedType` | Enum | Optional | Secured/unsecured classification | See [Appendix A.13](#a13-securedtype) | reda.041 — `Debt/ScrdTp` |
-| 106 | `guarantor` | String | Optional | Name of guarantor entity (if any) | `"US Government"` | reda.041 — `Debt/Guarntr/Nm` |
-| 107 | `covenants` | String | Optional | Summary of key covenants | `"Negative pledge, cross-default"` | reda.041 — `Debt/Cvnts` |
-| 108 | `defaultStatus` | Boolean | Optional | Whether the bond is currently in default | `false` | reda.041 — `Debt/DfltSts` |
+| 103 | `creditRating` | String | Optional | Primary credit rating | `"AA+"` | reda.041 — `Debt/CdtRtg/Rtg` |
+| 104 | `ratingAgency` | String | Optional | Rating agency name | `"S&P"`, `"Moody's"`, `"Fitch"` | reda.041 — `Debt/CdtRtg/RtgAgncy` |
+| 105 | `seniority` | Enum | Optional | Debt seniority ranking | See [Appendix A.12](#a12-senioritytype) | reda.041 — `Debt/SnrtyTp` |
+| 106 | `securedType` | Enum | Optional | Secured/unsecured classification | See [Appendix A.13](#a13-securedtype) | reda.041 — `Debt/ScrdTp` |
+| 107 | `guarantor` | String | Optional | Name of guarantor entity (if any) | `"US Government"` | reda.041 — `Debt/Guarntr/Nm` |
+| 108 | `covenants` | String | Optional | Summary of key covenants | `"Negative pledge, cross-default"` | reda.041 — `Debt/Cvnts` |
+| 109 | `defaultStatus` | Boolean | Optional | Whether the bond is currently in default | `false` | reda.041 — `Debt/DfltSts` |
 
 ### 6.3 Bond Call/Put Features
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 109 | `callable` | Boolean | Optional | Whether the bond is callable | `true` | reda.041 — `Debt/CallFeatrs/CallInd` |
-| 110 | `callPrice` | Decimal | Conditional | Call price (% of face). Required if `callable` = `true` | `102.00` | reda.041 — `Debt/CallFeatrs/CallPric` |
-| 111 | `callDate` | Date | Conditional | First call date. Required if `callable` = `true` | `"2029-03-15"` | reda.041 — `Debt/CallFeatrs/CallDt` |
-| 112 | `puttable` | Boolean | Optional | Whether the bond is puttable | `false` | reda.041 — `Debt/PutFeatrs/PutInd` |
-| 113 | `putPrice` | Decimal | Conditional | Put price (% of face). Required if `puttable` = `true` | `100.00` | reda.041 — `Debt/PutFeatrs/PutPric` |
-| 114 | `putDate` | Date | Conditional | First put date. Required if `puttable` = `true` | `"2029-03-15"` | reda.041 — `Debt/PutFeatrs/PutDt` |
+| 110 | `callable` | Boolean | Optional | Whether the bond is callable | `true` | reda.041 — `Debt/CallFeatrs/CallInd` |
+| 111 | `callPrice` | Decimal | Conditional | Call price (% of face). Required if `callable` = `true` | `102.00` | reda.041 — `Debt/CallFeatrs/CallPric` |
+| 112 | `callDate` | Date | Conditional | First call date. Required if `callable` = `true` | `"2029-03-15"` | reda.041 — `Debt/CallFeatrs/CallDt` |
+| 113 | `puttable` | Boolean | Optional | Whether the bond is puttable | `false` | reda.041 — `Debt/PutFeatrs/PutInd` |
+| 114 | `putPrice` | Decimal | Conditional | Put price (% of face). Required if `puttable` = `true` | `100.00` | reda.041 — `Debt/PutFeatrs/PutPric` |
+| 115 | `putDate` | Date | Conditional | First put date. Required if `puttable` = `true` | `"2029-03-15"` | reda.041 — `Debt/PutFeatrs/PutDt` |
 
 ### 6.4 Bond Analytics & Metrics
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 115 | `yieldToMaturity` | Decimal | Optional | Yield to maturity (%) | `5.10` | reda.041 — `Debt/YldToMtrty` |
-| 116 | `duration` | Decimal | Optional | Macaulay duration (years) | `7.25` | reda.041 — `Debt/Drtn` |
-| 117 | `convexity` | Decimal | Optional | Convexity measure | `62.30` | reda.041 — `Debt/Cnvxty` |
-| 118 | `minimumIncrement` | Decimal | Optional | Minimum trading increment | `1000.00` | reda.041 — `TradgDtls/MinIncrmt` |
-| 119 | `poolIdentifier` | String | Optional | Pool ID (for securitized bonds, e.g. MBS) | `"POOL-2024-001"` | reda.041 — `Debt/PoolId` |
-| 120 | `tranche` | String | Optional | Tranche identifier (for structured bonds) | `"A1"` | reda.041 — `Debt/Trnch` |
-| 121 | `series` | String | Optional | Series identifier | `"2024-1"` | reda.041 — `Debt/Srs` |
+| 116 | `yieldToMaturity` | Decimal | Optional | Yield to maturity (%) | `5.10` | reda.041 — `Debt/YldToMtrty` |
+| 117 | `duration` | Decimal | Optional | Macaulay duration (years) | `7.25` | reda.041 — `Debt/Drtn` |
+| 118 | `convexity` | Decimal | Optional | Convexity measure | `62.30` | reda.041 — `Debt/Cnvxty` |
+| 119 | `minimumIncrement` | Decimal | Optional | Minimum trading increment | `1000.00` | reda.041 — `TradgDtls/MinIncrmt` |
+| 120 | `poolIdentifier` | String | Optional | Pool ID (for securitized bonds, e.g. MBS) | `"POOL-2024-001"` | reda.041 — `Debt/PoolId` |
+| 121 | `tranche` | String | Optional | Tranche identifier (for structured bonds) | `"A1"` | reda.041 — `Debt/Trnch` |
+| 122 | `series` | String | Optional | Series identifier | `"2024-1"` | reda.041 — `Debt/Srs` |
 
 ### 6.5 Bond Additional Data — Credit Analysis
 
@@ -312,42 +313,42 @@ Provide if available. Critical for RM credit risk assessment.
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 122 | `creditRatingMoodys` | String | Optional | Moody's credit rating | `"Aa1"` | reda.041 — `Debt/CdtRtg/Rtg` (Moody's) |
-| 123 | `creditRatingSP` | String | Optional | S&P credit rating | `"AA+"` | reda.041 — `Debt/CdtRtg/Rtg` (S&P) |
-| 124 | `creditRatingFitch` | String | Optional | Fitch credit rating | `"AA+"` | reda.041 — `Debt/CdtRtg/Rtg` (Fitch) |
-| 125 | `creditSpread` | Decimal | Optional | Credit spread over benchmark (basis points) | `85.00` | semt.002 — `FinInstrmDtls/CdtSprd` |
-| 126 | `zSpread` | Decimal | Optional | Zero-volatility spread (basis points) | `92.00` | semt.002 — `FinInstrmDtls/ZSprd` |
-| 127 | `oas` | Decimal | Optional | Option-adjusted spread (basis points) | `78.00` | semt.002 — `FinInstrmDtls/OptnAdjstdSprd` |
-| 128 | `probabilityOfDefault` | Decimal | Optional | Probability of default (%) | `0.05` | — (supplementary) |
-| 129 | `lossGivenDefault` | Decimal | Optional | Loss given default (%) | `40.00` | — (supplementary) |
-| 130 | `recoveryRate` | Decimal | Optional | Expected recovery rate (%) | `60.00` | — (supplementary) |
+| 123 | `creditRatingMoodys` | String | Optional | Moody's credit rating | `"Aa1"` | reda.041 — `Debt/CdtRtg/Rtg` (Moody's) |
+| 124 | `creditRatingSP` | String | Optional | S&P credit rating | `"AA+"` | reda.041 — `Debt/CdtRtg/Rtg` (S&P) |
+| 125 | `creditRatingFitch` | String | Optional | Fitch credit rating | `"AA+"` | reda.041 — `Debt/CdtRtg/Rtg` (Fitch) |
+| 126 | `creditSpread` | Decimal | Optional | Credit spread over benchmark (basis points) | `85.00` | semt.002 — `FinInstrmDtls/CdtSprd` |
+| 127 | `zSpread` | Decimal | Optional | Zero-volatility spread (basis points) | `92.00` | semt.002 — `FinInstrmDtls/ZSprd` |
+| 128 | `oas` | Decimal | Optional | Option-adjusted spread (basis points) | `78.00` | semt.002 — `FinInstrmDtls/OptnAdjstdSprd` |
+| 129 | `probabilityOfDefault` | Decimal | Optional | Probability of default (%) | `0.05` | — (supplementary) |
+| 130 | `lossGivenDefault` | Decimal | Optional | Loss given default (%) | `40.00` | — (supplementary) |
+| 131 | `recoveryRate` | Decimal | Optional | Expected recovery rate (%) | `60.00` | — (supplementary) |
 
 ### 6.6 Bond Additional Data — Bond Metrics
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 131 | `macaulayDuration` | Decimal | Optional | Macaulay duration (years) | `7.25` | semt.002 — `FinInstrmDtls/Drtn` |
-| 132 | `modifiedDuration` | Decimal | Optional | Modified duration | `6.90` | semt.002 — `FinInstrmDtls/ModfdDrtn` |
-| 133 | `effectiveDuration` | Decimal | Optional | Effective duration (for bonds with optionality) | `6.50` | semt.002 — `FinInstrmDtls/FctvDrtn` |
-| 134 | `dv01` | Decimal | Optional | Dollar value of a basis point (per $1M face) | `690.00` | semt.002 — `FinInstrmDtls/DV01` |
-| 135 | `yieldToWorst` | Decimal | Optional | Yield to worst (%) | `4.85` | semt.002 — `FinInstrmDtls/YldToWrst` |
-| 136 | `yieldToCall` | Decimal | Optional | Yield to call (%) | `4.90` | semt.002 — `FinInstrmDtls/YldToCall` |
-| 137 | `yieldToPut` | Decimal | Optional | Yield to put (%) | `5.00` | semt.002 — `FinInstrmDtls/YldToPut` |
-| 138 | `currentYield` | Decimal | Optional | Current yield (%) | `5.25` | semt.002 — `FinInstrmDtls/CurYld` |
-| 139 | `accruedInterest` | Decimal | Optional | Accrued interest per unit | `13.15` | semt.002 — `FinInstrmDtls/AcrdIntrst` |
+| 132 | `macaulayDuration` | Decimal | Optional | Macaulay duration (years) | `7.25` | semt.002 — `FinInstrmDtls/Drtn` |
+| 133 | `modifiedDuration` | Decimal | Optional | Modified duration | `6.90` | semt.002 — `FinInstrmDtls/ModfdDrtn` |
+| 134 | `effectiveDuration` | Decimal | Optional | Effective duration (for bonds with optionality) | `6.50` | semt.002 — `FinInstrmDtls/FctvDrtn` |
+| 135 | `dv01` | Decimal | Optional | Dollar value of a basis point (per $1M face) | `690.00` | semt.002 — `FinInstrmDtls/DV01` |
+| 136 | `yieldToWorst` | Decimal | Optional | Yield to worst (%) | `4.85` | semt.002 — `FinInstrmDtls/YldToWrst` |
+| 137 | `yieldToCall` | Decimal | Optional | Yield to call (%) | `4.90` | semt.002 — `FinInstrmDtls/YldToCall` |
+| 138 | `yieldToPut` | Decimal | Optional | Yield to put (%) | `5.00` | semt.002 — `FinInstrmDtls/YldToPut` |
+| 139 | `currentYield` | Decimal | Optional | Current yield (%) | `5.25` | semt.002 — `FinInstrmDtls/CurYld` |
+| 140 | `accruedInterest` | Decimal | Optional | Accrued interest per unit | `13.15` | semt.002 — `FinInstrmDtls/AcrdIntrst` |
 
 ### 6.7 Bond Additional Data — Market Data
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 140 | `bidPrice` | Decimal | Optional | Bid price (% of face value) | `99.75` | semt.002 — `MktPric/BdPric` |
-| 141 | `askPrice` | Decimal | Optional | Ask price (% of face value) | `100.25` | semt.002 — `MktPric/AskPric` |
-| 142 | `midPrice` | Decimal | Optional | Mid price (% of face value) | `100.00` | semt.002 — `MktPric/MdPric` |
-| 143 | `lastTradePrice` | Decimal | Optional | Last traded price (% of face value) | `99.90` | semt.002 — `MktPric/LastTradPric` |
-| 144 | `volume` | Decimal | Optional | Trading volume (face value traded) | `50000000.00` | semt.002 — `MktPric/Vol` |
-| 145 | `averageDailyVolume` | Decimal | Optional | 30-day average daily volume | `25000000.00` | semt.002 — `MktPric/AvrgDlyVol` |
-| 146 | `outstandingAmount` | Decimal | Optional | Total outstanding face value | `500000000.00` | reda.041 — `Debt/OutstndgAmt` |
-| 147 | `liquidityScore` | Decimal | Optional | Liquidity score (0–100) | `72.50` | — (supplementary) |
+| 141 | `bidPrice` | Decimal | Optional | Bid price (% of face value) | `99.75` | semt.002 — `MktPric/BdPric` |
+| 142 | `askPrice` | Decimal | Optional | Ask price (% of face value) | `100.25` | semt.002 — `MktPric/AskPric` |
+| 143 | `midPrice` | Decimal | Optional | Mid price (% of face value) | `100.00` | semt.002 — `MktPric/MdPric` |
+| 144 | `lastTradePrice` | Decimal | Optional | Last traded price (% of face value) | `99.90` | semt.002 — `MktPric/LastTradPric` |
+| 145 | `volume` | Decimal | Optional | Trading volume (face value traded) | `50000000.00` | semt.002 — `MktPric/Vol` |
+| 146 | `averageDailyVolume` | Decimal | Optional | 30-day average daily volume | `25000000.00` | semt.002 — `MktPric/AvrgDlyVol` |
+| 147 | `outstandingAmount` | Decimal | Optional | Total outstanding face value | `500000000.00` | reda.041 — `Debt/OutstndgAmt` |
+| 148 | `liquidityScore` | Decimal | Optional | Liquidity score (0–100) | `72.50` | — (supplementary) |
 
 ---
 
@@ -359,26 +360,26 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 148 | `assetId` | String | Required | Reference to the security record ID | `"SEC-001234"` | semt.003 — `FinInstrmId/OthrId/Id` |
-| 149 | `price` | Decimal | Required | Last/closing price | `185.50` | semt.003 — `PricDtls/Pric/Amt` |
-| 150 | `currency` | String | Required | Price currency per ISO 4217 | `"USD"` | semt.003 — `PricDtls/Pric/Ccy` |
-| 151 | `timestamp` | DateTime | Required | Price timestamp | `"2026-02-08T16:00:00Z"` | semt.003 — `PricDtls/PricDtTm` |
-| 152 | `source` | String | Optional | Pricing source | `"Bloomberg"`, `"Reuters"` | semt.003 — `PricDtls/SrcOfPric` |
-| 153 | `bidPrice` | Decimal | Optional | Bid price | `185.45` | semt.003 — `PricDtls/BdPric` |
-| 154 | `askPrice` | Decimal | Optional | Ask price | `185.55` | semt.003 — `PricDtls/AskPric` |
-| 155 | `volume` | Decimal | Optional | Trading volume | `54230000` | semt.003 — `PricDtls/Vol` |
+| 149 | `assetId` | String | Required | Reference to the security record ID | `"SEC-001234"` | semt.003 — `FinInstrmId/OthrId/Id` |
+| 150 | `price` | Decimal | Required | Last/closing price | `185.50` | semt.003 — `PricDtls/Pric/Amt` |
+| 151 | `currency` | String | Required | Price currency per ISO 4217 | `"USD"` | semt.003 — `PricDtls/Pric/Ccy` |
+| 152 | `timestamp` | DateTime | Required | Price timestamp | `"2026-02-08T16:00:00Z"` | semt.003 — `PricDtls/PricDtTm` |
+| 153 | `source` | String | Optional | Pricing source | `"Bloomberg"`, `"Reuters"` | semt.003 — `PricDtls/SrcOfPric` |
+| 154 | `bidPrice` | Decimal | Optional | Bid price | `185.45` | semt.003 — `PricDtls/BdPric` |
+| 155 | `askPrice` | Decimal | Optional | Ask price | `185.55` | semt.003 — `PricDtls/AskPric` |
+| 156 | `volume` | Decimal | Optional | Trading volume | `54230000` | semt.003 — `PricDtls/Vol` |
 
 ### 7.2 Asset Valuation (Portfolio Valuation)
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 156 | `assetId` | String | Required | Reference to the security record ID | `"SEC-001234"` | semt.002 — `FinInstrmId/OthrId/Id` |
-| 157 | `valuationDate` | Date | Required | Valuation date | `"2026-02-08"` | semt.002 — `ValtnDt` |
-| 158 | `marketValue` | Decimal | Required | Market value | `1855000.00` | semt.002 — `MktVal/Amt` |
-| 159 | `bookValue` | Decimal | Optional | Book/cost value | `1650000.00` | semt.002 — `BookVal/Amt` |
-| 160 | `currency` | String | Required | Valuation currency per ISO 4217 | `"USD"` | semt.002 — `MktVal/Ccy` |
-| 161 | `valuationMethod` | Enum | Optional | Valuation methodology used | See [Appendix A.14](#a14-valuationmethod) | semt.002 — `ValtnMtd` |
-| 162 | `pricingSource` | String | Optional | Source of pricing data | `"Bloomberg"` | semt.002 — `PricgSrc` |
+| 157 | `assetId` | String | Required | Reference to the security record ID | `"SEC-001234"` | semt.002 — `FinInstrmId/OthrId/Id` |
+| 158 | `valuationDate` | Date | Required | Valuation date | `"2026-02-08"` | semt.002 — `ValtnDt` |
+| 159 | `marketValue` | Decimal | Required | Market value | `1855000.00` | semt.002 — `MktVal/Amt` |
+| 160 | `bookValue` | Decimal | Optional | Book/cost value | `1650000.00` | semt.002 — `BookVal/Amt` |
+| 161 | `currency` | String | Required | Valuation currency per ISO 4217 | `"USD"` | semt.002 — `MktVal/Ccy` |
+| 162 | `valuationMethod` | Enum | Optional | Valuation methodology used | See [Appendix A.14](#a14-valuationmethod) | semt.002 — `ValtnMtd` |
+| 163 | `pricingSource` | String | Optional | Source of pricing data | `"Bloomberg"` | semt.002 — `PricgSrc` |
 
 ---
 

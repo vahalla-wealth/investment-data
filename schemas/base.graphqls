@@ -308,6 +308,7 @@ interface Asset {
   lei: String # Legal Entity Identifier (20 chars)
   fisn: String # Financial Instrument Short Name (max 35 chars)
   cfi: String # Classification of Financial Instruments (6 chars)
+  documentUrl: String # URL to fact sheet, prospectus, or KID
 }
 
 interface Security {

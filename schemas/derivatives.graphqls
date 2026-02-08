@@ -78,6 +78,7 @@ type Derivative implements Asset {
   lei: String
   fisn: String
   cfi: String
+  documentUrl: String
   
   # ISO20022 Derivative Identification
   derivativeType: DerivativeType!
@@ -196,6 +197,7 @@ type Option implements Asset {
   lei: String
   fisn: String
   cfi: String
+  documentUrl: String
   
   # ISO20022 Option Identification
   optionType: OptionType!
@@ -319,6 +321,7 @@ type Swap implements Asset {
   lei: String
   fisn: String
   cfi: String
+  documentUrl: String
   
   # ISO20022 Swap Identification
   swapType: SwapType!
@@ -465,6 +468,7 @@ type Future implements Asset {
   lei: String
   fisn: String
   cfi: String
+  documentUrl: String
   
   # ISO20022 Future Identification
   underlyingAsset: String!
@@ -577,6 +581,7 @@ type Forward implements Asset {
   lei: String
   fisn: String
   cfi: String
+  documentUrl: String
   
   # ISO20022 Forward Identification
   underlyingAsset: String!
