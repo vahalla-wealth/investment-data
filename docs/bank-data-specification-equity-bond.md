@@ -26,9 +26,31 @@ This document specifies the data fields, formats, and standards required from ba
 
 ---
 
-## 2. Data Standards & Conventions
+## 2. Entity Relationship Overview
 
-### 2.1 Applicable ISO Standards
+The following diagram illustrates the relationships between the core entities in the Vahalla Wealth Management System.
+
+```mermaid
+erDiagram
+    RelationshipManager ||--o{ Client : manages
+    Client ||--o{ Account : owns
+    Account ||--o{ Portfolio : contains
+    Account ||--o{ Position : holds
+    Account ||--o{ Transaction : records
+    Account ||--o{ Order : places
+    Account ||--o{ FXDeposit : "source fund"
+    Portfolio ||--o{ Position : tracks
+    Order ||--o{ Transaction : generates
+    Position }o--|| Asset : references
+    Asset ||--|| Equity : "is a"
+    Asset ||--|| Bond : "is a"
+```
+
+---
+
+## 3. Data Standards & Conventions
+
+### 3.1 Applicable ISO Standards
 
 | Standard | Description | Usage |
 |---|---|---|
@@ -44,7 +66,7 @@ This document specifies the data fields, formats, and standards required from ba
 | **ISO 8601** | Date/Time Format | All date and timestamp fields |
 | **ISO 20022** | Financial Messaging Standard | Overall data model alignment |
 
-### 2.2 Data Type Definitions
+### 3.2 Data Type Definitions
 
 | Data Type | Format | Example |
 |---|---|---|
@@ -56,7 +78,7 @@ This document specifies the data fields, formats, and standards required from ba
 | `DateTime` | ISO 8601 with timezone: `YYYY-MM-DDTHH:MM:SSZ` | `2026-01-15T09:30:00Z` |
 | `Enum` | Predefined value from allowed list | `COMMON` |
 
-### 2.3 Field Requirement Levels
+### 3.3 Field Requirement Levels
 
 | Level | Label | Meaning |
 |---|---|---|
@@ -64,7 +86,7 @@ This document specifies the data fields, formats, and standards required from ba
 | **Conditionally Required** | Conditional | Required when a specific condition is met (noted in Description). |
 | **Optional** | Optional | Provide if available. Enhances data quality. |
 
-### 2.4 Delivery Format
+### 3.4 Delivery Format
 
 - **Preferred:** JSON or XML (ISO 20022 compliant messages)
 - **Acceptable:** CSV with header row matching field names, or plain text (fixed-width/delimited)
@@ -73,11 +95,11 @@ This document specifies the data fields, formats, and standards required from ba
 
 ---
 
-## 3. Common Security Identification Fields
+## 4. Common Security Identification Fields
 
 These fields apply to **all securities** (Equity and Bond). Every record must include these fields.
 
-### 3.1 Primary Identification
+### 4.1 Primary Identification
 
 | # | Field Name | Data Type | Required | Description | Example |
 |---|---|---|---|---|---|
@@ -89,7 +111,7 @@ These fields apply to **all securities** (Equity and Bond). Every record must in
 | 6 | `name` | String | Required | Full legal name of the security | `"Apple Inc. Common Stock"` |
 | 7 | `assetClass` | Enum | Required | Must be `SECURITIES` for all records in this specification | `"SECURITIES"` |
 
-### 3.2 Issuer & Classification
+### 4.2 Issuer & Classification
 
 | # | Field Name | Data Type | Required | Description | Example |
 |---|---|---|---|---|---|
@@ -101,7 +123,7 @@ These fields apply to **all securities** (Equity and Bond). Every record must in
 | 13 | `country` | String | Optional | Country of issuance per ISO 3166-1 alpha-2 | `"US"` |
 | 14 | `description` | String | Optional | Free-text description of the security | `"Common shares of Apple Inc."` |
 
-### 3.3 Security Common Fields
+### 4.3 Security Common Fields
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example |
 |---|---|---|---|---|---|
@@ -115,7 +137,7 @@ These fields apply to **all securities** (Equity and Bond). Every record must in
 | 22 | `listingDate` | Date | Optional | Date the security was listed on the exchange | `"2024-03-15"` |
 | 23 | `maturityDate` | Date | Optional | Maturity date (applicable to bonds/notes) | `"2034-03-15"` |
 
-### 3.4 Timestamps
+### 4.4 Timestamps
 
 | # | Field Name | Data Type | Required | Description | Example |
 |---|---|---|---|---|---|
@@ -124,11 +146,11 @@ These fields apply to **all securities** (Equity and Bond). Every record must in
 
 ---
 
-## 4. Equity Data Fields
+## 5. Equity Data Fields
 
 For records where `securityType` = `EQUITY`, `PREFERRED_STOCK`, `CONVERTIBLE_BOND`, or `WARRANT`.
 
-### 4.1 Equity-Specific Fields
+### 5.1 Equity-Specific Fields
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example |
 |---|---|---|---|---|---|
@@ -151,7 +173,7 @@ For records where `securityType` = `EQUITY`, `PREFERRED_STOCK`, `CONVERTIBLE_BON
 | 42 | `restrictionType` | Enum | Optional | Trading restriction classification | See [Appendix A.7](#a7-restrictiontype) |
 | 43 | `paymentStatus` | Enum | Optional | Share payment status | See [Appendix A.8](#a8-paymentstatus) |
 
-### 4.2 Equity Additional Data — Analyst Ratings
+### 5.2 Equity Additional Data — Analyst Ratings
 
 Provide if available. Used for RM advisory dashboards.
 
@@ -165,7 +187,7 @@ Provide if available. Used for RM advisory dashboards.
 | 49 | `targetPrice` | Decimal | Optional | Consensus target price | `210.00` |
 | 50 | `priceTarget12M` | Decimal | Optional | 12-month forward target price | `225.00` |
 
-### 4.3 Equity Additional Data — Financial Metrics
+### 5.3 Equity Additional Data — Financial Metrics
 
 Provide if available. Sourced from latest financial statements.
 
@@ -186,7 +208,7 @@ Provide if available. Sourced from latest financial statements.
 | 63 | `quickRatio` | Decimal | Optional | Quick ratio | `0.94` |
 | 64 | `freeCashFlow` | Decimal | Optional | Free cash flow | `111443000000.00` |
 
-### 4.4 Equity Additional Data — Valuation Metrics
+### 5.4 Equity Additional Data — Valuation Metrics
 
 | # | Field Name | Data Type | Required | Description | Example |
 |---|---|---|---|---|---|
@@ -198,7 +220,7 @@ Provide if available. Sourced from latest financial statements.
 | 70 | `dividendPayoutRatio` | Decimal | Optional | Dividend payout ratio (%) | `15.40` |
 | 71 | `earningsYield` | Decimal | Optional | Earnings yield (%) | `3.39` |
 
-### 4.5 Equity Additional Data — Technical Indicators
+### 5.5 Equity Additional Data — Technical Indicators
 
 | # | Field Name | Data Type | Required | Description | Example |
 |---|---|---|---|---|---|
@@ -214,7 +236,7 @@ Provide if available. Sourced from latest financial statements.
 | 81 | `volume` | Decimal | Optional | Latest trading volume | `54230000` |
 | 82 | `averageVolume` | Decimal | Optional | Average daily trading volume (30-day) | `62100000` |
 
-### 4.6 Equity Additional Data — Ownership
+### 5.6 Equity Additional Data — Ownership
 
 | # | Field Name | Data Type | Required | Description | Example |
 |---|---|---|---|---|---|
@@ -227,11 +249,11 @@ Provide if available. Sourced from latest financial statements.
 
 ---
 
-## 5. Bond (Fixed Income) Data Fields
+## 6. Bond (Fixed Income) Data Fields
 
 For records where `securityType` = `BOND`, `CONVERTIBLE_BOND`, or `DEBENTURE`.
 
-### 5.1 Bond-Specific Fields
+### 6.1 Bond-Specific Fields
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example |
 |---|---|---|---|---|---|
@@ -249,7 +271,7 @@ For records where `securityType` = `BOND`, `CONVERTIBLE_BOND`, or `DEBENTURE`.
 | 100 | `businessDayConvention` | Enum | Optional | Business day adjustment rule | See [Appendix A.11](#a11-businessdayconvention) |
 | 101 | `interestComputationMethod` | String | Optional | Interest computation method description | `"30/360"` |
 
-### 5.2 Bond Credit & Seniority
+### 6.2 Bond Credit & Seniority
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example |
 |---|---|---|---|---|---|
@@ -261,7 +283,7 @@ For records where `securityType` = `BOND`, `CONVERTIBLE_BOND`, or `DEBENTURE`.
 | 107 | `covenants` | String | Optional | Summary of key covenants | `"Negative pledge, cross-default"` |
 | 108 | `defaultStatus` | Boolean | Optional | Whether the bond is currently in default | `false` |
 
-### 5.3 Bond Call/Put Features
+### 6.3 Bond Call/Put Features
 
 | # | Field Name | Data Type | Required | Description | Example |
 |---|---|---|---|---|---|
@@ -272,7 +294,7 @@ For records where `securityType` = `BOND`, `CONVERTIBLE_BOND`, or `DEBENTURE`.
 | 113 | `putPrice` | Decimal | Conditional | Put price (% of face). Required if `puttable` = `true` | `100.00` |
 | 114 | `putDate` | Date | Conditional | First put date. Required if `puttable` = `true` | `"2029-03-15"` |
 
-### 5.4 Bond Analytics & Metrics
+### 6.4 Bond Analytics & Metrics
 
 | # | Field Name | Data Type | Required | Description | Example |
 |---|---|---|---|---|---|
@@ -284,7 +306,7 @@ For records where `securityType` = `BOND`, `CONVERTIBLE_BOND`, or `DEBENTURE`.
 | 120 | `tranche` | String | Optional | Tranche identifier (for structured bonds) | `"A1"` |
 | 121 | `series` | String | Optional | Series identifier | `"2024-1"` |
 
-### 5.5 Bond Additional Data — Credit Analysis
+### 6.5 Bond Additional Data — Credit Analysis
 
 Provide if available. Critical for RM credit risk assessment.
 
@@ -300,7 +322,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 129 | `lossGivenDefault` | Decimal | Optional | Loss given default (%) | `40.00` |
 | 130 | `recoveryRate` | Decimal | Optional | Expected recovery rate (%) | `60.00` |
 
-### 5.6 Bond Additional Data — Bond Metrics
+### 6.6 Bond Additional Data — Bond Metrics
 
 | # | Field Name | Data Type | Required | Description | Example |
 |---|---|---|---|---|---|
@@ -314,7 +336,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 138 | `currentYield` | Decimal | Optional | Current yield (%) | `5.25` |
 | 139 | `accruedInterest` | Decimal | Optional | Accrued interest per unit | `13.15` |
 
-### 5.7 Bond Additional Data — Market Data
+### 6.7 Bond Additional Data — Market Data
 
 | # | Field Name | Data Type | Required | Description | Example |
 |---|---|---|---|---|---|
@@ -329,11 +351,11 @@ Provide if available. Critical for RM credit risk assessment.
 
 ---
 
-## 6. Pricing & Valuation Data
+## 7. Pricing & Valuation Data
 
 Provided as separate data feeds, linked to securities via `assetId`.
 
-### 6.1 Asset Price (Real-Time / End-of-Day)
+### 7.1 Asset Price (Real-Time / End-of-Day)
 
 | # | Field Name | Data Type | Required | Description | Example |
 |---|---|---|---|---|---|
@@ -346,7 +368,7 @@ Provided as separate data feeds, linked to securities via `assetId`.
 | 154 | `askPrice` | Decimal | Optional | Ask price | `185.55` |
 | 155 | `volume` | Decimal | Optional | Trading volume | `54230000` |
 
-### 6.2 Asset Valuation (Portfolio Valuation)
+### 7.2 Asset Valuation (Portfolio Valuation)
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example |
 |---|---|---|---|---|---|
@@ -360,9 +382,9 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 ---
 
-## 7. Sample Data
+## 8. Sample Data
 
-### 7.1 Equity Example (JSON)
+### 8.1 Equity Example (JSON)
 
 ```json
 {
@@ -428,7 +450,7 @@ Provided as separate data feeds, linked to securities via `assetId`.
 }
 ```
 
-### 7.2 Bond Example (JSON)
+### 8.2 Bond Example (JSON)
 
 ```json
 {
@@ -652,7 +674,7 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 ---
 
-## 8. Data Quality Requirements
+## 9. Data Quality Requirements
 
 | Requirement | Description |
 |---|---|
@@ -666,7 +688,7 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 ---
 
-## 9. Contact & Support
+## 10. Contact & Support
 
 For questions regarding this specification, please contact:
 
