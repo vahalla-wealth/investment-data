@@ -1,6 +1,6 @@
 # 03 — Vahalla Wealth Data Specification — Investment Funds
 
-> **Document Index:** [00-index.md](00-index.md) | **Related:** [03.1 — CSV & JSON Sample Data](03.1-sample-data-csv-investment-funds.md) | [02 — Equity & Bond Specification](02-bank-data-specification-equity-bond.md) | [01 — Wealth Management Specification](01-wealth-management-specification.md)
+> **Document Index:** [00-index.md](00-index.md) | **Related:** [03.1 — Fund Master Data (CSV & JSON)](03.1-sample-data-csv-investment-funds.md) | [03.2 — Fund Position, Transaction & Order (CSV & JSON)](03.2-sample-data-csv-fund-position-transaction.md) | [02 — Equity & Bond Specification](02-bank-data-specification-equity-bond.md) | [01 — Wealth Management Specification](01-wealth-management-specification.md)
 
 | | |
 |---|---|
@@ -66,7 +66,23 @@ All data standards, conventions, data type definitions, field requirement levels
 
 ## 4. Common Security Identification Fields
 
-Investment Fund records share the same common identification fields (§4.1–§4.4) as defined in [02 — Equity & Bond Specification, Section 4](02-bank-data-specification-equity-bond.md#4-common-security-identification-fields). The `securityType` field (field #16) must be set to `INVESTMENT_FUND` for all records in this specification.
+Investment Fund records share the same common identification fields (§4.1–§4.4) as defined in [02 — Equity & Bond Specification, Section 4](02-bank-data-specification-equity-bond.md#4-common-security-identification-fields), with the following differences:
+
+- The `assetClass` field must be set to `INVESTMENT_FUNDS` (per the `AssetClass` enum).
+- Instead of `securityType` (which applies only to the `SECURITIES` asset class), Investment Funds use `fundSecurityType` from the `FundSecurityType` enum (ISO 20022 CFI — Collective Investment Vehicles classification).
+
+| `fundSecurityType` Value | Description | Example Fund Types |
+|---|---|---|
+| `OPEN_END_INVESTMENT_FUND` | Open-ended collective investment scheme | Mutual Fund, UCITS, Index Fund |
+| `CLOSED_END_INVESTMENT_FUND` | Closed-ended collective investment scheme | Closed-end Fund, Investment Trust |
+| `ETF` | Exchange-traded fund | ETF, Leveraged ETF, Inverse ETF |
+| `MONEY_MARKET_FUND` | Money market fund (short-term) | Prime MMF, Government MMF |
+| `REAL_ESTATE_FUND` | Real estate investment fund | REIT, Real Estate Fund |
+| `HEDGE_FUND` | Alternative/hedge fund | Hedge Fund, Fund of Hedge Funds |
+| `PRIVATE_EQUITY_FUND` | Private equity fund | PE Fund, Venture Capital Fund |
+| `PENSION_FUND` | Pension/retirement fund | Defined Benefit, Defined Contribution |
+
+The specific fund sub-type is further classified by the `fundType` field (`InvestmentFundType` enum) in §5.1.
 
 ---
 

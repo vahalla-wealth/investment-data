@@ -19,6 +19,7 @@
 | 02.3 | [↳ Sample Data — Transaction & Order (CSV & JSON)](02.3-sample-data-csv-transaction-order.md) | Transaction and Order samples mixing Equity and Bond trades | Draft |
 | 03 | [Bank Data Specification — Investment Funds](03-bank-data-specification-investment-funds.md) | Data fields, formats, ISO 20022 references for Mutual Funds, ETFs, Hedge Funds, REITs, etc. | Draft |
 | 03.1 | [↳ Sample Data — Investment Funds (CSV & JSON)](03.1-sample-data-csv-investment-funds.md) | CSV & JSON examples for ETF, Mutual Fund, and Hedge Fund records | Draft |
+| 03.2 | [↳ Sample Data — Fund Position, Transaction & Order (CSV & JSON)](03.2-sample-data-csv-fund-position-transaction.md) | Fund Position, Subscription, Redemption, Switch, and Distribution samples | Draft |
 
 ---
 

@@ -5,6 +5,19 @@
 # Investment Fund Enums
 # ============================================================================
 
+# ISO20022 CFI — Collective Investment Vehicles classification
+# Parallel to SecurityType (EQUITY, BOND) for SECURITIES asset class
+enum FundSecurityType {
+  OPEN_END_INVESTMENT_FUND    # CIV — Open-ended collective investment scheme
+  CLOSED_END_INVESTMENT_FUND  # CIV — Closed-ended collective investment scheme
+  ETF                         # CIV — Exchange-traded fund
+  MONEY_MARKET_FUND           # CIV — Money market fund (short-term)
+  REAL_ESTATE_FUND            # CIV — Real estate investment fund
+  HEDGE_FUND                  # CIV — Alternative/hedge fund
+  PRIVATE_EQUITY_FUND         # CIV — Private equity fund
+  PENSION_FUND                # CIV — Pension/retirement fund
+}
+
 enum InvestmentFundType {
   MUTUAL_FUND
   HEDGE_FUND
@@ -288,6 +301,9 @@ type InvestmentFund implements Asset {
   fisn: String
   cfi: String
   documentUrl: String
+  
+  # ISO20022 Fund Classification (parallel to securityType for Securities)
+  fundSecurityType: FundSecurityType!
   
   # ISO20022 Fund Identification
   fundType: InvestmentFundType!
