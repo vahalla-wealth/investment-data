@@ -80,4 +80,7 @@ type Query {
   
   order(id: ID!): Order @auth
   orders(accountId: ID!, status: OrderStatus, limit: Int, offset: Int): [Order!]! @auth
+  
+  fxDeposit(id: ID!): FXDeposit @auth
+  fxDeposits(accountId: ID, clientId: ID, currency: String, depositType: DepositType, status: DepositStatus, limit: Int, offset: Int): [FXDeposit!]! @auth
 }

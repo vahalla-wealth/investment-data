@@ -143,6 +143,46 @@ enum TimeInForce {
   CLO # At The Close
 }
 
+enum DepositType {
+  SAVINGS
+  FIXED_TERM
+  CALL_DEPOSIT
+  NOTICE_DEPOSIT
+  OVERNIGHT
+  TIME_DEPOSIT
+  DEMAND_DEPOSIT
+  STRUCTURED_DEPOSIT
+}
+
+enum DepositStatus {
+  ACTIVE
+  MATURED
+  BROKEN # Early termination
+  PENDING_ACTIVATION
+  ROLLED_OVER
+  CLOSED
+}
+
+enum DepositTermType {
+  OPEN_ENDED
+  FIXED_TERM
+  NOTICE_PERIOD
+  OVERNIGHT
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  SEMI_ANNUAL
+  ANNUAL
+}
+
+enum RolloverType {
+  NONE
+  PRINCIPAL_ONLY
+  PRINCIPAL_AND_INTEREST
+  AUTOMATIC
+  MANUAL
+}
+
 # ============================================================================
 # Client Type (ISO20022 Party Identification)
 # ============================================================================
@@ -307,6 +347,7 @@ type Account {
   clientId: ID!
   portfolios: [Portfolio!]
   positions: [Position!]
+  deposits: [FXDeposit!]
   
   createdAt: Time!
   updatedAt: Time!
@@ -496,6 +537,81 @@ type Transaction {
   portfolioId: ID
   positionId: ID
   orderId: ID
+  
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+# ============================================================================
+# FX Deposit Type (ISO20022 Cash Management / Deposit)
+# ============================================================================
+
+type FXDeposit {
+  id: ID!
+  
+  # ISO20022 Deposit Identification
+  depositReference: String!
+  depositType: DepositType!
+  status: DepositStatus!
+  
+  # ISO20022 Currency & Amount
+  currency: String! # ISO 4217
+  principalAmount: Decimal!
+  currentBalance: Decimal
+  
+  # ISO20022 Interest
+  interestType: InterestType!
+  interestRate: Decimal!
+  floatingRateIndex: FloatingRateIndex
+  floatingRateSpread: Decimal
+  accruedInterest: Decimal
+  interestAmount: Decimal
+  interestCurrency: String
+  dayCountBasis: DayCountBasis
+  interestPaymentFrequency: PaymentFrequency
+  compoundingFrequency: PaymentFrequency
+  
+  # ISO20022 Term & Maturity
+  termType: DepositTermType!
+  tenorDays: Int
+  noticePeriodDays: Int
+  startDate: Time!
+  maturityDate: Time
+  valueDate: Time
+  
+  # ISO20022 Rollover
+  rolloverType: RolloverType
+  rolloverCount: Int
+  nextRolloverDate: Time
+  
+  # ISO20022 Early Withdrawal
+  earlyWithdrawalAllowed: Boolean
+  earlyWithdrawalPenaltyRate: Decimal
+  breakCost: Decimal
+  minimumBalance: Decimal
+  
+  # ISO20022 Servicing Institution
+  depositBank: String
+  depositBankLei: String
+  depositBankBic: String
+  branchCode: String
+  
+  # ISO20022 Settlement
+  settlementAccount: String
+  settlementCurrency: String
+  settlementInstructions: String
+  
+  # ISO20022 Tax
+  withholdingTaxRate: Decimal
+  taxStatus: TaxStatus
+  
+  # ISO20022 Source Fund Linkage
+  sourceAccountId: ID # Linked Account used as source fund
+  fundingTransactionRef: String
+  
+  # Relationships
+  accountId: ID!
+  clientId: ID!
   
   createdAt: Time!
   updatedAt: Time!
