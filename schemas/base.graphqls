@@ -187,6 +187,32 @@ enum CalculationMethod {
   PERCENTAGE
 }
 
+enum DeliveryType {
+  CASH
+  PHYSICAL
+  CASH_SETTLED
+  FINANCIALLY_SETTLED
+  NON_DELIVERABLE
+  CONTINGENT
+  EXCHANGE_FOR_PHYSICAL # EFP
+  ALTERNATIVE_DELIVERY
+}
+
+enum UnderlyingAssetType {
+  EQUITY
+  SINGLE_STOCK
+  BASKET_OF_STOCKS
+  BOND
+  COMMODITY
+  CURRENCY
+  INDEX
+  INTEREST_RATE
+  CREDIT
+  BASKET
+  FUND
+  HYBRID
+}
+
 # ============================================================================
 # Core Interfaces
 # ============================================================================

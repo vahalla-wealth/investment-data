@@ -71,14 +71,6 @@ enum CommodityInstrumentType {
   ETC # Exchange Traded Commodity
 }
 
-enum DeliveryType {
-  PHYSICAL
-  CASH_SETTLED
-  FINANCIALLY_SETTLED
-  EXCHANGE_FOR_PHYSICAL # EFP
-  ALTERNATIVE_DELIVERY
-}
-
 enum QualityStandard {
   LBMA # London Bullion Market Association
   COMEX
@@ -239,7 +231,7 @@ type Commodity implements Asset {
   # ISO20022 Market Data
   openInterest: Decimal
   volume: Decimal
-  volumeUnit: String
+  tradingVolumeUnit: String
   numberOfTrades: Int
   volumeWeightedAveragePrice: Decimal
   

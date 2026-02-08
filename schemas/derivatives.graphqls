@@ -37,28 +37,10 @@ enum SettlementType {
   ELECTION
 }
 
-enum DeliveryType {
-  CASH
-  PHYSICAL
-  NON_DELIVERABLE
-  CONTINGENT
-}
-
 enum ExerciseType {
   AUTOMATIC
   MANUAL
   TRIGGER
-}
-
-enum UnderlyingAssetType {
-  EQUITY
-  BOND
-  COMMODITY
-  CURRENCY
-  INDEX
-  INTEREST_RATE
-  CREDIT
-  BASKET
 }
 
 enum SwapType {

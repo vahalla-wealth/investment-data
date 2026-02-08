@@ -34,6 +34,15 @@ type Query {
   option(id: ID!): Option @auth
   options(underlyingAsset: String, optionType: OptionType, limit: Int, offset: Int): [Option!]! @auth
   
+  swap(id: ID!): Swap @auth
+  swaps(swapType: SwapType, limit: Int, offset: Int): [Swap!]! @auth
+  
+  future(id: ID!): Future @auth
+  futures(underlyingAsset: String, limit: Int, offset: Int): [Future!]! @auth
+  
+  forward(id: ID!): Forward @auth
+  forwards(underlyingAsset: String, limit: Int, offset: Int): [Forward!]! @auth
+  
   moneyMarketInstrument(id: ID!): MoneyMarketInstrument @auth
   moneyMarketInstruments(instrumentType: MoneyMarketInstrumentType, limit: Int, offset: Int): [MoneyMarketInstrument!]! @auth
   

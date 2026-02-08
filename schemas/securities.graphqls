@@ -120,6 +120,28 @@ type AdditionalBondData {
   marketData: BondMarketData
 }
 
+type AdditionalNoteData {
+  creditAnalysis: CreditAnalysis
+  noteMetrics: NoteMetrics
+  marketData: BondMarketData
+}
+
+type NoteMetrics {
+  macaulayDuration: Decimal
+  modifiedDuration: Decimal
+  effectiveDuration: Decimal
+  dv01: Decimal # Dollar value of 01
+  convexity: Decimal
+  yieldToMaturity: Decimal
+  yieldToWorst: Decimal
+  currentYield: Decimal
+  accruedInterest: Decimal
+  floatingRateSpread: Decimal
+  discountMargin: Decimal
+  conversionPremium: Decimal # For convertible notes
+  conversionParity: Decimal # For convertible notes
+}
+
 type CreditAnalysis {
   creditRatingMoodys: String
   creditRatingSP: String
@@ -348,5 +370,5 @@ type Note implements Security & Asset {
   rankingType: RankingType
   
   # Additional Data from External Sources
-  additional: AdditionalBondData
+  additional: AdditionalNoteData
 }

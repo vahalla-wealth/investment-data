@@ -95,18 +95,6 @@ enum CapitalProtectionType {
   NO_PROTECTION
 }
 
-enum UnderlyingAssetType {
-  SINGLE_STOCK
-  BASKET_OF_STOCKS
-  INDEX
-  COMMODITY
-  CURRENCY
-  INTEREST_RATE
-  CREDIT
-  FUND
-  HYBRID
-}
-
 enum AutocallType {
   EUROPEAN # Only at maturity
   AMERICAN # Any time
@@ -317,7 +305,7 @@ type StructuredProduct implements Asset {
   # ISO20022 Documentation
   termSheet: String
   finalTerms: String
-  basePro spectus: String
+  baseProspectus: String
 }
 
 # ============================================================================
