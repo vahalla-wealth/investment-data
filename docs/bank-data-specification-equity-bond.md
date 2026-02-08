@@ -67,7 +67,7 @@ This document specifies the data fields, formats, and standards required from ba
 ### 2.4 Delivery Format
 
 - **Preferred:** JSON or XML (ISO 20022 compliant messages)
-- **Acceptable:** CSV with header row matching field names
+- **Acceptable:** CSV with header row matching field names, or plain text (fixed-width/delimited)
 - **Encoding:** UTF-8
 - **Frequency:** Daily end-of-day batch, or real-time via API
 
