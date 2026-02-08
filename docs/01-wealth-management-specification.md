@@ -16,7 +16,7 @@
 
 | Version | Date | Author | Description |
 |---|---|---|---|
-| 1.0 | 2026-02-09 | Vahalla System Team | Initial draft — Wealth Management domain specification |
+| 1.0 | 2025-06-09 | Vahalla System Team | Initial draft — Wealth Management domain specification |
 
 ---
 
