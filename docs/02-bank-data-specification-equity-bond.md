@@ -1,6 +1,6 @@
-# 01 — Vahalla Wealth Data Specification
+# 02 — Vahalla Wealth Data Specification
 
-> **Document Index:** [00-index.md](00-index.md) | **Related:** [01.1 — CSV Sample Data](01.1-sample-data-csv-equity-bond.md)
+> **Document Index:** [00-index.md](00-index.md) | **Related:** [02.1 — CSV Sample Data](02.1-sample-data-csv-equity-bond.md)
 
 | | |
 |---|---|
@@ -527,7 +527,7 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 ### 8.3 Equity Example (CSV)
 
-> Full CSV reference with formatting rules: [01.1 — CSV Sample Data](01.1-sample-data-csv-equity-bond.md)
+> Full CSV reference with formatting rules: [02.1 — CSV Sample Data](02.1-sample-data-csv-equity-bond.md)
 
 **Header Row:**
 
