@@ -15,8 +15,8 @@
 | 01 | [Wealth Management Specification](01-wealth-management-specification.md) | Client, Account, Portfolio, Position, Transaction, Order & FX Deposit data fields | Draft |
 | 02 | [Bank Data Specification — Equity & Bond](02-bank-data-specification-equity-bond.md) | Data fields, formats, ISO 20022 references, and standards for Equity and Bond asset classes | Draft |
 | 02.1 | [↳ CSV Sample Data — Equity & Bond](02.1-sample-data-csv-equity-bond.md) | CSV format examples, formatting rules, header rows and sample data | Draft |
-| 02.2 | [↳ CSV Sample Data — Position](02.2-sample-data-csv-position.md) | Position CSV samples mixing Equity and Bond holdings | Draft |
-| 02.3 | [↳ CSV Sample Data — Transaction & Order](02.3-sample-data-csv-transaction-order.md) | Transaction and Order CSV samples mixing Equity and Bond trades | Draft |
+| 02.2 | [↳ Sample Data — Position (CSV & JSON)](02.2-sample-data-csv-position.md) | Position samples mixing Equity and Bond holdings | Draft |
+| 02.3 | [↳ Sample Data — Transaction & Order (CSV & JSON)](02.3-sample-data-csv-transaction-order.md) | Transaction and Order samples mixing Equity and Bond trades | Draft |
 
 ---
 
