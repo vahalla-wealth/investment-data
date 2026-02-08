@@ -331,24 +331,25 @@ Provide if available. Critical for RM credit risk assessment.
 | 133 | `modifiedDuration` | Decimal | Optional | Modified duration | `6.90` | semt.002 — `FinInstrmDtls/ModfdDrtn` |
 | 134 | `effectiveDuration` | Decimal | Optional | Effective duration (for bonds with optionality) | `6.50` | semt.002 — `FinInstrmDtls/FctvDrtn` |
 | 135 | `dv01` | Decimal | Optional | Dollar value of a basis point (per $1M face) | `690.00` | semt.002 — `FinInstrmDtls/DV01` |
-| 136 | `yieldToWorst` | Decimal | Optional | Yield to worst (%) | `4.85` | semt.002 — `FinInstrmDtls/YldToWrst` |
-| 137 | `yieldToCall` | Decimal | Optional | Yield to call (%) | `4.90` | semt.002 — `FinInstrmDtls/YldToCall` |
-| 138 | `yieldToPut` | Decimal | Optional | Yield to put (%) | `5.00` | semt.002 — `FinInstrmDtls/YldToPut` |
-| 139 | `currentYield` | Decimal | Optional | Current yield (%) | `5.25` | semt.002 — `FinInstrmDtls/CurYld` |
-| 140 | `accruedInterest` | Decimal | Optional | Accrued interest per unit | `13.15` | semt.002 — `FinInstrmDtls/AcrdIntrst` |
+| 136 | `convexity` | Decimal | Optional | Convexity measure (additional analytics) | `62.30` | semt.002 — `FinInstrmDtls/Cnvxty` |
+| 137 | `yieldToWorst` | Decimal | Optional | Yield to worst (%) | `4.85` | semt.002 — `FinInstrmDtls/YldToWrst` |
+| 138 | `yieldToCall` | Decimal | Optional | Yield to call (%) | `4.90` | semt.002 — `FinInstrmDtls/YldToCall` |
+| 139 | `yieldToPut` | Decimal | Optional | Yield to put (%) | `5.00` | semt.002 — `FinInstrmDtls/YldToPut` |
+| 140 | `currentYield` | Decimal | Optional | Current yield (%) | `5.25` | semt.002 — `FinInstrmDtls/CurYld` |
+| 141 | `accruedInterest` | Decimal | Optional | Accrued interest per unit | `13.15` | semt.002 — `FinInstrmDtls/AcrdIntrst` |
 
 ### 6.7 Bond Additional Data — Market Data
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 141 | `bidPrice` | Decimal | Optional | Bid price (% of face value) | `99.75` | semt.002 — `MktPric/BdPric` |
-| 142 | `askPrice` | Decimal | Optional | Ask price (% of face value) | `100.25` | semt.002 — `MktPric/AskPric` |
-| 143 | `midPrice` | Decimal | Optional | Mid price (% of face value) | `100.00` | semt.002 — `MktPric/MdPric` |
-| 144 | `lastTradePrice` | Decimal | Optional | Last traded price (% of face value) | `99.90` | semt.002 — `MktPric/LastTradPric` |
-| 145 | `volume` | Decimal | Optional | Trading volume (face value traded) | `50000000.00` | semt.002 — `MktPric/Vol` |
-| 146 | `averageDailyVolume` | Decimal | Optional | 30-day average daily volume | `25000000.00` | semt.002 — `MktPric/AvrgDlyVol` |
-| 147 | `outstandingAmount` | Decimal | Optional | Total outstanding face value | `500000000.00` | reda.041 — `Debt/OutstndgAmt` |
-| 148 | `liquidityScore` | Decimal | Optional | Liquidity score (0–100) | `72.50` | — (supplementary) |
+| 142 | `bidPrice` | Decimal | Optional | Bid price (% of face value) | `99.75` | semt.002 — `MktPric/BdPric` |
+| 143 | `askPrice` | Decimal | Optional | Ask price (% of face value) | `100.25` | semt.002 — `MktPric/AskPric` |
+| 144 | `midPrice` | Decimal | Optional | Mid price (% of face value) | `100.00` | semt.002 — `MktPric/MdPric` |
+| 145 | `lastTradePrice` | Decimal | Optional | Last traded price (% of face value) | `99.90` | semt.002 — `MktPric/LastTradPric` |
+| 146 | `volume` | Decimal | Optional | Trading volume (face value traded) | `50000000.00` | semt.002 — `MktPric/Vol` |
+| 147 | `averageDailyVolume` | Decimal | Optional | 30-day average daily volume | `25000000.00` | semt.002 — `MktPric/AvrgDlyVol` |
+| 148 | `outstandingAmount` | Decimal | Optional | Total outstanding face value | `500000000.00` | reda.041 — `Debt/OutstndgAmt` |
+| 149 | `liquidityScore` | Decimal | Optional | Liquidity score (0–100) | `72.50` | — (supplementary) |
 
 ---
 
@@ -360,26 +361,26 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 149 | `assetId` | String | Required | Reference to the security record ID | `"SEC-001234"` | semt.003 — `FinInstrmId/OthrId/Id` |
-| 150 | `price` | Decimal | Required | Last/closing price | `185.50` | semt.003 — `PricDtls/Pric/Amt` |
-| 151 | `currency` | String | Required | Price currency per ISO 4217 | `"USD"` | semt.003 — `PricDtls/Pric/Ccy` |
-| 152 | `timestamp` | DateTime | Required | Price timestamp | `"2026-02-08T16:00:00Z"` | semt.003 — `PricDtls/PricDtTm` |
-| 153 | `source` | String | Optional | Pricing source | `"Bloomberg"`, `"Reuters"` | semt.003 — `PricDtls/SrcOfPric` |
-| 154 | `bidPrice` | Decimal | Optional | Bid price | `185.45` | semt.003 — `PricDtls/BdPric` |
-| 155 | `askPrice` | Decimal | Optional | Ask price | `185.55` | semt.003 — `PricDtls/AskPric` |
-| 156 | `volume` | Decimal | Optional | Trading volume | `54230000` | semt.003 — `PricDtls/Vol` |
+| 150 | `assetId` | String | Required | Reference to the security record ID | `"SEC-001234"` | semt.003 — `FinInstrmId/OthrId/Id` |
+| 151 | `price` | Decimal | Required | Last/closing price | `185.50` | semt.003 — `PricDtls/Pric/Amt` |
+| 152 | `currency` | String | Required | Price currency per ISO 4217 | `"USD"` | semt.003 — `PricDtls/Pric/Ccy` |
+| 153 | `timestamp` | DateTime | Required | Price timestamp | `"2026-02-08T16:00:00Z"` | semt.003 — `PricDtls/PricDtTm` |
+| 154 | `source` | String | Optional | Pricing source | `"Bloomberg"`, `"Reuters"` | semt.003 — `PricDtls/SrcOfPric` |
+| 155 | `bidPrice` | Decimal | Optional | Bid price | `185.45` | semt.003 — `PricDtls/BdPric` |
+| 156 | `askPrice` | Decimal | Optional | Ask price | `185.55` | semt.003 — `PricDtls/AskPric` |
+| 157 | `volume` | Decimal | Optional | Trading volume | `54230000` | semt.003 — `PricDtls/Vol` |
 
 ### 7.2 Asset Valuation (Portfolio Valuation)
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 157 | `assetId` | String | Required | Reference to the security record ID | `"SEC-001234"` | semt.002 — `FinInstrmId/OthrId/Id` |
-| 158 | `valuationDate` | Date | Required | Valuation date | `"2026-02-08"` | semt.002 — `ValtnDt` |
-| 159 | `marketValue` | Decimal | Required | Market value | `1855000.00` | semt.002 — `MktVal/Amt` |
-| 160 | `bookValue` | Decimal | Optional | Book/cost value | `1650000.00` | semt.002 — `BookVal/Amt` |
-| 161 | `currency` | String | Required | Valuation currency per ISO 4217 | `"USD"` | semt.002 — `MktVal/Ccy` |
-| 162 | `valuationMethod` | Enum | Optional | Valuation methodology used | See [Appendix A.14](#a14-valuationmethod) | semt.002 — `ValtnMtd` |
-| 163 | `pricingSource` | String | Optional | Source of pricing data | `"Bloomberg"` | semt.002 — `PricgSrc` |
+| 158 | `assetId` | String | Required | Reference to the security record ID | `"SEC-001234"` | semt.002 — `FinInstrmId/OthrId/Id` |
+| 159 | `valuationDate` | Date | Required | Valuation date | `"2026-02-08"` | semt.002 — `ValtnDt` |
+| 160 | `marketValue` | Decimal | Required | Market value | `1855000.00` | semt.002 — `MktVal/Amt` |
+| 161 | `bookValue` | Decimal | Optional | Book/cost value | `1650000.00` | semt.002 — `BookVal/Amt` |
+| 162 | `currency` | String | Required | Valuation currency per ISO 4217 | `"USD"` | semt.002 — `MktVal/Ccy` |
+| 163 | `valuationMethod` | Enum | Optional | Valuation methodology used | See [Appendix A.14](#a14-valuationmethod) | semt.002 — `ValtnMtd` |
+| 164 | `pricingSource` | String | Optional | Source of pricing data | `"Bloomberg"` | semt.002 — `PricgSrc` |
 
 ---
 
