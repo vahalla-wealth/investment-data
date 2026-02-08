@@ -1,0 +1,263 @@
+# GraphQL Schema for Investment Service - Base Types
+# This file contains common scalars, directives, enums, and interfaces
+
+# ============================================================================
+# Scalars
+# ============================================================================
+
+scalar Time
+scalar JSON
+scalar Decimal
+
+# ============================================================================
+# Directives
+# ============================================================================
+
+directive @auth on FIELD_DEFINITION
+directive @hasRole(role: String!) on FIELD_DEFINITION
+directive @hasAnyRole(roles: [String!]!) on FIELD_DEFINITION
+
+# ============================================================================
+# ISO20022 Asset Classification Enums
+# ============================================================================
+
+enum AssetClass {
+  SECURITIES
+  INVESTMENT_FUNDS
+  DERIVATIVES
+  MONEY_MARKET_INSTRUMENTS
+  FOREIGN_EXCHANGE_INSTRUMENTS
+  STRUCTURED_HYBRID_PRODUCTS
+  COMMODITIES
+}
+
+enum SecurityType {
+  EQUITY
+  BOND
+  NOTE
+  DEBENTURE
+  PREFERRED_STOCK
+  CONVERTIBLE_BOND
+  WARRANT
+}
+
+enum TradingStatus {
+  ACTIVE
+  SUSPENDED
+  HALTED
+  DELISTED
+  PENDING
+}
+
+enum FormOfSecurity {
+  REGISTERED
+  BEARER
+  BOOK_ENTRY
+}
+
+enum RestrictionType {
+  RESTRICTED
+  UNRESTRICTED
+  REGULATION_S
+  RULE_144A
+}
+
+enum PaymentStatus {
+  FULLY_PAID
+  PARTLY_PAID
+  NIL_PAID
+}
+
+enum DayCountBasis {
+  ACT_360
+  ACT_365
+  ACT_ACT
+  THIRTY_360
+  THIRTY_E_360
+}
+
+enum BusinessDayConvention {
+  FOLLOWING
+  MODIFIED_FOLLOWING
+  PRECEDING
+  MODIFIED_PRECEDING
+  UNADJUSTED
+}
+
+enum SeniorityType {
+  SENIOR
+  SUBORDINATED
+  JUNIOR
+  MEZZANINE
+}
+
+enum SecuredType {
+  SECURED
+  UNSECURED
+  PARTIALLY_SECURED
+}
+
+enum InterestType {
+  FIXED
+  FLOATING
+  ZERO_COUPON
+  VARIABLE
+}
+
+enum SettlementCycle {
+  T_PLUS_0
+  T_PLUS_1
+  T_PLUS_2
+  T_PLUS_3
+  IMMEDIATE
+}
+
+enum RankingType {
+  PARI_PASSU
+  SENIOR
+  JUNIOR
+  SUBORDINATED
+}
+
+enum PaymentFrequency {
+  ANNUAL
+  SEMI_ANNUAL
+  QUARTERLY
+  MONTHLY
+  WEEKLY
+  DAILY
+  AT_MATURITY
+  IRREGULAR
+}
+
+enum FloatingRateIndex {
+  LIBOR
+  SOFR
+  EURIBOR
+  SONIA
+  EONIA
+  HIBOR
+  TIBOR
+  CDOR
+  BBSW
+  PRIME_RATE
+}
+
+enum SubordinationType {
+  SENIOR
+  SUBORDINATED
+  JUNIOR_SUBORDINATED
+  MEZZANINE
+  TIER_1
+  TIER_2
+  UPPER_TIER_2
+  LOWER_TIER_2
+}
+
+enum PriceType {
+  BID
+  ASK
+  MID
+  NAV
+  INDICATIVE
+  OFFICIAL
+}
+
+enum SettlementMethod {
+  CASH
+  IN_SPECIE
+  MIXED
+}
+
+enum ProcessingCharacteristic {
+  FORWARD_PRICING
+  HISTORIC_PRICING
+  UNKNOWN_PRICING
+}
+
+enum RoundingDirection {
+  UP
+  DOWN
+  NEAREST
+}
+
+enum CalculationMethod {
+  UNITS
+  AMOUNT
+  PERCENTAGE
+}
+
+# ============================================================================
+# Core Interfaces
+# ============================================================================
+
+interface Asset {
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String
+  name: String!
+  assetClass: AssetClass!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # ISO20022 Common Fields
+  lei: String # Legal Entity Identifier (20 chars)
+  fisn: String # Financial Instrument Short Name (max 35 chars)
+  cfi: String # Classification of Financial Instruments (6 chars)
+}
+
+interface Security {
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String
+  name: String!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  exchange: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # ISO20022 Security Common Fields
+  mic: String # Market Identifier Code (ISO 10383)
+  tradingStatus: TradingStatus
+  formOfSecurity: FormOfSecurity
+  settlementCycle: SettlementCycle
+  minimumDenomination: Decimal
+  listingDate: Time
+  maturityDate: Time
+}
+
+# ============================================================================
+# Supporting Types
+# ============================================================================
+
+type AssetPrice {
+  assetId: ID!
+  price: Decimal!
+  currency: String!
+  timestamp: Time!
+  source: String
+  bidPrice: Decimal
+  askPrice: Decimal
+  volume: Decimal
+}
+
+type AssetValuation {
+  assetId: ID!
+  valuationDate: Time!
+  marketValue: Decimal!
+  bookValue: Decimal
+  currency: String!
+  valuationMethod: String
+  pricingSource: String
+}

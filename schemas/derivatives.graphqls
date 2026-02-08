@@ -1,0 +1,819 @@
+# GraphQL Schema for Investment Service - Derivatives
+# This file contains Derivative, Option, and Swap types
+
+# ============================================================================
+# Derivatives Enums
+# ============================================================================
+
+enum DerivativeType {
+  FUTURE
+  FORWARD
+  OPTION
+  SWAP
+  CDS
+  IRS
+  TOTAL_RETURN_SWAP
+  VARIANCE_SWAP
+}
+
+enum OptionType {
+  CALL
+  PUT
+}
+
+enum OptionStyle {
+  AMERICAN
+  EUROPEAN
+  BERMUDAN
+  ASIAN
+  BARRIER
+  BINARY
+}
+
+enum SettlementType {
+  CASH
+  PHYSICAL
+  NET_CASH
+  ELECTION
+}
+
+enum DeliveryType {
+  CASH
+  PHYSICAL
+  NON_DELIVERABLE
+  CONTINGENT
+}
+
+enum ExerciseType {
+  AUTOMATIC
+  MANUAL
+  TRIGGER
+}
+
+enum UnderlyingAssetType {
+  EQUITY
+  BOND
+  COMMODITY
+  CURRENCY
+  INDEX
+  INTEREST_RATE
+  CREDIT
+  BASKET
+}
+
+enum SwapType {
+  INTEREST_RATE_SWAP
+  CURRENCY_SWAP
+  EQUITY_SWAP
+  COMMODITY_SWAP
+  CREDIT_DEFAULT_SWAP
+  TOTAL_RETURN_SWAP
+  VARIANCE_SWAP
+  INFLATION_SWAP
+  BASIS_SWAP
+}
+
+enum PaymentLegType {
+  FIXED
+  FLOATING
+  VARIABLE
+  ZERO_COUPON
+}
+
+enum ClearingType {
+  BILATERAL
+  CLEARED
+  CENTRAL_COUNTERPARTY
+}
+
+enum ActionType {
+  NEW
+  MODIFY
+  CANCEL
+  CORRECT
+  TERMINATE
+  REVIVE
+  ERROR
+  VALUATION_UPDATE
+  POSITION_COMPONENT
+}
+
+enum MasterAgreementType {
+  ISDA
+  ISDA_2002
+  ISDA_1992
+  GMRA
+  GMSLA
+  EMA
+  FBF
+  DERIV_SEE
+  OTHER
+}
+
+enum ValuationMethod {
+  MARK_TO_MARKET
+  MARK_TO_MODEL
+  MARK_TO_MANAGEMENT
+  THEORETICAL_PRICING
+  VENDOR_PRICING
+}
+
+enum LifecycleEventType {
+  TRADE
+  AMENDMENT
+  NOVATION
+  TERMINATION
+  COMPRESSION
+  CORPORATE_ACTION
+  EXERCISE
+  EXPIRY
+  ALLOCATION
+  CLEARING
+  SETTLEMENT
+}
+
+# ============================================================================
+# Derivatives Types
+# ============================================================================
+
+type Derivative implements Asset {
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String
+  name: String!
+  assetClass: AssetClass!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # Asset interface fields (ISO20022)
+  lei: String
+  fisn: String
+  cfi: String
+  
+  # ISO20022 Derivative Identification
+  derivativeType: DerivativeType!
+  underlyingAsset: String!
+  underlyingAssetIsin: String
+  underlyingAssetType: UnderlyingAssetType
+  underlyingAssetLei: String
+  
+  # ISO20022 Contract Specifications
+  contractSize: Decimal
+  contractMultiplier: Decimal
+  lotSize: Decimal
+  minimumTradingSize: Decimal
+  
+  # ISO20022 Dates
+  tradeDate: Time
+  effectiveDate: Time
+  expirationDate: Time
+  maturityDate: Time
+  firstExerciseDate: Time
+  lastExerciseDate: Time
+  settlementDate: Time
+  
+  # ISO20022 Pricing & Valuation
+  strikePrice: Decimal
+  premium: Decimal
+  notionalAmount: Decimal
+  notionalCurrency: String
+  
+  # ISO20022 Settlement
+  settlementType: SettlementType
+  deliveryType: DeliveryType
+  settlementCurrency: String
+  
+  # ISO20022 Trading & Clearing
+  exchange: String
+  mic: String # Market Identifier Code
+  clearingType: ClearingType
+  clearingHouse: String
+  clearingHouseLei: String
+  
+  # ISO20022 Counterparty Information
+  counterparty: String
+  counterpartyLei: String
+  centralCounterparty: String
+  centralCounterpartyLei: String
+  
+  # ISO20022 Regulatory
+  reportingJurisdiction: String
+  tradingVenue: String
+  tradingVenueLei: String
+  regulatoryReportingRequired: Boolean
+  
+  # ISO20022 Risk & Margin
+  initialMargin: Decimal
+  variationMargin: Decimal
+  marginCurrency: String
+  independentAmount: Decimal
+  thresholdAmount: Decimal
+  minimumTransferAmount: Decimal
+  
+  # ISO20022 Product Identification
+  uniqueProductIdentifier: String # UPI
+  productTaxonomy: String
+  assetClassHierarchy: String
+  
+  # ISO20022 Pricing Details
+  pricingSource: String
+  pricingMethod: String
+  referencePrice: Decimal
+  referencePriceSource: String
+  
+  # ISO20022 Regulatory Reporting
+  tradeRepository: String
+  tradeRepositoryLei: String
+  reportingTimestamp: Time
+  actionType: ActionType
+  clearingObligationFlag: Boolean
+  tradingObligationFlag: Boolean
+  
+  # ISO20022 Contract Details
+  masterAgreementType: MasterAgreementType
+  masterAgreementVersion: String
+  contractVersion: String
+  contractAmendmentDate: Time
+  
+  # ISO20022 Valuation Details
+  valuationMethod: ValuationMethod
+  valuationSource: String
+  markToMarket: Decimal
+  
+  # ISO20022 Clearing Details
+  clearingMember: String
+  clearingMemberLei: String
+  clearingAccount: String
+  clearingObligation: Boolean
+}
+
+type Option implements Asset {
+  # Asset interface fields
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String!
+  name: String!
+  assetClass: AssetClass!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # Asset interface fields (ISO20022)
+  lei: String
+  fisn: String
+  cfi: String
+  
+  # ISO20022 Option Identification
+  optionType: OptionType!
+  optionStyle: OptionStyle!
+  underlyingAsset: String!
+  underlyingAssetIsin: String
+  underlyingAssetType: UnderlyingAssetType
+  underlyingAssetLei: String
+  
+  # ISO20022 Contract Specifications
+  strikePrice: Decimal!
+  contractSize: Decimal!
+  contractMultiplier: Decimal
+  lotSize: Decimal
+  minimumTradingSize: Decimal
+  
+  # ISO20022 Dates
+  tradeDate: Time
+  issueDate: Time
+  expirationDate: Time!
+  lastTradingDate: Time
+  firstExerciseDate: Time
+  exerciseDate: Time
+  settlementDate: Time
+  
+  # ISO20022 Exercise & Settlement
+  exerciseType: ExerciseType
+  settlementType: SettlementType
+  deliveryType: DeliveryType
+  settlementCurrency: String
+  automaticExercise: Boolean
+  
+  # ISO20022 Pricing & Valuation
+  premium: Decimal
+  premiumCurrency: String
+  premiumPaymentDate: Time
+  intrinsicValue: Decimal
+  timeValue: Decimal
+  theoreticalValue: Decimal
+  
+  # ISO20022 Greeks
+  delta: Decimal
+  gamma: Decimal
+  theta: Decimal
+  vega: Decimal
+  rho: Decimal
+  
+  # ISO20022 Volatility
+  impliedVolatility: Decimal
+  historicalVolatility: Decimal
+  
+  # ISO20022 Trading & Clearing
+  exchange: String
+  mic: String # Market Identifier Code
+  clearingType: ClearingType
+  clearingHouse: String
+  clearingHouseLei: String
+  
+  # ISO20022 Barrier Features (for exotic options)
+  barrierLevel: Decimal
+  barrierType: String # UP_AND_IN, UP_AND_OUT, DOWN_AND_IN, DOWN_AND_OUT
+  knockInLevel: Decimal
+  knockOutLevel: Decimal
+  
+  # ISO20022 Additional Features
+  openInterest: Decimal
+  volumeTraded: Decimal
+  bidPrice: Decimal
+  askPrice: Decimal
+  lastPrice: Decimal
+  
+  # ISO20022 Product Identification
+  uniqueProductIdentifier: String # UPI
+  productTaxonomy: String
+  
+  # ISO20022 Pricing Details
+  pricingSource: String
+  pricingMethod: String
+  referencePrice: Decimal
+  
+  # ISO20022 Regulatory Reporting
+  tradeRepository: String
+  tradeRepositoryLei: String
+  reportingTimestamp: Time
+  actionType: ActionType
+  clearingObligationFlag: Boolean
+  tradingObligationFlag: Boolean
+  
+  # ISO20022 Contract Details
+  masterAgreementType: MasterAgreementType
+  contractVersion: String
+  
+  # ISO20022 Valuation Details
+  valuationMethod: ValuationMethod
+  valuationSource: String
+  markToMarket: Decimal
+  
+  # ISO20022 Clearing Details
+  clearingMember: String
+  clearingMemberLei: String
+  clearingAccount: String
+}
+
+type Swap implements Asset {
+  # Asset interface fields
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String
+  name: String!
+  assetClass: AssetClass!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # Asset interface fields (ISO20022)
+  lei: String
+  fisn: String
+  cfi: String
+  
+  # ISO20022 Swap Identification
+  swapType: SwapType!
+  productClassification: String
+  productType: String
+  
+  # ISO20022 Notional & Currency
+  notionalAmount: Decimal!
+  notionalCurrency: String!
+  notionalSchedule: String # CONSTANT, AMORTIZING, ACCRETING, CUSTOM
+  
+  # ISO20022 Dates
+  tradeDate: Time
+  effectiveDate: Time!
+  maturityDate: Time!
+  terminationDate: Time
+  nextPaymentDate: Time
+  nextResetDate: Time
+  
+  # ISO20022 Fixed Leg
+  fixedLegPaymentFrequency: PaymentFrequency
+  fixedRate: Decimal
+  fixedLegDayCountBasis: DayCountBasis
+  fixedLegBusinessDayConvention: BusinessDayConvention
+  fixedLegPaymentCurrency: String
+  
+  # ISO20022 Floating Leg
+  floatingLegPaymentFrequency: PaymentFrequency
+  floatingRateIndex: FloatingRateIndex
+  floatingRateIndexTenor: String
+  floatingRateSpread: Decimal
+  floatingLegDayCountBasis: DayCountBasis
+  floatingLegBusinessDayConvention: BusinessDayConvention
+  floatingLegPaymentCurrency: String
+  floatingRateResetFrequency: PaymentFrequency
+  
+  # ISO20022 Payment Details
+  paymentLeg1Type: PaymentLegType
+  paymentLeg2Type: PaymentLegType
+  netPayment: Boolean
+  paymentCurrency: String
+  
+  # ISO20022 Counterparty Information
+  counterparty: String!
+  counterpartyLei: String
+  beneficiary: String
+  beneficiaryLei: String
+  
+  # ISO20022 Clearing & Settlement
+  clearingType: ClearingType
+  clearingHouse: String
+  clearingHouseLei: String
+  centralCounterparty: String
+  centralCounterpartyLei: String
+  settlementCurrency: String
+  
+  # ISO20022 Collateral & Margin
+  collateralRequired: Boolean
+  collateralType: String
+  collateralAmount: Decimal
+  collateralCurrency: String
+  initialMargin: Decimal
+  variationMargin: Decimal
+  marginCurrency: String
+  
+  # ISO20022 Valuation
+  marketValue: Decimal
+  presentValue: Decimal
+  fairValue: Decimal
+  valuationDate: Time
+  valuationCurrency: String
+  
+  # ISO20022 Regulatory
+  reportingJurisdiction: String
+  tradingVenue: String
+  tradingVenueLei: String
+  regulatoryReportingRequired: Boolean
+  uniqueTransactionIdentifier: String # UTI
+  uniqueProductIdentifier: String # UPI
+  
+  # ISO20022 Additional Terms
+  earlyTerminationProvision: Boolean
+  earlyTerminationDate: Time
+  optionalityType: String
+  embeddedOption: Boolean
+  barrierLevel: Decimal
+  
+  # ISO20022 Pricing Details
+  pricingSource: String
+  pricingMethod: String
+  referencePrice: Decimal
+  
+  # ISO20022 Regulatory Reporting
+  tradeRepository: String
+  tradeRepositoryLei: String
+  reportingTimestamp: Time
+  actionType: ActionType
+  clearingObligationFlag: Boolean
+  tradingObligationFlag: Boolean
+  
+  # ISO20022 Contract Details
+  masterAgreementType: MasterAgreementType
+  masterAgreementVersion: String
+  contractVersion: String
+  
+  # ISO20022 Margin Details
+  independentAmount: Decimal
+  thresholdAmount: Decimal
+  minimumTransferAmount: Decimal
+  
+  # ISO20022 Clearing Details
+  clearingMember: String
+  clearingMemberLei: String
+  clearingAccount: String
+  clearingObligation: Boolean
+  
+  # ISO20022 Valuation Details
+  valuationMethod: ValuationMethod
+  valuationSource: String
+  markToMarket: Decimal
+}
+
+# ============================================================================
+# Additional Derivative Types
+# ============================================================================
+
+type Future implements Asset {
+  # Asset interface fields
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String!
+  name: String!
+  assetClass: AssetClass!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # Asset interface fields (ISO20022)
+  lei: String
+  fisn: String
+  cfi: String
+  
+  # ISO20022 Future Identification
+  underlyingAsset: String!
+  underlyingAssetIsin: String
+  underlyingAssetType: UnderlyingAssetType!
+  underlyingAssetLei: String
+  
+  # ISO20022 Contract Specifications
+  contractSize: Decimal!
+  contractMultiplier: Decimal
+  lotSize: Decimal
+  tickSize: Decimal
+  tickValue: Decimal
+  
+  # ISO20022 Dates
+  tradeDate: Time
+  listingDate: Time
+  firstTradingDate: Time
+  lastTradingDate: Time
+  expirationDate: Time!
+  deliveryDate: Time
+  settlementDate: Time
+  
+  # ISO20022 Pricing
+  futuresPrice: Decimal
+  settlementPrice: Decimal
+  previousSettlementPrice: Decimal
+  openPrice: Decimal
+  highPrice: Decimal
+  lowPrice: Decimal
+  closePrice: Decimal
+  
+  # ISO20022 Settlement
+  settlementType: SettlementType!
+  deliveryType: DeliveryType
+  settlementCurrency: String
+  deliveryLocation: String
+  
+  # ISO20022 Trading
+  exchange: String!
+  mic: String # Market Identifier Code
+  tradingHours: String
+  
+  # ISO20022 Margin
+  initialMargin: Decimal
+  maintenanceMargin: Decimal
+  variationMargin: Decimal
+  marginCurrency: String
+  
+  # ISO20022 Market Data
+  openInterest: Decimal
+  volumeTraded: Decimal
+  numberOfTrades: Int
+  
+  # ISO20022 Delivery Specifications (for physical settlement)
+  deliveryGrade: String
+  deliveryUnit: String
+  qualitySpecifications: String
+  
+  # ISO20022 Product Identification
+  uniqueProductIdentifier: String # UPI
+  productTaxonomy: String
+  
+  # ISO20022 Pricing Details
+  pricingSource: String
+  pricingMethod: String
+  referencePrice: Decimal
+  
+  # ISO20022 Regulatory Reporting
+  tradeRepository: String
+  tradeRepositoryLei: String
+  reportingTimestamp: Time
+  actionType: ActionType
+  clearingObligationFlag: Boolean
+  tradingObligationFlag: Boolean
+  
+  # ISO20022 Contract Details
+  masterAgreementType: MasterAgreementType
+  contractVersion: String
+  
+  # ISO20022 Clearing Details
+  clearingMember: String
+  clearingMemberLei: String
+  clearingAccount: String
+  clearingObligation: Boolean
+  
+  # ISO20022 Valuation Details
+  valuationMethod: ValuationMethod
+  valuationSource: String
+  markToMarket: Decimal
+}
+
+type Forward implements Asset {
+  # Asset interface fields
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String
+  name: String!
+  assetClass: AssetClass!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # Asset interface fields (ISO20022)
+  lei: String
+  fisn: String
+  cfi: String
+  
+  # ISO20022 Forward Identification
+  underlyingAsset: String!
+  underlyingAssetIsin: String
+  underlyingAssetType: UnderlyingAssetType!
+  underlyingAssetLei: String
+  
+  # ISO20022 Contract Specifications
+  contractSize: Decimal!
+  notionalAmount: Decimal
+  notionalCurrency: String
+  
+  # ISO20022 Dates
+  tradeDate: Time!
+  effectiveDate: Time
+  maturityDate: Time!
+  settlementDate: Time!
+  fixingDate: Time
+  
+  # ISO20022 Pricing
+  forwardPrice: Decimal!
+  forwardRate: Decimal
+  spotPrice: Decimal
+  spotRate: Decimal
+  forwardPoints: Decimal
+  
+  # ISO20022 Settlement
+  settlementType: SettlementType!
+  deliveryType: DeliveryType
+  settlementCurrency: String
+  settlementAmount: Decimal
+  
+  # ISO20022 Counterparty
+  counterparty: String!
+  counterpartyLei: String
+  
+  # ISO20022 Clearing
+  clearingType: ClearingType
+  clearingHouse: String
+  clearingHouseLei: String
+  
+  # ISO20022 Collateral
+  collateralRequired: Boolean
+  collateralType: String
+  collateralAmount: Decimal
+  collateralCurrency: String
+  
+  # ISO20022 Valuation
+  marketValue: Decimal
+  fairValue: Decimal
+  valuationDate: Time
+  
+  # ISO20022 Regulatory
+  reportingJurisdiction: String
+  regulatoryReportingRequired: Boolean
+  uniqueTransactionIdentifier: String # UTI
+  uniqueProductIdentifier: String # UPI
+  tradeRepository: String
+  tradeRepositoryLei: String
+  reportingTimestamp: Time
+  actionType: ActionType
+  clearingObligationFlag: Boolean
+  tradingObligationFlag: Boolean
+  
+  # ISO20022 Contract Details
+  masterAgreementType: MasterAgreementType
+  contractVersion: String
+  
+  # ISO20022 Pricing Details
+  pricingSource: String
+  pricingMethod: String
+  referencePrice: Decimal
+  
+  # ISO20022 Clearing Details
+  clearingMember: String
+  clearingMemberLei: String
+  clearingAccount: String
+  
+  # ISO20022 Valuation Details
+  valuationMethod: ValuationMethod
+  valuationSource: String
+  markToMarket: Decimal
+}
+
+# ============================================================================
+# Lifecycle Events & Supporting Types
+# ============================================================================
+
+type DerivativeLifecycleEvent {
+  id: ID!
+  derivativeId: ID!
+  eventType: LifecycleEventType!
+  eventDate: Time!
+  effectiveDate: Time
+  reportingTimestamp: Time!
+  actionType: ActionType!
+  
+  # Event Details
+  eventDescription: String
+  eventReason: String
+  priorEventId: ID
+  
+  # Parties Involved
+  reportingParty: String
+  reportingPartyLei: String
+  counterparty: String
+  counterpartyLei: String
+  
+  # Financial Impact
+  notionalChange: Decimal
+  valuationChange: Decimal
+  cashFlow: Decimal
+  
+  # Regulatory
+  tradeRepository: String
+  uniqueTransactionIdentifier: String
+}
+
+type UnderlyingAssetDetails {
+  assetId: String!
+  isin: String
+  lei: String
+  assetType: UnderlyingAssetType!
+  name: String!
+  
+  # For Basket/Index
+  weight: Decimal
+  quantity: Decimal
+  multiplier: Decimal
+  
+  # Pricing
+  price: Decimal
+  priceSource: String
+  currency: String
+}
+
+type RiskMetrics {
+  derivativeId: ID!
+  calculationDate: Time!
+  
+  # Market Risk
+  marketRisk: Decimal
+  deltaEquivalent: Decimal
+  vegaNotional: Decimal
+  
+  # Credit Risk
+  creditRisk: Decimal
+  counterpartyExposure: Decimal
+  creditValuationAdjustment: Decimal # CVA
+  debtValuationAdjustment: Decimal # DVA
+  
+  # Liquidity Risk
+  liquidityRisk: String
+  liquidityScore: Decimal
+  
+  # Operational Risk
+  operationalRisk: Decimal
+  
+  # Value at Risk
+  valueAtRisk: Decimal
+  expectedShortfall: Decimal
+  confidenceLevel: Decimal
+}

@@ -1,0 +1,352 @@
+# GraphQL Schema for Investment Service - Securities
+# This file contains Equity, Bond, and Note types
+
+# ============================================================================
+# Securities-specific Enums
+# ============================================================================
+
+enum EquityType {
+  COMMON
+  PREFERRED
+  DEPOSITARY_RECEIPT
+  ADR
+  GDR
+  WARRANT
+  RIGHT
+  UNIT
+}
+
+enum BondType {
+  GOVERNMENT
+  CORPORATE
+  MUNICIPAL
+  AGENCY
+  CONVERTIBLE
+  ZERO_COUPON
+  FLOATING_RATE
+  INFLATION_LINKED
+  PERPETUAL
+  CALLABLE
+  PUTTABLE
+}
+
+enum NoteType {
+  PROMISSORY_NOTE
+  TREASURY_NOTE
+  EURO_NOTE
+  MEDIUM_TERM_NOTE
+  STRUCTURED_NOTE
+  CREDIT_LINKED_NOTE
+  EQUITY_LINKED_NOTE
+  FLOATING_RATE_NOTE
+  FIXED_RATE_NOTE
+}
+
+# ============================================================================
+# Additional Data Types for Securities
+# ============================================================================
+
+type AdditionalEquityData {
+  analystRatings: AnalystRatings
+  financials: FinancialMetrics
+  valuation: ValuationMetrics
+  technicals: TechnicalIndicators
+  ownership: OwnershipData
+}
+
+type AnalystRatings {
+  consensusRating: String # BUY/HOLD/SELL
+  numberOfAnalysts: Int
+  buyRatings: Int
+  holdRatings: Int
+  sellRatings: Int
+  targetPrice: Decimal
+  priceTarget12M: Decimal
+}
+
+type FinancialMetrics {
+  revenue: Decimal
+  revenueGrowth: Decimal # YoY %
+  netIncome: Decimal
+  netIncomeGrowth: Decimal # YoY %
+  ebitda: Decimal
+  ebitdaMargin: Decimal
+  operatingMargin: Decimal
+  profitMargin: Decimal
+  roe: Decimal # Return on Equity
+  roa: Decimal # Return on Assets
+  debtToEquity: Decimal
+  currentRatio: Decimal
+  quickRatio: Decimal
+  freeCashFlow: Decimal
+}
+
+type ValuationMetrics {
+  priceToBook: Decimal # P/B ratio
+  priceToSales: Decimal # P/S ratio
+  evToEbitda: Decimal # EV/EBITDA
+  evToSales: Decimal # EV/Sales
+  pegRatio: Decimal # PEG ratio
+  dividendPayoutRatio: Decimal
+  earningsYield: Decimal
+}
+
+type TechnicalIndicators {
+  rsi: Decimal # Relative Strength Index
+  macd: Decimal # MACD
+  sma50: Decimal # 50-day Simple Moving Average
+  sma200: Decimal # 200-day Simple Moving Average
+  ema50: Decimal # 50-day Exponential Moving Average
+  ema200: Decimal # 200-day Exponential Moving Average
+  bollingerUpper: Decimal
+  bollingerLower: Decimal
+  atr: Decimal # Average True Range
+  volume: Decimal
+  averageVolume: Decimal
+}
+
+type OwnershipData {
+  institutionalOwnership: Decimal # Percentage
+  insiderOwnership: Decimal # Percentage
+  publicFloat: Decimal # Percentage
+  sharesShort: Decimal
+  shortRatio: Decimal
+  shortPercentOfFloat: Decimal
+}
+
+type AdditionalBondData {
+  creditAnalysis: CreditAnalysis
+  bondMetrics: BondMetrics
+  marketData: BondMarketData
+}
+
+type CreditAnalysis {
+  creditRatingMoodys: String
+  creditRatingSP: String
+  creditRatingFitch: String
+  creditSpread: Decimal # bps over benchmark
+  zSpread: Decimal # Zero-volatility spread
+  oas: Decimal # Option-adjusted spread
+  probabilityOfDefault: Decimal # %
+  lossGivenDefault: Decimal # %
+  recoveryRate: Decimal # %
+}
+
+type BondMetrics {
+  macaulayDuration: Decimal
+  modifiedDuration: Decimal
+  effectiveDuration: Decimal
+  dv01: Decimal # Dollar value of 01
+  convexity: Decimal
+  yieldToWorst: Decimal
+  yieldToCall: Decimal
+  yieldToPut: Decimal
+  currentYield: Decimal
+  accruedInterest: Decimal
+}
+
+type BondMarketData {
+  bidPrice: Decimal
+  askPrice: Decimal
+  midPrice: Decimal
+  lastTradePrice: Decimal
+  volume: Decimal
+  averageDailyVolume: Decimal
+  outstandingAmount: Decimal
+  liquidityScore: Decimal # 0-100
+}
+
+# ============================================================================
+# Securities Types
+# ============================================================================
+
+type Equity implements Security & Asset {
+  # Asset interface fields
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String
+  name: String!
+  assetClass: AssetClass!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # Security interface fields
+  exchange: String
+  mic: String
+  tradingStatus: TradingStatus
+  formOfSecurity: FormOfSecurity
+  settlementCycle: SettlementCycle
+  minimumDenomination: Decimal
+  listingDate: Time
+  maturityDate: Time
+  
+  # Asset interface fields (ISO20022)
+  lei: String
+  fisn: String
+  cfi: String
+  
+  # Equity-specific fields (ISO20022 compliant)
+  sector: String
+  industry: String
+  marketCap: Decimal
+  sharesOutstanding: Decimal
+  dividendYield: Decimal
+  beta: Decimal
+  eps: Decimal
+  peRatio: Decimal
+  votingRights: Boolean
+  dividendFrequency: PaymentFrequency
+  parValue: Decimal
+  delistingDate: Time
+  lotSize: Int
+  boardLot: Int
+  priceMultiplier: Decimal
+  restrictionType: RestrictionType
+  equityType: EquityType
+  paymentStatus: PaymentStatus
+  
+  # Additional Data from External Sources
+  additional: AdditionalEquityData
+}
+
+type Bond implements Security & Asset {
+  # Asset interface fields
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String
+  name: String!
+  assetClass: AssetClass!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # Security interface fields
+  exchange: String
+  mic: String
+  tradingStatus: TradingStatus
+  formOfSecurity: FormOfSecurity
+  settlementCycle: SettlementCycle
+  minimumDenomination: Decimal
+  listingDate: Time
+  maturityDate: Time
+  
+  # Asset interface fields (ISO20022)
+  lei: String
+  fisn: String
+  cfi: String
+  
+  # Bond-specific fields (ISO20022 compliant)
+  faceValue: Decimal!
+  couponRate: Decimal!
+  issueDate: Time!
+  paymentFrequency: PaymentFrequency
+  creditRating: String
+  bondType: BondType
+  callable: Boolean
+  puttable: Boolean
+  yieldToMaturity: Decimal
+  duration: Decimal
+  convexity: Decimal
+  dayCountBasis: DayCountBasis
+  accrualStartDate: Time
+  firstCouponDate: Time
+  lastCouponDate: Time
+  callPrice: Decimal
+  callDate: Time
+  putPrice: Decimal
+  putDate: Time
+  minimumIncrement: Decimal
+  issuePrice: Decimal
+  redemptionPrice: Decimal
+  seniority: SeniorityType
+  securedType: SecuredType
+  guarantor: String
+  covenants: String
+  defaultStatus: Boolean
+  ratingAgency: String
+  interestComputationMethod: String
+  businessDayConvention: BusinessDayConvention
+  poolIdentifier: String
+  tranche: String
+  series: String
+  
+  # Additional Data from External Sources
+  additional: AdditionalBondData
+}
+
+type Note implements Security & Asset {
+  # Asset interface fields
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String
+  name: String!
+  assetClass: AssetClass!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # Security interface fields
+  exchange: String
+  mic: String
+  tradingStatus: TradingStatus
+  formOfSecurity: FormOfSecurity
+  settlementCycle: SettlementCycle
+  minimumDenomination: Decimal
+  listingDate: Time
+  maturityDate: Time
+  
+  # Asset interface fields (ISO20022)
+  lei: String
+  fisn: String
+  cfi: String
+  
+  # Note-specific fields (ISO20022 compliant)
+  faceValue: Decimal!
+  couponRate: Decimal
+  issueDate: Time!
+  noteType: NoteType
+  seniority: SeniorityType
+  creditRating: String
+  paymentFrequency: PaymentFrequency
+  dayCountBasis: DayCountBasis
+  interestType: InterestType
+  floatingRateIndex: FloatingRateIndex
+  spread: Decimal
+  issuePrice: Decimal
+  redemptionPrice: Decimal
+  callable: Boolean
+  callPrice: Decimal
+  callDate: Time
+  puttable: Boolean
+  putPrice: Decimal
+  putDate: Time
+  convertible: Boolean
+  conversionRatio: Decimal
+  conversionPrice: Decimal
+  guarantor: String
+  securedType: SecuredType
+  ratingAgency: String
+  defaultStatus: Boolean
+  businessDayConvention: BusinessDayConvention
+  subordinationType: SubordinationType
+  rankingType: RankingType
+  
+  # Additional Data from External Sources
+  additional: AdditionalBondData
+}

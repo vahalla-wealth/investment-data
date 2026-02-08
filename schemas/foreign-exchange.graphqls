@@ -1,0 +1,500 @@
+# GraphQL Schema for Investment Service - Foreign Exchange Instruments
+# This file contains ForeignExchangeInstrument type
+
+# ============================================================================
+# Foreign Exchange Enums
+# ============================================================================
+
+enum ForeignExchangeInstrumentType {
+  FX_SPOT
+  FX_FORWARD
+  FX_SWAP
+  FX_SWAP_NEAR_LEG
+  FX_SWAP_FAR_LEG
+  NDF # Non-Deliverable Forward
+  NDS # Non-Deliverable Swap
+  FX_OPTION
+  CURRENCY_SWAP
+  CROSS_CURRENCY_SWAP
+  FX_FUTURE
+  CURRENCY_OPTION
+}
+
+enum FXSettlementType {
+  DELIVERABLE
+  NON_DELIVERABLE
+  CASH_SETTLED
+  PHYSICAL_DELIVERY
+}
+
+enum FXQuotationType {
+  DIRECT # Base/Quote
+  INDIRECT # Quote/Base
+  POINTS # Forward points
+  OUTRIGHT # Outright rate
+}
+
+enum FXTradeSide {
+  BUY
+  SELL
+  BUY_SELL_BACK
+  SELL_BUY_BACK
+}
+
+enum FXExecutionType {
+  SPOT
+  FORWARD
+  SWAP
+  OPTION
+  NDF
+}
+
+enum FXCutType {
+  TOKYO_CUT
+  LONDON_CUT
+  NEW_YORK_CUT
+  CUSTOM
+}
+
+enum FXFixingSource {
+  WMR # WM/Reuters
+  ECB # European Central Bank
+  FED # Federal Reserve
+  BOE # Bank of England
+  BOJ # Bank of Japan
+  PBOC # People's Bank of China
+  CENTRAL_BANK
+  MARKET_CONSENSUS
+  BLOOMBERG
+  REUTERS
+  CUSTOM
+}
+
+enum FXTradeStatus {
+  PENDING
+  CONFIRMED
+  ACTIVE
+  MATURED
+  CANCELLED
+  AMENDED
+  TERMINATED
+  FAILED
+  SETTLED
+}
+
+enum FXConfirmationStatus {
+  UNCONFIRMED
+  CONFIRMED
+  DISPUTED
+  MATCHED
+  MISMATCHED
+  PENDING_CONFIRMATION
+}
+
+enum FXNettingType {
+  BILATERAL
+  MULTILATERAL
+  PAYMENT_NETTING
+  CLOSE_OUT_NETTING
+  NOVATION_NETTING
+}
+
+# ============================================================================
+# Foreign Exchange Instrument Type
+# ============================================================================
+
+type ForeignExchangeInstrument implements Asset {
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String
+  name: String!
+  assetClass: AssetClass!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # Asset interface fields (ISO20022)
+  lei: String
+  fisn: String
+  cfi: String
+  
+  # ISO20022 FX Identification
+  instrumentType: ForeignExchangeInstrumentType!
+  uniqueTransactionIdentifier: String # UTI
+  uniqueProductIdentifier: String # UPI
+  productTaxonomy: String
+  priorUniqueTransactionIdentifier: String # Prior UTI for amendments
+  tradeReferenceNumber: String
+  dealerReferenceNumber: String
+  
+  # ISO20022 Currency Pair
+  baseCurrency: String! # ISO 4217
+  quoteCurrency: String! # ISO 4217
+  currencyPair: String # e.g., "EUR/USD"
+  invertedPair: Boolean # If quote is inverted
+  
+  # ISO20022 Trade Details
+  tradeSide: FXTradeSide
+  executionType: FXExecutionType
+  tradeDate: Time
+  executionTimestamp: Time
+  valueDate: Time # T+0, T+1, T+2, etc.
+  maturityDate: Time
+  tenorPeriod: String # ON, TN, SN, 1W, 1M, 3M, 6M, 1Y, etc.
+  
+  # ISO20022 Execution Details
+  executionPrice: Decimal
+  executionVenueType: String # OTC, EXCHANGE, MTF, OTF
+  executionMethod: String # ELECTRONIC, VOICE, HYBRID
+  executionAlgorithm: String
+  
+  # ISO20022 Confirmation
+  confirmationStatus: FXConfirmationStatus
+  confirmationDate: Time
+  confirmationMethod: String # SWIFT, EMAIL, PLATFORM
+  
+  # ISO20022 Notional & Amounts
+  notionalAmount: Decimal
+  notionalCurrency: String
+  baseCurrencyAmount: Decimal
+  quoteCurrencyAmount: Decimal
+  
+  # ISO20022 Exchange Rates
+  exchangeRate: Decimal
+  spotRate: Decimal
+  forwardRate: Decimal
+  forwardPoints: Decimal
+  allInRate: Decimal # Spot + Forward Points
+  quotationType: FXQuotationType
+  
+  # ISO20022 Settlement
+  settlementType: FXSettlementType
+  settlementDate: Time
+  settlementCurrency: String
+  settlementAmount: Decimal
+  settlementMethod: SettlementMethod
+  settlementCycle: SettlementCycle
+  settlementInstructions: String
+  
+  # ISO20022 Settlement Risk
+  settlementRisk: Boolean
+  continuousLinkedSettlement: Boolean # CLS eligible
+  paymentVersusPayment: Boolean # PVP
+  settlementNetting: Boolean
+  nettingType: FXNettingType
+  
+  # ISO20022 Delivery Instructions
+  baseCurrencyDeliveryAccount: String
+  quoteCurrencyDeliveryAccount: String
+  baseCurrencyDeliveryAgent: String
+  quoteCurrencyDeliveryAgent: String
+  baseCurrencyDeliveryAgentLei: String
+  quoteCurrencyDeliveryAgentLei: String
+  
+  # ISO20022 NDF-Specific Fields
+  fixingDate: Time
+  fixingSource: FXFixingSource
+  fixingRate: Decimal
+  settlementRateSource: String
+  cutType: FXCutType
+  
+  # ISO20022 FX Swap Specific
+  nearLegValueDate: Time
+  nearLegRate: Decimal
+  nearLegAmount: Decimal
+  nearLegBaseCurrencyAmount: Decimal
+  nearLegQuoteCurrencyAmount: Decimal
+  farLegValueDate: Time
+  farLegRate: Decimal
+  farLegAmount: Decimal
+  farLegBaseCurrencyAmount: Decimal
+  farLegQuoteCurrencyAmount: Decimal
+  swapPoints: Decimal
+  impliedYield: Decimal
+  
+  # ISO20022 Option Specific
+  optionType: OptionType # CALL/PUT
+  optionStyle: OptionStyle # AMERICAN/EUROPEAN
+  strikeRate: Decimal
+  premium: Decimal
+  premiumCurrency: String
+  premiumPaymentDate: Time
+  premiumType: String # PERCENTAGE, POINTS, AMOUNT
+  expirationDate: Time
+  expirationTime: Time
+  deliveryDate: Time
+  exerciseDate: Time
+  automaticExercise: Boolean
+  
+  # ISO20022 Barrier Option Features
+  barrierType: String # KNOCK_IN, KNOCK_OUT, DOUBLE_BARRIER
+  barrierLevel: Decimal
+  upperBarrier: Decimal
+  lowerBarrier: Decimal
+  barrierMonitoring: String # CONTINUOUS, DISCRETE
+  
+  # ISO20022 Option Valuation
+  impliedVolatility: Decimal
+  historicalVolatility: Decimal
+  volatilitySurface: String
+  
+  # ISO20022 Counterparty Information
+  counterparty: String
+  counterpartyLei: String
+  counterpartyRole: String # BUYER, SELLER
+  counterpartyCountry: String
+  counterpartySector: String
+  broker: String
+  brokerLei: String
+  primeBroker: String
+  primeBrokerLei: String
+  executingBroker: String
+  executingBrokerLei: String
+  
+  # ISO20022 Trading Venue
+  tradingVenue: String
+  tradingVenueLei: String
+  executionVenue: String
+  mic: String # Market Identifier Code
+  
+  # ISO20022 Clearing & Settlement
+  clearingType: ClearingType
+  clearingHouse: String
+  clearingHouseLei: String
+  clearingMember: String
+  clearingMemberLei: String
+  centralCounterparty: String
+  centralCounterpartyLei: String
+  
+  # ISO20022 Valuation
+  marketValue: Decimal
+  markToMarket: Decimal
+  unrealizedPnL: Decimal
+  valuationDate: Time
+  valuationCurrency: String
+  valuationMethod: ValuationMethod
+  
+  # ISO20022 Regulatory Reporting
+  reportingJurisdiction: String
+  reportingTimestamp: Time
+  actionType: ActionType
+  regulatoryReportingRequired: Boolean
+  tradeRepository: String
+  tradeRepositoryLei: String
+  
+  # ISO20022 Master Agreement
+  masterAgreementType: MasterAgreementType
+  masterAgreementVersion: String
+  masterAgreementDate: Time
+  
+  # ISO20022 Collateral
+  collateralRequired: Boolean
+  collateralType: String
+  collateralAmount: Decimal
+  collateralCurrency: String
+  initialMargin: Decimal
+  variationMargin: Decimal
+  independentAmount: Decimal
+  thresholdAmount: Decimal
+  minimumTransferAmount: Decimal
+  marginCallFrequency: String
+  
+  # ISO20022 Risk Metrics
+  delta: Decimal # For options
+  gamma: Decimal
+  vega: Decimal
+  theta: Decimal
+  rho: Decimal
+  
+  # ISO20022 Market Data
+  bidRate: Decimal
+  askRate: Decimal
+  midRate: Decimal
+  lastTradeRate: Decimal
+  highRate: Decimal
+  lowRate: Decimal
+  openRate: Decimal
+  closeRate: Decimal
+  volume: Decimal
+  
+  # ISO20022 Additional Details
+  dayCountBasis: DayCountBasis
+  businessDayConvention: BusinessDayConvention
+  paymentCalendar: String
+  fixingCalendar: String
+  
+  # ISO20022 Lifecycle
+  tradeStatus: FXTradeStatus
+  amendmentDate: Time
+  terminationDate: Time
+  earlyTermination: Boolean
+  novationDate: Time
+  novatedTo: String # Counterparty LEI
+  
+  # ISO20022 Cross-Currency Swap Specific
+  payLegCurrency: String
+  payLegNotional: Decimal
+  payLegRate: Decimal
+  payLegPaymentFrequency: PaymentFrequency
+  payLegDayCountBasis: DayCountBasis
+  receiveLegCurrency: String
+  receiveLegNotional: Decimal
+  receiveLegRate: Decimal
+  receiveLegPaymentFrequency: PaymentFrequency
+  receiveLegDayCountBasis: DayCountBasis
+  principalExchange: Boolean
+  initialExchangeRate: Decimal
+  finalExchangeRate: Decimal
+  
+  # ISO20022 Documentation
+  confirmationUrl: String
+  termSheetUrl: String
+  
+  # ISO20022 Fees & Costs
+  commission: Decimal
+  commissionCurrency: String
+  brokerageFee: Decimal
+  transactionCost: Decimal
+  spread: Decimal # Bid-ask spread
+  
+  # ISO20022 Credit Support
+  creditSupportAnnex: Boolean
+  csaType: String
+  creditRating: String
+  creditLimit: Decimal
+  creditLimitCurrency: String
+}
+
+# ============================================================================
+# Supporting Types for Foreign Exchange
+# ============================================================================
+
+type FXRate {
+  currencyPair: String!
+  baseCurrency: String!
+  quoteCurrency: String!
+  rate: Decimal!
+  rateType: String! # SPOT, FORWARD, MID, BID, ASK
+  asOfDate: Time!
+  asOfTime: Time
+  source: String
+  quotationType: FXQuotationType
+}
+
+type FXForwardCurve {
+  currencyPair: String!
+  baseCurrency: String!
+  quoteCurrency: String!
+  spotRate: Decimal!
+  points: [FXForwardPoint!]!
+  asOfDate: Time!
+}
+
+type FXForwardPoint {
+  tenor: String! # ON, TN, 1W, 1M, 3M, 6M, 1Y, etc.
+  valueDate: Time!
+  forwardPoints: Decimal!
+  forwardRate: Decimal!
+  bid: Decimal
+  ask: Decimal
+  mid: Decimal
+}
+
+type FXSwapLeg {
+  legType: String! # NEAR, FAR
+  valueDate: Time!
+  baseCurrencyAmount: Decimal!
+  quoteCurrencyAmount: Decimal!
+  exchangeRate: Decimal!
+  settlementType: FXSettlementType!
+}
+
+type FXFixing {
+  fixingDate: Time!
+  fixingTime: Time
+  currencyPair: String!
+  fixingRate: Decimal!
+  fixingSource: FXFixingSource!
+  cutType: FXCutType
+  published: Boolean
+  publishedDate: Time
+}
+
+type FXSettlement {
+  settlementId: String!
+  settlementDate: Time!
+  currency: String!
+  amount: Decimal!
+  settlementType: FXSettlementType!
+  deliveryAccount: String
+  deliveryAgent: String
+  deliveryAgentLei: String
+  status: String # PENDING, SETTLED, FAILED
+}
+
+type FXCashflow {
+  paymentDate: Time!
+  currency: String!
+  amount: Decimal!
+  cashflowType: String! # PREMIUM, SETTLEMENT, MARGIN
+  status: String # SCHEDULED, PAID
+}
+
+type FXValuation {
+  valuationDate: Time!
+  currencyPair: String!
+  notionalAmount: Decimal!
+  marketValue: Decimal!
+  unrealizedPnL: Decimal!
+  realizedPnL: Decimal
+  valuationCurrency: String!
+  spotRate: Decimal
+  forwardRate: Decimal
+  valuationMethod: ValuationMethod
+  creditValuationAdjustment: Decimal # CVA
+  debtValuationAdjustment: Decimal # DVA
+  fundingValuationAdjustment: Decimal # FVA
+}
+
+type FXLifecycleEvent {
+  eventId: ID!
+  instrumentId: ID!
+  eventType: String! # TRADE, AMENDMENT, NOVATION, TERMINATION, MATURITY, EXERCISE, FIXING
+  eventDate: Time!
+  effectiveDate: Time
+  description: String
+  previousValue: String
+  newValue: String
+  initiatedBy: String
+  approvedBy: String
+  status: String # PENDING, APPROVED, REJECTED
+}
+
+type FXConfirmation {
+  confirmationId: String!
+  tradeId: String!
+  confirmationDate: Time!
+  confirmationStatus: FXConfirmationStatus!
+  confirmationMethod: String
+  confirmedBy: String
+  confirmedByLei: String
+  matchingStatus: String # MATCHED, MISMATCHED, PENDING
+  discrepancies: [String!]
+}
+
+type FXNetting {
+  nettingAgreementId: String!
+  nettingType: FXNettingType!
+  nettingDate: Time!
+  participants: [String!]!
+  baseCurrency: String!
+  netAmount: Decimal!
+  grossAmount: Decimal!
+  numberOfTrades: Int!
+  nettingRatio: Decimal # Net/Gross
+}

@@ -1,0 +1,411 @@
+# GraphQL Schema for Investment Service - Commodities
+# This file contains Commodity type
+
+# ============================================================================
+# Commodities Enums
+# ============================================================================
+
+enum CommodityType {
+  # Precious Metals
+  GOLD
+  SILVER
+  PLATINUM
+  PALLADIUM
+  RHODIUM
+  
+  # Base Metals
+  COPPER
+  ALUMINUM
+  ZINC
+  NICKEL
+  LEAD
+  TIN
+  
+  # Energy
+  CRUDE_OIL
+  BRENT_OIL
+  WTI_OIL
+  NATURAL_GAS
+  HEATING_OIL
+  GASOLINE
+  COAL
+  ELECTRICITY
+  
+  # Agricultural - Grains
+  WHEAT
+  CORN
+  SOYBEANS
+  RICE
+  OATS
+  BARLEY
+  
+  # Agricultural - Softs
+  COFFEE
+  SUGAR
+  COCOA
+  COTTON
+  ORANGE_JUICE
+  
+  # Livestock
+  LIVE_CATTLE
+  FEEDER_CATTLE
+  LEAN_HOGS
+  
+  # Other
+  COMMODITY_ETF
+  COMMODITY_INDEX
+  FREIGHT
+  EMISSIONS
+  WEATHER_DERIVATIVE
+}
+
+enum CommodityInstrumentType {
+  SPOT
+  FUTURE
+  FORWARD
+  SWAP
+  OPTION
+  SPREAD
+  PHYSICAL
+  ETF
+  ETC # Exchange Traded Commodity
+}
+
+enum DeliveryType {
+  PHYSICAL
+  CASH_SETTLED
+  FINANCIALLY_SETTLED
+  EXCHANGE_FOR_PHYSICAL # EFP
+  ALTERNATIVE_DELIVERY
+}
+
+enum QualityStandard {
+  LBMA # London Bullion Market Association
+  COMEX
+  LME # London Metal Exchange
+  ICE # Intercontinental Exchange
+  NYMEX
+  CBOT # Chicago Board of Trade
+  ISO_STANDARD
+  CUSTOM
+}
+
+enum StorageType {
+  WAREHOUSE
+  VAULT
+  TANK
+  SILO
+  OPEN_STORAGE
+  PIPELINE
+  VIRTUAL # For financial settlement
+}
+
+enum PricingBasis {
+  SPOT
+  FORWARD
+  FUTURES
+  INDEX
+  FIXED
+  FORMULA
+  BENCHMARK_PLUS_MINUS
+}
+
+# ============================================================================
+# Commodity Type
+# ============================================================================
+
+type Commodity implements Asset {
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String
+  name: String!
+  assetClass: AssetClass!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # Asset interface fields (ISO20022)
+  lei: String
+  fisn: String
+  cfi: String
+  
+  # ISO20022 Commodity Identification
+  commodityType: CommodityType!
+  instrumentType: CommodityInstrumentType!
+  uniqueTransactionIdentifier: String # UTI
+  uniqueProductIdentifier: String # UPI
+  productTaxonomy: String
+  commodityCode: String # UN/CEFACT code
+  
+  # ISO20022 Contract Specifications
+  contractSize: Decimal!
+  contractUnit: String # BARRELS, TROY_OUNCES, METRIC_TONS, BUSHELS, etc.
+  lotSize: Decimal
+  minimumTradingSize: Decimal
+  tickSize: Decimal
+  tickValue: Decimal
+  priceQuotation: String # Per unit, per lot, etc.
+  
+  # ISO20022 Quality & Grade
+  grade: String
+  quality: String
+  qualityStandard: QualityStandard
+  purity: Decimal # For metals (e.g., 99.99% for gold)
+  specifications: String
+  certificationRequired: Boolean
+  
+  # ISO20022 Trading Details
+  exchange: String!
+  mic: String # Market Identifier Code
+  tradingCurrency: String
+  tradingVenue: String
+  tradingVenueLei: String
+  tradingHours: String
+  tradingStatus: TradingStatus
+  
+  # ISO20022 Dates
+  tradeDate: Time
+  valueDate: Time
+  firstTradingDate: Time
+  lastTradingDate: Time
+  firstDeliveryDate: Time
+  lastDeliveryDate: Time
+  expirationDate: Time
+  maturityDate: Time
+  deliveryMonth: String
+  deliveryYear: Int
+  
+  # ISO20022 Pricing
+  spotPrice: Decimal
+  futuresPrice: Decimal
+  settlementPrice: Decimal
+  previousSettlementPrice: Decimal
+  openPrice: Decimal
+  highPrice: Decimal
+  lowPrice: Decimal
+  closePrice: Decimal
+  pricingBasis: PricingBasis
+  benchmarkPrice: Decimal
+  benchmarkSource: String
+  
+  # ISO20022 Delivery
+  deliveryType: DeliveryType!
+  deliveryLocation: String
+  deliveryPoint: String
+  deliveryHub: String
+  alternativeDeliveryLocations: [String!]
+  
+  # ISO20022 Storage
+  storageType: StorageType
+  storageLocation: String
+  storageFacility: String
+  storageFacilityLei: String
+  warehouseReceipt: String
+  
+  # ISO20022 Physical Delivery Details
+  packagingType: String
+  weightUnit: String # KG, MT, LBS, TROY_OZ
+  volumeUnit: String # BBL, GAL, M3
+  minimumDeliveryQuantity: Decimal
+  maximumDeliveryQuantity: Decimal
+  deliveryTolerance: Decimal # Percentage
+  
+  # ISO20022 Settlement
+  settlementType: SettlementType
+  settlementDate: Time
+  settlementCurrency: String
+  settlementMethod: SettlementMethod
+  settlementCycle: SettlementCycle
+  
+  # ISO20022 Counterparty
+  counterparty: String
+  counterpartyLei: String
+  broker: String
+  brokerLei: String
+  clearingHouse: String
+  clearingHouseLei: String
+  
+  # ISO20022 Margin & Collateral
+  initialMargin: Decimal
+  maintenanceMargin: Decimal
+  variationMargin: Decimal
+  marginCurrency: String
+  
+  # ISO20022 Market Data
+  openInterest: Decimal
+  volume: Decimal
+  volumeUnit: String
+  numberOfTrades: Int
+  volumeWeightedAveragePrice: Decimal
+  
+  # ISO20022 Valuation
+  marketValue: Decimal
+  notionalValue: Decimal
+  valuationDate: Time
+  valuationCurrency: String
+  valuationMethod: ValuationMethod
+  
+  # ISO20022 Regulatory
+  reportingJurisdiction: String
+  regulatoryReportingRequired: Boolean
+  tradeRepository: String
+  tradeRepositoryLei: String
+  reportingTimestamp: Time
+  actionType: ActionType
+  
+  # ISO20022 Master Agreement
+  masterAgreementType: MasterAgreementType
+  masterAgreementVersion: String
+  
+  # ISO20022 Risk Metrics
+  delta: Decimal # For options
+  gamma: Decimal
+  vega: Decimal
+  theta: Decimal
+  
+  # ISO20022 Option Specific
+  optionType: OptionType # CALL/PUT
+  optionStyle: OptionStyle # AMERICAN/EUROPEAN
+  strikePrice: Decimal
+  premium: Decimal
+  premiumCurrency: String
+  
+  # ISO20022 Swap Specific
+  swapType: String # COMMODITY_SWAP, BASIS_SWAP
+  fixedPrice: Decimal
+  floatingPriceIndex: String
+  paymentFrequency: PaymentFrequency
+  
+  # ISO20022 Additional Details
+  dayCountBasis: DayCountBasis
+  businessDayConvention: BusinessDayConvention
+  pricingCalendar: String
+  deliveryCalendar: String
+  
+  # ISO20022 Sustainability & ESG
+  sustainabilityCertification: String
+  carbonFootprint: Decimal
+  esgCompliant: Boolean
+  organicCertified: Boolean
+  fairTradeCertified: Boolean
+  
+  # ISO20022 Origin & Provenance
+  countryOfOrigin: String
+  regionOfOrigin: String
+  producer: String
+  producerLei: String
+  mineOrField: String
+  harvestYear: Int
+  
+  # ISO20022 Transport & Logistics
+  incoterms: String # FOB, CIF, CFR, etc.
+  shippingTerms: String
+  transportMethod: String # PIPELINE, TANKER, RAIL, TRUCK
+  loadingPort: String
+  dischargePort: String
+  
+  # ISO20022 Insurance
+  insuranceRequired: Boolean
+  insuranceProvider: String
+  insuranceAmount: Decimal
+  insuranceCurrency: String
+}
+
+# ============================================================================
+# Supporting Types for Commodities
+# ============================================================================
+
+type CommodityPrice {
+  commodityType: CommodityType!
+  priceType: String! # SPOT, FUTURES, FORWARD
+  price: Decimal!
+  currency: String!
+  unit: String!
+  asOfDate: Time!
+  asOfTime: Time
+  exchange: String
+  source: String
+}
+
+type CommodityDelivery {
+  deliveryId: String!
+  commodityType: CommodityType!
+  quantity: Decimal!
+  unit: String!
+  deliveryDate: Time!
+  deliveryLocation: String!
+  deliveryType: DeliveryType!
+  grade: String
+  quality: String
+  warehouseReceipt: String
+  status: String # SCHEDULED, IN_TRANSIT, DELIVERED
+}
+
+type CommodityStorage {
+  storageId: String!
+  commodityType: CommodityType!
+  quantity: Decimal!
+  unit: String!
+  storageLocation: String!
+  storageFacility: String!
+  storageType: StorageType!
+  storageStartDate: Time!
+  storageEndDate: Time
+  storageCost: Decimal
+  storageCurrency: String
+}
+
+type CommodityQuality {
+  commodityType: CommodityType!
+  grade: String!
+  qualityStandard: QualityStandard!
+  purity: Decimal
+  specifications: JSON
+  certificationNumber: String
+  certificationDate: Time
+  certifiedBy: String
+  testResults: JSON
+}
+
+type CommodityForwardCurve {
+  commodityType: CommodityType!
+  spotPrice: Decimal!
+  currency: String!
+  unit: String!
+  points: [CommodityForwardPoint!]!
+  asOfDate: Time!
+}
+
+type CommodityForwardPoint {
+  tenor: String! # 1M, 3M, 6M, 1Y, 2Y, etc.
+  deliveryDate: Time!
+  forwardPrice: Decimal!
+  contango: Decimal # Forward - Spot
+  backwardation: Decimal # Spot - Forward
+}
+
+type CommodityInventory {
+  commodityType: CommodityType!
+  location: String!
+  quantity: Decimal!
+  unit: String!
+  grade: String
+  owner: String
+  ownerLei: String
+  lastUpdated: Time!
+  warehouseReceipts: [String!]
+}
+
+type CommoditySpread {
+  spreadType: String! # CALENDAR, INTER_COMMODITY, LOCATION
+  longLeg: String!
+  shortLeg: String!
+  spreadValue: Decimal!
+  spreadCurrency: String
+  asOfDate: Time!
+}

@@ -1,0 +1,556 @@
+# GraphQL Schema for Investment Service - Investment Funds
+# This file contains InvestmentFund type and related supporting types
+
+# ============================================================================
+# Investment Fund Enums
+# ============================================================================
+
+enum InvestmentFundType {
+  MUTUAL_FUND
+  HEDGE_FUND
+  REIT
+  PRIVATE_EQUITY_FUND
+  ETF
+  INDEX_FUND
+  VENTURE_CAPITAL_FUND
+}
+
+enum FundDistributionPolicy {
+  ACCUMULATING
+  DISTRIBUTING
+  MIXED
+}
+
+enum FundLegalStructure {
+  OPEN_ENDED
+  CLOSED_ENDED
+  UNIT_TRUST
+  MUTUAL_FUND
+  SICAV
+  FCP
+  OEIC
+  INVESTMENT_TRUST
+}
+
+enum ShareClassType {
+  CLASS_A
+  CLASS_B
+  CLASS_C
+  CLASS_I
+  INSTITUTIONAL
+  RETAIL
+  HEDGED
+  UNHEDGED
+}
+
+enum RedemptionFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  SEMI_ANNUAL
+  ANNUAL
+  ON_DEMAND
+  NOTICE_REQUIRED
+}
+
+enum RiskRating {
+  VERY_LOW
+  LOW
+  MEDIUM_LOW
+  MEDIUM
+  MEDIUM_HIGH
+  HIGH
+  VERY_HIGH
+}
+
+enum FundStatus {
+  ACTIVE
+  SUSPENDED
+  CLOSED
+  LIQUIDATING
+  MERGED
+  TERMINATED
+}
+
+enum TaxStatus {
+  TAXABLE
+  TAX_EXEMPT
+  TAX_DEFERRED
+  QUALIFIED
+  NON_QUALIFIED
+}
+
+enum InvestorType {
+  RETAIL
+  PROFESSIONAL
+  INSTITUTIONAL
+  QUALIFIED
+  ACCREDITED
+  ELIGIBLE_COUNTERPARTY
+}
+
+enum DistributionChannel {
+  DIRECT
+  PLATFORM
+  ADVISOR
+  BANK
+  BROKER
+  INSTITUTIONAL
+}
+
+enum ReportingFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  SEMI_ANNUAL
+  ANNUAL
+}
+
+enum OrderType {
+  SUBSCRIPTION
+  REDEMPTION
+  SWITCH_IN
+  SWITCH_OUT
+  TRANSFER_IN
+  TRANSFER_OUT
+}
+
+# ============================================================================
+# Supporting Types for Investment Fund
+# ============================================================================
+
+type Holding {
+  securityId: String!
+  securityName: String!
+  isin: String
+  quantity: Decimal
+  marketValue: Decimal
+  weight: Decimal # Percentage of portfolio
+  sector: String
+  country: String
+}
+
+type SectorAllocation {
+  sector: String!
+  weight: Decimal! # Percentage
+  marketValue: Decimal
+}
+
+type GeographicAllocation {
+  country: String!
+  region: String
+  weight: Decimal! # Percentage
+  marketValue: Decimal
+}
+
+type AssetAllocation {
+  assetClass: String!
+  weight: Decimal! # Percentage
+  marketValue: Decimal
+}
+
+type FundPrice {
+  priceType: PriceType!
+  price: Decimal!
+  currency: String!
+  asOfDate: Time!
+  source: String
+}
+
+type InvestmentRestriction {
+  restrictionType: String!
+  description: String
+  limit: Decimal
+  unit: String # PERCENTAGE, AMOUNT, etc.
+}
+
+type OrderDesk {
+  orderDeskType: String # MAIN, BACKUP
+  contactName: String
+  phoneNumber: String
+  emailAddress: String
+  faxNumber: String
+  dealingCutOffTime: String
+  dealingCutOffTimeZone: String
+}
+
+type FinancialInstrumentClassification {
+  classificationType: String! # CFI, ANNA, etc.
+  classificationValue: String!
+}
+
+type LocalMarketAnnex {
+  country: String!
+  localOrderDesk: OrderDesk
+  localSettlementDetails: String
+  localTaxInformation: String
+  localRegulations: String
+}
+
+type SettlementAccount {
+  accountNumber: String!
+  accountName: String
+  accountCurrency: String
+  bic: String # Bank Identifier Code
+  iban: String # International Bank Account Number
+  bankName: String
+  bankAddress: String
+  bankCountry: String
+  accountType: String # CASH, SECURITIES
+}
+
+# ============================================================================
+# Additional Data Types (External Sources)
+# ============================================================================
+
+type AdditionalPerformanceMetrics {
+  calmarRatio: Decimal # Return over maximum drawdown
+  treynorRatio: Decimal # Excess return per unit of systematic risk
+  jensenAlpha: Decimal # Risk-adjusted performance measure
+  rSquared: Decimal # Correlation with benchmark (0-1)
+  upCaptureRatio: Decimal # Performance in up markets
+  downCaptureRatio: Decimal # Performance in down markets
+  winningMonthsPercentage: Decimal # Percentage of positive months
+  averageGain: Decimal # Average gain in positive periods
+  averageLoss: Decimal # Average loss in negative periods
+}
+
+type AdditionalPortfolioAnalytics {
+  weightedAverageDuration: Decimal # For fixed income funds
+  weightedAverageMaturity: Decimal # For fixed income funds
+  yieldToMaturity: Decimal # For fixed income funds
+  effectiveDuration: Decimal # Interest rate sensitivity
+  creditQuality: String # Average credit rating
+  top10HoldingsPercentage: Decimal # Concentration in top 10
+  activeShare: Decimal # Deviation from benchmark (0-100)
+  concentrationRisk: Decimal # Herfindahl index
+}
+
+type AdditionalRiskMetrics {
+  valueAtRisk: Decimal # VaR (95% confidence)
+  conditionalValueAtRisk: Decimal # CVaR/Expected Shortfall
+  stressTestResult: Decimal # Stress scenario impact
+  liquidityRisk: String # HIGH/MEDIUM/LOW
+  counterpartyRisk: String # Counterparty exposure level
+  currencyRisk: Decimal # FX exposure percentage
+}
+
+type AdditionalESGMetrics {
+  environmentalScore: Decimal # E pillar score
+  socialScore: Decimal # S pillar score
+  governanceScore: Decimal # G pillar score
+  carbonRiskScore: Decimal # Carbon risk exposure
+  controversyLevel: Int # 0-5 scale (0=no controversy, 5=severe)
+  sustainabilityRank: Int # Percentile rank in category
+  fossilFuelInvolvement: Decimal # Percentage exposure
+  sustainableInvestmentPercentage: Decimal # % of sustainable investments
+}
+
+type FundRatings {
+  morningstarRating: Int # Star rating 1-5
+  morningstarAnalystRating: String # Gold/Silver/Bronze/Neutral/Negative
+  lipperLeaderRating: Int # Lipper leader rating 1-5
+  lipperCategory: String # Lipper classification
+}
+
+type ManagerInformation {
+  managerName: String # Portfolio manager name
+  managerTenure: Decimal # Years managing fund
+  managerBiography: String # Manager background
+  teamManaged: Boolean # Team vs individual management
+}
+
+type AdditionalFundData {
+  performance: AdditionalPerformanceMetrics
+  portfolio: AdditionalPortfolioAnalytics
+  risk: AdditionalRiskMetrics
+  esg: AdditionalESGMetrics
+  ratings: FundRatings
+  manager: ManagerInformation
+}
+
+# ============================================================================
+# Investment Fund Type
+# ============================================================================
+
+type InvestmentFund implements Asset {
+  # Asset interface fields
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String
+  name: String!
+  assetClass: AssetClass!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # Asset interface fields (ISO20022)
+  lei: String
+  fisn: String
+  cfi: String
+  
+  # ISO20022 Fund Identification
+  fundType: InvestmentFundType!
+  fundManager: String
+  fundManagerLei: String # LEI of fund manager
+  fundManagerBic: String # BIC of fund manager
+  investmentManager: String
+  investmentManagerLei: String
+  
+  # ISO20022 Fund Characteristics
+  fundCategory: String # As per local regulation
+  fundCategoryDescription: String
+  fundNature: String # OPEN_ENDED, CLOSED_ENDED
+  fundStyle: String # GROWTH, VALUE, BLEND, etc.
+  fundCurrency: String # Base currency
+  
+  # ISO20022 Valuation
+  inceptionDate: Time
+  nav: Decimal # Net Asset Value
+  navPerShare: Decimal
+  totalAssets: Decimal # Assets Under Management (AUM)
+  totalLiabilities: Decimal
+  netAssets: Decimal
+  sharesOutstanding: Decimal
+  grossAssetValue: Decimal
+  navFrequency: PaymentFrequency
+  
+  # Fees and Expenses
+  expenseRatio: Decimal # Total expense ratio (TER)
+  managementFee: Decimal
+  performanceFee: Decimal
+  entryCharge: Decimal # Front-end load
+  exitCharge: Decimal # Back-end load
+  redemptionFee: Decimal
+  
+  # Investment Details
+  minimumInvestment: Decimal
+  minimumAdditionalInvestment: Decimal
+  maximumInvestment: Decimal
+  minimumHoldingAmount: Decimal
+  benchmark: String
+  benchmarkIsin: String
+  strategy: String
+  investmentObjective: String
+  riskRating: RiskRating
+  srriRating: Int # Synthetic Risk and Reward Indicator (1-7)
+  
+  # Holding Period Restrictions (ISO20022)
+  minimumHoldingPeriod: Int # Days - minimum period before redemption allowed
+  lockUpPeriod: Int # Days - initial lock-up period
+  noticePeriodForRedemption: Int # Days - advance notice required
+  
+  # Legal and Regulatory
+  legalStructure: FundLegalStructure
+  domicile: String # Country of domicile
+  registrationCountry: String
+  regulator: String
+  regulatorLei: String
+  ucitsCompliant: Boolean # UCITS = Undertakings for Collective Investment in Transferable Securities
+  fundStatus: FundStatus
+  
+  # Service Providers
+  custodian: String
+  custodianLei: String
+  administrator: String
+  administratorLei: String
+  auditor: String
+  transferAgent: String
+  legalAdvisor: String
+  
+  # Distribution
+  distributionPolicy: FundDistributionPolicy
+  dividendFrequency: PaymentFrequency
+  lastDividendDate: Time
+  lastDividendAmount: Decimal
+  exDividendDate: Time
+  paymentDate: Time
+  
+  # Income Equalisation (ISO20022)
+  incomeEqualisation: Boolean
+  equalisationMethod: String # FULL, PARTIAL, NONE
+  equalisationRate: Decimal
+  
+  # ISO20022 Subscription & Redemption
+  shareClassType: ShareClassType
+  tradingCurrency: String
+  baseCurrency: String
+  hedged: Boolean
+  hedgingStrategy: String
+  
+  # Subscription Details (ISO20022)
+  subscriptionFrequency: RedemptionFrequency
+  subscriptionNoticePeriod: Int # Days
+  subscriptionCutOffTime: String
+  subscriptionCutOffTimeZone: String
+  subscriptionSettlementPeriod: Int # Days (T+N)
+  subscriptionProcessingCharacteristic: ProcessingCharacteristic
+  subscriptionSettlementMethod: SettlementMethod
+  initialSubscriptionAmount: Decimal
+  subsequentSubscriptionAmount: Decimal
+  maximumSubscriptionAmount: Decimal
+  subscriptionSettlementAccounts: [SettlementAccount!]
+  
+  # Redemption Details (ISO20022)
+  redemptionFrequency: RedemptionFrequency
+  redemptionNoticePeriod: Int # Days
+  redemptionCutOffTime: String
+  redemptionCutOffTimeZone: String
+  redemptionSettlementPeriod: Int # Days (T+N)
+  redemptionProcessingCharacteristic: ProcessingCharacteristic
+  redemptionSettlementMethod: SettlementMethod
+  minimumRedemptionAmount: Decimal
+  maximumRedemptionAmount: Decimal
+  redemptionSettlementAccounts: [SettlementAccount!]
+  
+  # Switching (ISO20022)
+  switchingAllowed: Boolean
+  switchingFrequency: RedemptionFrequency
+  switchingCharge: Decimal
+  switchingCutOffTime: String
+  
+  # Order Desk (ISO20022)
+  orderDesks: [OrderDesk!]
+  dealingFrequency: PaymentFrequency
+  settlementPeriod: Int # Days (T+N)
+  
+  # Performance
+  ytdReturn: Decimal # Year-to-date return
+  oneMonthReturn: Decimal
+  threeMonthReturn: Decimal
+  sixMonthReturn: Decimal
+  oneYearReturn: Decimal
+  threeYearReturn: Decimal
+  fiveYearReturn: Decimal
+  tenYearReturn: Decimal
+  inceptionReturn: Decimal
+  sharpeRatio: Decimal
+  sortinoRatio: Decimal
+  informationRatio: Decimal
+  volatility: Decimal
+  beta: Decimal
+  alpha: Decimal
+  maxDrawdown: Decimal
+  trackingError: Decimal
+  
+  # Portfolio Composition
+  topHoldings: [Holding!]
+  numberOfHoldings: Int
+  sectorAllocations: [SectorAllocation!]
+  geographicAllocations: [GeographicAllocation!]
+  assetAllocations: [AssetAllocation!]
+  averageMarketCap: Decimal
+  portfolioTurnover: Decimal # Percentage
+  cashPosition: Decimal # Percentage
+  
+  # Tax Information
+  taxStatus: TaxStatus
+  taxDomicile: String
+  withholdingTaxRate: Decimal
+  taxReportingStatus: String
+  fatcaStatus: String # FATCA compliance status
+  crsReportable: Boolean # Common Reporting Standard
+  
+  # Pricing & Valuation
+  prices: [FundPrice!]
+  bidPrice: Decimal
+  askPrice: Decimal
+  midPrice: Decimal
+  navDate: Time
+  pricingSource: String
+  pricingMethod: String
+  
+  # Investment Restrictions
+  restrictions: [InvestmentRestriction!]
+  maxLeverage: Decimal # Maximum leverage ratio
+  maxConcentration: Decimal # Maximum single position %
+  maxSectorExposure: Decimal # Maximum sector exposure %
+  maxGeographicExposure: Decimal # Maximum country exposure %
+  shortSellingAllowed: Boolean
+  derivativesAllowed: Boolean
+  borrowingAllowed: Boolean
+  
+  # ESG & Sustainability
+  esgRating: String
+  esgScore: Decimal
+  sustainabilityRating: String
+  article8Compliant: Boolean # SFDR Article 8
+  article9Compliant: Boolean # SFDR Article 9
+  sustainabilityFocus: String
+  excludedSectors: [String!]
+  
+  # Distribution & Investors
+  distributionChannels: [DistributionChannel!]
+  allowedInvestorTypes: [InvestorType!]
+  minimumInvestorQualification: String
+  geographicRestrictions: [String!] # Countries where not available
+  
+  # Reporting & Documentation
+  reportingFrequency: ReportingFrequency
+  factsheetUrl: String
+  prospectusUrl: String
+  kiidUrl: String # Key Investor Information Document
+  annualReportUrl: String
+  semiAnnualReportUrl: String
+  lastReportDate: Time
+  
+  # ISO20022 Fund Structure
+  fundFamily: String
+  fundFamilyName: String
+  umbrellaFund: String # Parent fund if sub-fund
+  umbrellaFundLei: String
+  subFundName: String
+  shareClassName: String
+  shareClassCurrency: String
+  shareClassLaunchDate: Time
+  shareClassLifecycle: String
+  
+  # ISO20022 Valuation & Pricing
+  navCalculationFrequency: PaymentFrequency
+  valuationTime: String
+  valuationTimeZone: String
+  cutOffTime: String
+  cutOffTimeZone: String
+  pricingMethodology: String
+  roundingDirection: RoundingDirection
+  decimalPlaces: Int
+  
+  # ISO20022 Financial Information
+  fiscalYearEnd: String
+  launchDate: Time
+  closureDate: Time
+  mergerDate: Time
+  financialInstrumentClassifications: [FinancialInstrumentClassification!]
+  
+  # ISO20022 Operational Features
+  swingPricing: Boolean
+  swingFactor: Decimal
+  swingPricingThreshold: Decimal
+  dilutionLevy: Decimal
+  dilutionLevyRate: Decimal
+  gateProvisions: Boolean
+  gateThreshold: Decimal
+  sidePockets: Boolean
+  redemptionSuspended: Boolean
+  subscriptionSuspended: Boolean
+  
+  # ISO20022 Local Market Information
+  localMarketAnnexes: [LocalMarketAnnex!]
+  
+  # ISO20022 Additional Information
+  productStructure: String
+  investmentRestrictions: String
+  riskProfile: String
+  targetMarket: String
+  appropriatenessProfile: String
+  
+  # Additional Data from External Sources (Morningstar, Bloomberg, etc.)
+  additional: AdditionalFundData
+}

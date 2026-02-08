@@ -1,0 +1,411 @@
+# GraphQL Schema for Investment Service - Money Market Instruments
+# This file contains MoneyMarketInstrument type
+
+# ============================================================================
+# Money Market Enums
+# ============================================================================
+
+enum MoneyMarketInstrumentType {
+  TREASURY_BILL
+  COMMERCIAL_PAPER
+  CERTIFICATE_OF_DEPOSIT
+  REPO
+  REVERSE_REPO
+  BANKERS_ACCEPTANCE
+  TIME_DEPOSIT
+  CALL_DEPOSIT
+  OVERNIGHT_DEPOSIT
+  TERM_DEPOSIT
+  MONEY_MARKET_FUND
+  DISCOUNT_NOTE
+  PROMISSORY_NOTE
+}
+
+enum RepoType {
+  CLASSIC_REPO
+  BUY_SELL_BACK
+  SELL_BUY_BACK
+  TRIPARTY_REPO
+  HOLD_IN_CUSTODY
+  GENERAL_COLLATERAL
+  SPECIAL_COLLATERAL
+}
+
+enum CollateralType {
+  GOVERNMENT_SECURITIES
+  CORPORATE_BONDS
+  EQUITIES
+  CASH
+  MIXED
+  GENERAL_COLLATERAL
+}
+
+enum CreditQualityStep {
+  STEP_1
+  STEP_2
+  STEP_3
+  STEP_4
+  STEP_5
+  STEP_6
+  NOT_RATED
+}
+
+enum RegulatoryClassification {
+  ELIGIBLE_COLLATERAL_ECB
+  ELIGIBLE_COLLATERAL_FED
+  HQLA_LEVEL_1
+  HQLA_LEVEL_2A
+  HQLA_LEVEL_2B
+  NON_HQLA
+}
+
+enum InterestPaymentType {
+  DISCOUNT
+  INTEREST_BEARING
+  ZERO_COUPON
+  FLOATING_RATE
+}
+
+enum RepoTerminationType {
+  OPEN
+  TERM
+  OVERNIGHT
+  EVERGREEN
+}
+
+enum PricingMethod {
+  DISCOUNT_BASIS
+  YIELD_BASIS
+  MONEY_MARKET_BASIS
+  BOND_EQUIVALENT_YIELD
+  ACTUAL_360
+  ACTUAL_365
+}
+
+enum IssuerType {
+  SOVEREIGN
+  CORPORATE
+  FINANCIAL_INSTITUTION
+  SUPRANATIONAL
+  AGENCY
+  MUNICIPAL
+  SPECIAL_PURPOSE_VEHICLE
+}
+
+enum MoneyMarketStatus {
+  ACTIVE
+  MATURED
+  DEFAULTED
+  CALLED
+  CANCELLED
+  SUSPENDED
+}
+
+# ============================================================================
+# Money Market Instrument Type
+# ============================================================================
+
+type MoneyMarketInstrument implements Asset {
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String
+  name: String!
+  assetClass: AssetClass!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # Asset interface fields (ISO20022)
+  lei: String
+  fisn: String
+  cfi: String
+  
+  # ISO20022 Money Market Identification
+  instrumentType: MoneyMarketInstrumentType!
+  shortTermPaperId: String
+  dealerReference: String
+  programName: String # For CP/CD programs
+  seriesNumber: String
+  trancheNumber: String
+  uniqueTransactionIdentifier: String # UTI for SFTR
+  uniqueProductIdentifier: String # UPI
+  instrumentStatus: MoneyMarketStatus
+  
+  # ISO20022 Instrument Specifications
+  faceValue: Decimal!
+  denomination: Decimal
+  minimumTradingAmount: Decimal
+  minimumIncrement: Decimal
+  lotSize: Decimal
+  totalIssueSize: Decimal
+  outstandingIssueSize: Decimal
+  maximumIssueSize: Decimal
+  fungible: Boolean # Can be fungible with other issues
+  
+  # ISO20022 Dates
+  issueDate: Time!
+  maturityDate: Time!
+  valueDate: Time
+  settlementDate: Time
+  firstPaymentDate: Time
+  lastPaymentDate: Time
+  nextPaymentDate: Time
+  terminationDate: Time # For repos
+  
+  # ISO20022 Pricing & Valuation
+  discountRate: Decimal
+  yieldToMaturity: Decimal
+  issuePrice: Decimal
+  redemptionPrice: Decimal
+  cleanPrice: Decimal
+  dirtyPrice: Decimal
+  accruedInterest: Decimal
+  currentYield: Decimal
+  pricingMethod: PricingMethod
+  quotationType: String # PRICE, YIELD, DISCOUNT
+  
+  # ISO20022 Interest Details
+  interestPaymentType: InterestPaymentType
+  interestRate: Decimal
+  interestPaymentFrequency: PaymentFrequency
+  nextInterestPaymentDate: Time
+  interestAccrualDate: Time
+  
+  # ISO20022 Floating Rate Details (if applicable)
+  floatingRateIndex: FloatingRateIndex
+  floatingRateIndexTenor: String
+  floatingRateSpread: Decimal
+  floatingRateResetFrequency: PaymentFrequency
+  nextResetDate: Time
+  rateFloor: Decimal
+  rateCap: Decimal
+  
+  # ISO20022 Credit & Rating
+  creditRating: String
+  creditRatingMoodys: String
+  creditRatingSP: String
+  creditRatingFitch: String
+  ratingAgency: String
+  creditQualityStep: CreditQualityStep
+  defaultStatus: Boolean
+  ratingDate: Time
+  ratingOutlook: String # POSITIVE, NEGATIVE, STABLE, DEVELOPING
+  
+  # ISO20022 Settlement
+  settlementType: SettlementType
+  settlementCycle: SettlementCycle
+  clearingSystem: String
+  clearingSystemLei: String
+  deliveryType: DeliveryType
+  settlementLocation: String
+  custodian: String
+  custodianLei: String
+  
+  # ISO20022 Trading
+  tradingVenue: String
+  mic: String # Market Identifier Code
+  tradingCurrency: String
+  tradingStatus: TradingStatus
+  firstTradingDate: Time
+  lastTradingDate: Time
+  
+  # ISO20022 Repo-Specific Fields
+  repoType: RepoType
+  repoTerminationType: RepoTerminationType
+  repoRate: Decimal
+  repoSpread: Decimal # Over benchmark
+  haircut: Decimal # Percentage
+  collateralType: CollateralType
+  collateralValue: Decimal
+  collateralCurrency: String
+  collateralIsin: String
+  initialMargin: Decimal
+  variationMargin: Decimal
+  marginCall: Boolean
+  marginCallFrequency: String
+  substitutionAllowed: Boolean
+  substitutionNotice: Int # Days
+  minimumNoticeForTermination: Int # Days
+  
+  # ISO20022 Regulatory
+  regulatoryClassification: RegulatoryClassification
+  eligibleCollateralFlag: Boolean
+  liquidityCoverageRatio: Boolean # LCR eligible
+  centralBankEligible: Boolean
+  ecbEligible: Boolean
+  fedEligible: Boolean
+  reportingJurisdiction: String
+  regulatoryReportingRequired: Boolean
+  
+  # ISO20022 Counterparty (for Repo)
+  counterparty: String
+  counterpartyLei: String
+  counterpartyRating: String
+  tripartyAgent: String
+  tripartyAgentLei: String
+  clearingBroker: String
+  clearingBrokerLei: String
+  
+  # ISO20022 Issuer Details
+  issuerLei: String
+  issuerType: IssuerType
+  issuerCountry: String
+  issuerSector: String
+  issuerCreditRating: String
+  guarantor: String
+  guarantorLei: String
+  guarantorType: String
+  backupFacility: Boolean
+  backupFacilityProvider: String
+  
+  # ISO20022 Additional Details
+  dayCountBasis: DayCountBasis
+  businessDayConvention: BusinessDayConvention
+  interestCalculationMethod: String
+  compoundingMethod: String
+  rollConvention: String
+  
+  # ISO20022 Valuation Details
+  valuationMethod: ValuationMethod
+  valuationSource: String
+  valuationDate: Time
+  marketValue: Decimal
+  bookValue: Decimal
+  
+  # ISO20022 Market Data
+  bidPrice: Decimal
+  askPrice: Decimal
+  bidYield: Decimal
+  askYield: Decimal
+  midPrice: Decimal
+  lastTradePrice: Decimal
+  openPrice: Decimal
+  highPrice: Decimal
+  lowPrice: Decimal
+  closePrice: Decimal
+  volume: Decimal
+  volumeWeightedAveragePrice: Decimal
+  outstandingAmount: Decimal
+  numberOfTrades: Int
+  lastUpdateTime: Time
+  
+  # ISO20022 Tax Information
+  taxStatus: TaxStatus
+  withholdingTaxRate: Decimal
+  taxExempt: Boolean
+  taxCountry: String
+  
+  # ISO20022 Documentation
+  prospectusUrl: String
+  termSheetUrl: String
+  offeringCircularUrl: String
+  
+  # ISO20022 SFTR Reporting (for Repos)
+  reportingCounterparty: String
+  reportingCounterpartyLei: String
+  reportingTimestamp: Time
+  actionType: ActionType
+  
+  # ISO20022 Additional Repo Fields
+  repurchasePrice: Decimal
+  repurchaseDate: Time
+  openRepoFlag: Boolean
+  autoRenewal: Boolean
+  
+  # ISO20022 Risk Metrics
+  duration: Decimal
+  modifiedDuration: Decimal
+  convexity: Decimal
+  dv01: Decimal
+}
+
+# ============================================================================
+# Supporting Types for Money Market
+# ============================================================================
+
+type MoneyMarketPrice {
+  priceType: PriceType!
+  price: Decimal!
+  yield: Decimal
+  discount: Decimal
+  currency: String!
+  asOfDate: Time!
+  source: String
+  quotationBasis: String # PRICE, YIELD, DISCOUNT
+}
+
+type RepoCollateral {
+  collateralId: String!
+  isin: String
+  collateralType: CollateralType!
+  quantity: Decimal
+  marketValue: Decimal!
+  haircut: Decimal
+  valueAfterHaircut: Decimal
+  currency: String!
+  issuer: String
+  creditRating: String
+}
+
+type MoneyMarketCashflow {
+  paymentDate: Time!
+  paymentType: String! # PRINCIPAL, INTEREST, REPO_PAYMENT
+  amount: Decimal!
+  currency: String!
+  status: String # SCHEDULED, PAID, OVERDUE
+  paymentMethod: String
+  paymentReference: String
+}
+
+type MoneyMarketRating {
+  ratingAgency: String!
+  rating: String!
+  ratingDate: Time!
+  outlook: String # POSITIVE, NEGATIVE, STABLE, DEVELOPING
+  watchStatus: String # POSITIVE, NEGATIVE, DEVELOPING
+  ratingType: String # ISSUER, ISSUE
+}
+
+type FloatingRateDetails {
+  indexName: String!
+  indexTenor: String
+  spread: Decimal
+  resetFrequency: PaymentFrequency!
+  nextResetDate: Time
+  currentRate: Decimal
+  floor: Decimal
+  cap: Decimal
+  dayCountBasis: DayCountBasis
+}
+
+type RepoTransaction {
+  transactionId: String!
+  repoType: RepoType!
+  startDate: Time!
+  endDate: Time
+  repoRate: Decimal!
+  notionalAmount: Decimal!
+  currency: String!
+  collateral: [RepoCollateral!]!
+  haircut: Decimal
+  marginCall: Boolean
+  counterparty: String!
+  counterpartyLei: String
+}
+
+type MoneyMarketLifecycleEvent {
+  eventId: ID!
+  instrumentId: ID!
+  eventType: String! # ISSUE, MATURITY, INTEREST_PAYMENT, CALL, DEFAULT, AMENDMENT
+  eventDate: Time!
+  effectiveDate: Time
+  description: String
+  amount: Decimal
+  currency: String
+  status: String # SCHEDULED, COMPLETED, CANCELLED
+}

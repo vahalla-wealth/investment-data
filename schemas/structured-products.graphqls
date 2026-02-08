@@ -1,0 +1,398 @@
+# GraphQL Schema for Investment Service - Structured Products
+# This file contains StructuredProduct type
+
+# ============================================================================
+# Structured Products Enums
+# ============================================================================
+
+enum StructuredProductType {
+  # Capital Protection Products
+  PRINCIPAL_PROTECTED_NOTE
+  CAPITAL_GUARANTEED_NOTE
+  PARTIALLY_PROTECTED_NOTE
+  
+  # Yield Enhancement Products
+  REVERSE_CONVERTIBLE
+  DISCOUNT_CERTIFICATE
+  BONUS_CERTIFICATE
+  AUTOCALLABLE
+  
+  # Participation Products
+  TRACKER_CERTIFICATE
+  OUTPERFORMANCE_CERTIFICATE
+  CAPPED_OUTPERFORMANCE
+  
+  # Leverage Products
+  TURBO_CERTIFICATE
+  KNOCK_OUT_CERTIFICATE
+  MINI_FUTURE
+  FACTOR_CERTIFICATE
+  
+  # Linked Notes
+  EQUITY_LINKED_NOTE
+  CREDIT_LINKED_NOTE
+  COMMODITY_LINKED_NOTE
+  FX_LINKED_NOTE
+  INTEREST_RATE_LINKED_NOTE
+  INFLATION_LINKED_NOTE
+  
+  # Structured Deposits
+  STRUCTURED_DEPOSIT
+  DUAL_CURRENCY_DEPOSIT
+  RANGE_ACCRUAL_DEPOSIT
+  
+  # Other
+  CALLABLE_NOTE
+  PUTTABLE_NOTE
+  CONVERTIBLE_NOTE
+  EXCHANGEABLE_NOTE
+  BASKET_CERTIFICATE
+}
+
+enum PayoffStructure {
+  LINEAR
+  DIGITAL
+  BARRIER
+  ASIAN
+  LOOKBACK
+  CLIQUET
+  RAINBOW
+  WORST_OF
+  BEST_OF
+  SPREAD
+  CUSTOM
+}
+
+enum BarrierType {
+  KNOCK_IN
+  KNOCK_OUT
+  UP_AND_IN
+  UP_AND_OUT
+  DOWN_AND_IN
+  DOWN_AND_OUT
+  DOUBLE_BARRIER
+  CONTINUOUS
+  DISCRETE
+}
+
+enum CouponType {
+  FIXED
+  FLOATING
+  CONDITIONAL
+  MEMORY
+  DIGITAL
+  RANGE_ACCRUAL
+  STEP_UP
+  STEP_DOWN
+  ZERO_COUPON
+}
+
+enum CapitalProtectionType {
+  FULL_PROTECTION # 100%
+  PARTIAL_PROTECTION # < 100%
+  CONDITIONAL_PROTECTION
+  SOFT_PROTECTION
+  NO_PROTECTION
+}
+
+enum UnderlyingAssetType {
+  SINGLE_STOCK
+  BASKET_OF_STOCKS
+  INDEX
+  COMMODITY
+  CURRENCY
+  INTEREST_RATE
+  CREDIT
+  FUND
+  HYBRID
+}
+
+enum AutocallType {
+  EUROPEAN # Only at maturity
+  AMERICAN # Any time
+  BERMUDAN # Specific dates
+  PHOENIX # With memory coupon
+  SNOWBALL # Accumulating coupon
+}
+
+# ============================================================================
+# Structured Product Type
+# ============================================================================
+
+type StructuredProduct implements Asset {
+  id: ID!
+  isin: String
+  cusip: String
+  sedol: String
+  ticker: String
+  name: String!
+  assetClass: AssetClass!
+  issuer: String
+  currency: String!
+  country: String
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+  
+  # Asset interface fields (ISO20022)
+  lei: String
+  fisn: String
+  cfi: String
+  
+  # ISO20022 Product Identification
+  productType: StructuredProductType!
+  uniqueProductIdentifier: String # UPI
+  productTaxonomy: String
+  productCategory: String # CAPITAL_PROTECTION, YIELD_ENHANCEMENT, PARTICIPATION, LEVERAGE
+  complexityLevel: String # LOW, MEDIUM, HIGH
+  
+  # ISO20022 Issuer Details
+  issuerLei: String
+  issuerRating: String
+  issuerCountry: String
+  guarantor: String
+  guarantorLei: String
+  
+  # ISO20022 Underlying Assets
+  underlyingAssetType: UnderlyingAssetType!
+  underlyingAssets: [UnderlyingAsset!]!
+  numberOfUnderlyings: Int
+  basketWeighting: String # EQUAL, MARKET_CAP, CUSTOM
+  
+  # ISO20022 Dates
+  issueDate: Time!
+  valuationDate: Time
+  maturityDate: Time!
+  firstTradingDate: Time
+  lastTradingDate: Time
+  observationDates: [Time!]
+  autocallDates: [Time!]
+  couponPaymentDates: [Time!]
+  
+  # ISO20022 Capital Protection
+  capitalProtectionType: CapitalProtectionType!
+  principalProtection: Decimal # Percentage (0-100)
+  protectionLevel: Decimal
+  protectionBarrier: Decimal
+  conditionalProtection: Boolean
+  protectionConditions: String
+  
+  # ISO20022 Participation & Performance
+  participationRate: Decimal # Percentage
+  gearing: Decimal # Leverage factor
+  cap: Decimal # Maximum return
+  floor: Decimal # Minimum return
+  strike: Decimal
+  knockOutLevel: Decimal
+  knockInLevel: Decimal
+  
+  # ISO20022 Barrier Features
+  barrierType: BarrierType
+  barrierLevel: Decimal
+  upperBarrier: Decimal
+  lowerBarrier: Decimal
+  barrierObservation: String # CONTINUOUS, DAILY, WEEKLY, MONTHLY
+  barrierBreached: Boolean
+  barrierBreachDate: Time
+  
+  # ISO20022 Autocall Features
+  autocallable: Boolean
+  autocallType: AutocallType
+  autocallBarrier: Decimal
+  autocallFrequency: String # MONTHLY, QUARTERLY, SEMI_ANNUAL, ANNUAL
+  autocallTriggered: Boolean
+  autocallTriggerDate: Time
+  autocallPayment: Decimal
+  
+  # ISO20022 Coupon Details
+  couponType: CouponType
+  couponRate: Decimal
+  couponFrequency: PaymentFrequency
+  couponBarrier: Decimal
+  memoryCoupon: Boolean # Accumulated unpaid coupons
+  accumulatedCoupons: Decimal
+  nextCouponDate: Time
+  nextCouponAmount: Decimal
+  
+  # ISO20022 Payoff Structure
+  payoffStructure: PayoffStructure!
+  payoffFormula: String
+  payoffDescription: String
+  returnCalculation: String
+  
+  # ISO20022 Pricing & Valuation
+  issuePrice: Decimal!
+  currentPrice: Decimal
+  redemptionPrice: Decimal
+  theoreticalValue: Decimal
+  intrinsicValue: Decimal
+  timeValue: Decimal
+  bidPrice: Decimal
+  askPrice: Decimal
+  
+  # ISO20022 Denomination & Size
+  denomination: Decimal!
+  minimumInvestment: Decimal
+  totalIssueSize: Decimal
+  outstandingAmount: Decimal
+  
+  # ISO20022 Settlement
+  settlementType: SettlementType
+  settlementCurrency: String
+  settlementMethod: SettlementMethod
+  settlementCycle: SettlementCycle
+  
+  # ISO20022 Trading
+  exchange: String
+  mic: String # Market Identifier Code
+  tradingVenue: String
+  tradingCurrency: String
+  tradingStatus: TradingStatus
+  
+  # ISO20022 Risk Metrics
+  delta: Decimal
+  gamma: Decimal
+  vega: Decimal
+  theta: Decimal
+  rho: Decimal
+  impliedVolatility: Decimal
+  
+  # ISO20022 Credit Risk
+  creditRating: String
+  creditRatingAgency: String
+  creditQualityStep: CreditQualityStep
+  defaultRisk: Boolean
+  bailInRisk: Boolean # Can be bailed-in
+  
+  # ISO20022 Regulatory
+  priipsCompliant: Boolean # PRIIPs regulation
+  kidAvailable: Boolean # Key Information Document
+  prospectusUrl: String
+  kidUrl: String
+  factsheetUrl: String
+  
+  # ISO20022 Tax
+  taxStatus: TaxStatus
+  withholdingTax: Decimal
+  taxCountry: String
+  
+  # ISO20022 Fees & Costs
+  managementFee: Decimal
+  subscriptionFee: Decimal
+  redemptionFee: Decimal
+  performanceFee: Decimal
+  ongoingCharges: Decimal
+  
+  # ISO20022 Callable/Puttable Features
+  callable: Boolean
+  callDates: [Time!]
+  callPrice: Decimal
+  puttable: Boolean
+  putDates: [Time!]
+  putPrice: Decimal
+  
+  # ISO20022 Conversion Features
+  convertible: Boolean
+  conversionRatio: Decimal
+  conversionPrice: Decimal
+  conversionDates: [Time!]
+  
+  # ISO20022 Distribution
+  distributionChannel: String # RETAIL, INSTITUTIONAL, PRIVATE_BANKING
+  targetMarket: String
+  appropriatenessCategory: String
+  
+  # ISO20022 Performance
+  currentReturn: Decimal
+  sinceInception: Decimal
+  yearToDate: Decimal
+  oneYear: Decimal
+  threeYear: Decimal
+  
+  # ISO20022 Additional Details
+  dayCountBasis: DayCountBasis
+  businessDayConvention: BusinessDayConvention
+  paymentCalendar: String
+  
+  # ISO20022 Documentation
+  termSheet: String
+  finalTerms: String
+  basePro spectus: String
+}
+
+# ============================================================================
+# Supporting Types for Structured Products
+# ============================================================================
+
+type UnderlyingAsset {
+  assetId: String!
+  assetType: String! # EQUITY, INDEX, COMMODITY, FX, etc.
+  isin: String
+  ticker: String
+  name: String!
+  weight: Decimal # For baskets
+  initialPrice: Decimal
+  currentPrice: Decimal
+  performance: Decimal # Percentage
+  currency: String
+}
+
+type BarrierObservation {
+  observationDate: Time!
+  underlyingPrice: Decimal!
+  barrierLevel: Decimal!
+  breached: Boolean!
+  distance: Decimal # Distance to barrier in %
+}
+
+type CouponPayment {
+  paymentDate: Time!
+  couponRate: Decimal!
+  couponAmount: Decimal!
+  currency: String!
+  barrierMet: Boolean
+  paid: Boolean
+  status: String # SCHEDULED, PAID, CANCELLED
+}
+
+type AutocallScenario {
+  autocallDate: Time!
+  autocallBarrier: Decimal!
+  underlyingLevel: Decimal
+  triggered: Boolean
+  redemptionAmount: Decimal
+  totalReturn: Decimal
+}
+
+type PayoffScenario {
+  scenarioName: String!
+  underlyingPerformance: Decimal!
+  finalPayoff: Decimal!
+  totalReturn: Decimal!
+  description: String
+}
+
+type StructuredProductRisk {
+  productId: ID!
+  riskLevel: String! # LOW, MEDIUM, HIGH
+  marketRisk: String
+  creditRisk: String
+  liquidityRisk: String
+  currencyRisk: String
+  earlyRedemptionRisk: String
+  capitalLossRisk: String
+  complexityRisk: String
+  srri: Int # Synthetic Risk and Reward Indicator (1-7)
+}
+
+type StructuredProductPerformance {
+  productId: ID!
+  asOfDate: Time!
+  currentValue: Decimal!
+  initialValue: Decimal!
+  absoluteReturn: Decimal!
+  percentageReturn: Decimal!
+  accruedCoupon: Decimal
+  daysToMaturity: Int
+  timeElapsed: Decimal # Percentage
+}

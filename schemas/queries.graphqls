@@ -1,0 +1,52 @@
+# GraphQL Schema for Investment Service - Queries
+# This file contains all Query definitions
+
+# ============================================================================
+# Query Type
+# ============================================================================
+
+type Query {
+  # Public queries (no authentication required)
+  healthCheck: String
+  
+  # Asset queries (require authentication)
+  asset(id: ID!): Asset @auth
+  assets(assetClass: AssetClass, limit: Int, offset: Int): [Asset!]! @auth
+  
+  # Specific asset type queries
+  securities(limit: Int, offset: Int): [Security!]! @auth
+  
+  equity(id: ID!): Equity @auth
+  equities(exchange: String, sector: String, limit: Int, offset: Int): [Equity!]! @auth
+  
+  bond(id: ID!): Bond @auth
+  bonds(issuer: String, creditRating: String, limit: Int, offset: Int): [Bond!]! @auth
+  
+  note(id: ID!): Note @auth
+  notes(issuer: String, limit: Int, offset: Int): [Note!]! @auth
+  
+  investmentFund(id: ID!): InvestmentFund @auth
+  investmentFunds(fundType: InvestmentFundType, limit: Int, offset: Int): [InvestmentFund!]! @auth
+  
+  derivative(id: ID!): Derivative @auth
+  derivatives(derivativeType: DerivativeType, limit: Int, offset: Int): [Derivative!]! @auth
+  
+  option(id: ID!): Option @auth
+  options(underlyingAsset: String, optionType: OptionType, limit: Int, offset: Int): [Option!]! @auth
+  
+  moneyMarketInstrument(id: ID!): MoneyMarketInstrument @auth
+  moneyMarketInstruments(instrumentType: MoneyMarketInstrumentType, limit: Int, offset: Int): [MoneyMarketInstrument!]! @auth
+  
+  foreignExchangeInstrument(id: ID!): ForeignExchangeInstrument @auth
+  foreignExchangeInstruments(instrumentType: ForeignExchangeInstrumentType, limit: Int, offset: Int): [ForeignExchangeInstrument!]! @auth
+  
+  structuredProduct(id: ID!): StructuredProduct @auth
+  structuredProducts(productType: StructuredProductType, limit: Int, offset: Int): [StructuredProduct!]! @auth
+  
+  commodity(id: ID!): Commodity @auth
+  commodities(commodityType: CommodityType, limit: Int, offset: Int): [Commodity!]! @auth
+  
+  # Price and valuation queries
+  assetPrice(assetId: ID!): AssetPrice @auth
+  assetValuation(assetId: ID!, valuationDate: Time): AssetValuation @auth
+}
