@@ -31,19 +31,19 @@ This document specifies the data fields, formats, and standards required from ba
 The following diagram illustrates the relationships between the core entities in the Vahalla Wealth Management System.
 
 ```mermaid
-erDiagram
-    RelationshipManager ||--o{ Client : manages
-    Client ||--o{ Account : owns
-    Account ||--o{ Portfolio : contains
-    Account ||--o{ Position : holds
-    Account ||--o{ Transaction : records
-    Account ||--o{ Order : places
-    Account ||--o{ FXDeposit : "source fund"
-    Portfolio ||--o{ Position : tracks
-    Order ||--o{ Transaction : generates
-    Position }o--|| Asset : references
-    Asset ||--|| Equity : "is a"
-    Asset ||--|| Bond : "is a"
+graph TD
+    RelationshipManager -->|manages| Client
+    Client -->|owns| Account
+    Account -->|contains| Portfolio
+    Account -->|holds| Position
+    Account -->|records| Transaction
+    Account -->|places| Order
+    Account -->|source fund| FXDeposit
+    Portfolio -->|tracks| Position
+    Order -->|generates| Transaction
+    Position -->|references| Asset
+    Asset -->|is a| Equity
+    Asset -->|is a| Bond
 ```
 
 ---
