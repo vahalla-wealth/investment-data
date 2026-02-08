@@ -34,16 +34,26 @@ For security master data (Equity & Bond fields), refer to [02 — Bank Data Spec
 
 ```mermaid
 graph TD
-    RelationshipManager -->|manages| Client
-    Client -->|owns| Account
-    Account -->|contains| Portfolio
-    Account -->|holds| Position
-    Account -->|records| Transaction
-    Account -->|places| Order
-    Account -->|source fund| FXDeposit
-    Portfolio -->|tracks| Position
-    Order -->|generates| Transaction
-    Position -->|references| Asset
+    RM["RelationshipManager"]
+    CLI["Client (acmt.001)"]
+    ACC["Account (acmt.001)"]
+    PF["Portfolio (semt.003)"]
+    POS["Position (semt.003)"]
+    TXN["Transaction (sese.023)"]
+    ORD["Order (setr.001)"]
+    FXD["FXDeposit (camt.052)"]
+    AST["Asset (reda.041)"]
+
+    RM -->|manages| CLI
+    CLI -->|owns| ACC
+    ACC -->|contains| PF
+    ACC -->|holds| POS
+    ACC -->|records| TXN
+    ACC -->|places| ORD
+    ACC -->|source fund| FXD
+    PF -->|tracks| POS
+    ORD -->|generates| TXN
+    POS -->|references| AST
 ```
 
 ---
