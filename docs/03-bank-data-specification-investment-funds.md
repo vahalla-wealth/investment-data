@@ -109,6 +109,36 @@ The specific fund sub-type is further classified by the `fundType` field (`Inves
 | 36 | `fundStyle` | String | Optional | Investment style | `"GROWTH"`, `"VALUE"`, `"BLEND"` | reda.041 — `FndRpt/FndDtls/InvstmtStyl` |
 | 37 | `fundCurrency` | String | Required | Base/reference currency per ISO 4217 | `"USD"` | reda.041 — `FndRpt/FndDtls/BaseCcy` |
 
+#### Recommended `fundCategory` Values
+
+The `fundCategory` field is a free-text string, but the following standardised values are **recommended** to ensure consistency across data providers. These align with ISO 20022 fund classification (`reda.041 — FndCtgy`), Morningstar Global Category, and EFAMA/ICI industry standards.
+
+| Category | Description | Example Funds |
+|---|---|---|
+| `Equity — Large Cap` | Invests primarily in large-capitalisation equities | S&P 500 Index Fund, Large Cap Growth |
+| `Equity — Mid Cap` | Invests primarily in mid-capitalisation equities | Mid Cap Value, Mid Cap Growth |
+| `Equity — Small Cap` | Invests primarily in small-capitalisation equities | Russell 2000 Index Fund |
+| `Equity — Global` | Invests in equities across multiple regions | MSCI World Index Fund |
+| `Equity — Emerging Markets` | Invests in emerging market equities | MSCI EM Index Fund |
+| `Equity — Sector` | Invests in a specific sector (tech, healthcare, etc.) | Technology Select Fund |
+| `Fixed Income — Government` | Invests in government bonds and treasuries | US Treasury Bond Fund |
+| `Fixed Income — Corporate` | Invests in investment-grade corporate bonds | Corporate Bond Index Fund |
+| `Fixed Income — High Yield` | Invests in below-investment-grade bonds | High Yield Bond Fund |
+| `Fixed Income — Global` | Invests in bonds across multiple regions | Global Aggregate Bond Fund |
+| `Fixed Income — Inflation-Linked` | Invests in inflation-protected securities | TIPS Fund |
+| `Fixed Income — Short-Term` | Invests in short-duration fixed income | Short-Term Bond Fund |
+| `Multi-Asset — Balanced` | Balanced allocation across equities and bonds | 60/40 Balanced Fund |
+| `Multi-Asset — Target Date` | Glide-path allocation based on target retirement date | Target Date 2040 Fund |
+| `Multi-Asset — Income` | Focuses on income generation across asset classes | Multi-Asset Income Fund |
+| `Alternative — Long/Short` | Long/short equity or credit strategies | Market Neutral Fund |
+| `Alternative — Macro` | Global macro and risk parity strategies | All Weather Fund |
+| `Alternative — Event Driven` | Merger arbitrage, distressed, special situations | Event Driven Fund |
+| `Real Estate` | Invests in real estate securities or direct property | REIT Index Fund |
+| `Commodity` | Invests in commodities or commodity-linked instruments | Gold Fund, Commodity Index Fund |
+| `Money Market` | Invests in short-term money market instruments | Prime Money Market Fund |
+
+> **Note:** Providers may use more granular sub-categories (e.g., `"Equity — Large Cap Growth"`, `"Fixed Income — Intermediate Core-Plus Bond"`). The `fundCategoryDescription` field should provide additional detail when needed.
+
 ---
 
 ## 6. Fund Valuation
