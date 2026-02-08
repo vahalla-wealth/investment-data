@@ -200,6 +200,7 @@ type Equity implements Security & Asset {
   
   # Security interface fields
   exchange: String
+  securityType: SecurityType!
   mic: String
   tradingStatus: TradingStatus
   formOfSecurity: FormOfSecurity
@@ -255,6 +256,7 @@ type Bond implements Security & Asset {
   
   # Security interface fields
   exchange: String
+  securityType: SecurityType!
   mic: String
   tradingStatus: TradingStatus
   formOfSecurity: FormOfSecurity
@@ -325,6 +327,7 @@ type Note implements Security & Asset {
   
   # Security interface fields
   exchange: String
+  securityType: SecurityType!
   mic: String
   tradingStatus: TradingStatus
   formOfSecurity: FormOfSecurity

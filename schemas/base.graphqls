@@ -326,6 +326,7 @@ interface Security {
   updatedAt: Time!
   
   # ISO20022 Security Common Fields
+  securityType: SecurityType!
   mic: String # Market Identifier Code (ISO 10383)
   tradingStatus: TradingStatus
   formOfSecurity: FormOfSecurity
