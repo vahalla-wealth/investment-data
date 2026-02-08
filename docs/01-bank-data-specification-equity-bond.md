@@ -1,4 +1,6 @@
-# Vahalla Wealth Data Specification
+# 01 — Vahalla Wealth Data Specification
+
+> **Document Index:** [00-index.md](00-index.md) | **Related:** [01.1 — CSV Sample Data](01.1-sample-data-csv-equity-bond.md)
 
 | | |
 |---|---|
@@ -522,6 +524,38 @@ Provided as separate data feeds, linked to securities via `assetId`.
   }
 }
 ```
+
+### 8.3 Equity Example (CSV)
+
+> Full CSV reference with formatting rules: [01.1 — CSV Sample Data](01.1-sample-data-csv-equity-bond.md)
+
+**Header Row:**
+
+```csv
+id,isin,cusip,sedol,ticker,name,assetClass,securityType,equityType,issuer,lei,fisn,cfi,documentUrl,currency,country,exchange,mic,tradingStatus,formOfSecurity,settlementCycle,listingDate,minimumDenomination,maturityDate,createdAt,updatedAt,sector,industry,marketCap,sharesOutstanding,dividendYield,beta,eps,peRatio,votingRights,dividendFrequency,parValue,delistingDate,lotSize,boardLot,priceMultiplier,restrictionType,paymentStatus,consensusRating,numberOfAnalysts,buyRatings,holdRatings,sellRatings,targetPrice,priceTarget12M,revenue,revenueGrowth,netIncome,netIncomeGrowth,ebitda,ebitdaMargin,operatingMargin,profitMargin,roe,roa,debtToEquity,currentRatio,quickRatio,freeCashFlow,priceToBook,priceToSales,evToEbitda,evToSales,pegRatio,dividendPayoutRatio,earningsYield,rsi,macd,sma50,sma200,ema50,ema200,bollingerUpper,bollingerLower,atr,volume,averageVolume,institutionalOwnership,insiderOwnership,publicFloat,sharesShort,shortRatio,shortPercentOfFloat
+```
+
+**Data Row:**
+
+```csv
+SEC-EQ-001,US0378331005,037833100,2046251,AAPL,"Apple Inc. Common Stock",SECURITIES,EQUITY,COMMON,"Apple Inc.",HWUPKR0MPOU8FGXBT394,"APPLE INC/SH",ESVUFR,,USD,US,NASDAQ,XNAS,ACTIVE,BOOK_ENTRY,T_PLUS_2,1980-12-12,,,,2026-01-01T00:00:00Z,2026-02-08T16:00:00Z,"Information Technology","Consumer Electronics",2850000000000.00,15500000000,0.55,1.28,6.42,29.50,true,QUARTERLY,0.00001,,100,100,1.00,UNRESTRICTED,FULLY_PAID,BUY,42,30,10,2,210.00,225.00,394328000000.00,8.10,96995000000.00,10.20,130541000000.00,33.10,30.74,24.60,160.09,28.30,1.87,0.99,0.94,111443000000.00,47.20,7.50,22.30,7.40,2.80,15.40,3.39,58.30,2.15,182.50,175.20,183.10,176.00,195.00,170.00,3.45,54230000,62100000,60.50,0.07,99.93,120000000,1.90,0.80
+```
+
+### 8.4 Bond Example (CSV)
+
+**Header Row:**
+
+```csv
+id,isin,cusip,sedol,ticker,name,assetClass,securityType,bondType,issuer,lei,fisn,cfi,documentUrl,currency,country,exchange,mic,tradingStatus,formOfSecurity,settlementCycle,listingDate,minimumDenomination,maturityDate,createdAt,updatedAt,faceValue,couponRate,issueDate,issuePrice,redemptionPrice,paymentFrequency,dayCountBasis,accrualStartDate,firstCouponDate,lastCouponDate,businessDayConvention,interestComputationMethod,creditRating,ratingAgency,seniority,securedType,guarantor,covenants,defaultStatus,callable,callPrice,callDate,puttable,putPrice,putDate,yieldToMaturity,duration,convexity,minimumIncrement,poolIdentifier,tranche,series,creditRatingMoodys,creditRatingSP,creditRatingFitch,creditSpread,zSpread,oas,probabilityOfDefault,lossGivenDefault,recoveryRate,macaulayDuration,modifiedDuration,effectiveDuration,dv01,convexity_additional,yieldToWorst,yieldToCall,yieldToPut,currentYield,accruedInterest,bidPrice,askPrice,midPrice,lastTradePrice,volume,averageDailyVolume,outstandingAmount,liquidityScore
+```
+
+**Data Row:**
+
+```csv
+SEC-BD-001,US912828Z784,912828Z78,,,"US Treasury Note 2.5% 2034",SECURITIES,BOND,GOVERNMENT,"United States Treasury",254900HROIFWPRGM1V77,,,USD,US,OTC,,ACTIVE,BOOK_ENTRY,T_PLUS_1,,,2034-03-15,2024-03-15T00:00:00Z,2026-02-08T16:00:00Z,1000.00,2.50,2024-03-15,99.50,100.00,SEMI_ANNUAL,ACT_ACT,2024-03-15,2024-09-15,,MODIFIED_FOLLOWING,,"AA+","S&P",SENIOR,UNSECURED,,,false,false,,,false,,,2.65,8.20,75.40,,,,,Aaa,"AA+",AAA,0.00,,,0.001,,100.00,8.20,7.95,7.95,795.00,75.40,2.65,,,2.50,10.27,98.75,99.00,98.875,,,,50000000000.00,95.00
+```
+
+> **Note:** For CSV delivery, the `additional` nested structure is flattened into the same row. The `convexity_additional` column differentiates `BondMetrics.convexity` from the direct `Bond.convexity` field.
 
 ---
 
