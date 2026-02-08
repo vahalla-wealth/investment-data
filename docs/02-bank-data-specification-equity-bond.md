@@ -772,12 +772,12 @@ The following table lists all data files that the bank must provide to the Vahal
 
 | # | File Name | Description | Frequency | Format | ISO 20022 Reference |
 |---|---|---|---|---|---|
-| 1 | `equity_master.csv` | Equity security master data — all fields from §4 and §5 | Daily | CSV / JSON | reda.041 |
-| 2 | `bond_master.csv` | Bond security master data — all fields from §4 and §6 | Daily | CSV / JSON | reda.041 |
-| 3 | `equity_pricing.csv` | End-of-day equity pricing & valuation data (§7) | Daily | CSV / JSON | semt.002 |
-| 4 | `bond_pricing.csv` | End-of-day bond pricing & valuation data (§7) | Daily | CSV / JSON | semt.002 |
-| 5 | `equity_analytics.csv` | Analyst ratings, financials, technicals (§5 additional) | Daily / Weekly | CSV / JSON | — (supplementary) |
-| 6 | `bond_analytics.csv` | Credit metrics, spread data, risk analytics (§6 additional) | Daily / Weekly | CSV / JSON | — (supplementary) |
+| 1 | `equity_master.csv` | Equity security master data — all fields from [Section 4](#4-common-security-identification-fields) and [Section 5](#5-equity-data-fields) | Daily | CSV / JSON | reda.041 |
+| 2 | `bond_master.csv` | Bond security master data — all fields from [Section 4](#4-common-security-identification-fields) and [Section 6](#6-bond-fixed-income-data-fields) | Daily | CSV / JSON | reda.041 |
+| 3 | `equity_pricing.csv` | End-of-day equity pricing & valuation data ([Section 7](#7-pricing--valuation-data)) | Daily | CSV / JSON | semt.002 |
+| 4 | `bond_pricing.csv` | End-of-day bond pricing & valuation data ([Section 7](#7-pricing--valuation-data)) | Daily | CSV / JSON | semt.002 |
+| 5 | `equity_analytics.csv` | Analyst ratings, financials, technicals ([Section 5](#5-equity-data-fields) additional) | Daily / Weekly | CSV / JSON | — (supplementary) |
+| 6 | `bond_analytics.csv` | Credit metrics, spread data, risk analytics ([Section 6](#6-bond-fixed-income-data-fields) additional) | Daily / Weekly | CSV / JSON | — (supplementary) |
 
 ### 11.2 Wealth Management Data Files ([01 — Wealth Management Specification](01-wealth-management-specification.md))
 
