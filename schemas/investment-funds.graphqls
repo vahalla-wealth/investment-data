@@ -314,7 +314,15 @@ type InvestmentFund implements Asset {
   investmentManagerLei: String
   
   # ISO20022 Fund Characteristics
-  fundCategory: String # As per local regulation
+  # fundCategory recommended values (reda.041 — FndCtgy):
+  #   Equity — Large Cap | Equity — Mid Cap | Equity — Small Cap | Equity — Global
+  #   Equity — Emerging Markets | Equity — Sector
+  #   Fixed Income — Government | Fixed Income — Corporate | Fixed Income — High Yield
+  #   Fixed Income — Global | Fixed Income — Inflation-Linked | Fixed Income — Short-Term
+  #   Multi-Asset — Balanced | Multi-Asset — Target Date | Multi-Asset — Income
+  #   Alternative — Long/Short | Alternative — Macro | Alternative — Event Driven
+  #   Real Estate | Commodity | Money Market
+  fundCategory: String # Fund investment focus category
   fundCategoryDescription: String
   fundNature: String # OPEN_ENDED, CLOSED_ENDED
   fundStyle: String # GROWTH, VALUE, BLEND, etc.
