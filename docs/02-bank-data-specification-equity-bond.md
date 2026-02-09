@@ -110,9 +110,9 @@ This document defines the following entities. Each entity has its own field numb
 | **Equity** | Section 5.1–5.6 | 61 | Equity-specific fields: fundamentals, analyst ratings, financials, valuation, technicals, ownership | `reda.041` | Static / Daily |
 | **Equity Market Data** | Section 5.7 | 20 | Real-time / EOD market data feed for equities: OHLC prices, VWAP, volume, liquidity, source | `semt.002` | Intraday / EOD |
 | **Equity Dividend Schedule** | Section 5.8 | 18 | Declared and projected dividends: amount, dates, tax, stock dividends, DRIP | `seev.031` | On declaration / Daily |
-| **Bond** | Section 6.1–6.6 | 52 | Bond-specific fields: coupon, credit, call/put, analytics, metrics | `reda.041`, `semt.002` | Static / Daily |
-| **Bond Market Data** | Section 6.7 | 26 | Real-time / EOD market data feed for bonds: prices, yields, clean/dirty, volume, liquidity, source | `semt.002` | Intraday / EOD |
-| **Bond Cashflow Schedule** | Section 6.8 | 25 | Projected coupon, principal, and redemption cashflows per bond: accrual, payment dates, floating rate | `reda.041` | On issuance / On change |
+| **Bond** | Section 6.1–6.16 | 118 | Bond-specific fields: coupon, amortization, inflation-linked, tax, local identifiers, issuance, settlement, ESG, credit, call/put, analytics, benchmark, yield curve, MTM, duration, investor holdings, repo/lending | `reda.041`, `semt.002` | Static / Daily |
+| **Bond Market Data** | Section 6.17 | 29 | Real-time / EOD market data feed for bonds: prices, yields, clean/dirty, volume, liquidity, turnover, source | `semt.002` | Intraday / EOD |
+| **Bond Cashflow Schedule** | Section 6.18 | 25 | Projected coupon, principal, and redemption cashflows per bond: accrual, payment dates, floating rate | `reda.041` | On issuance / On change |
 | **Asset Valuation** | Section 7 | 8 | Portfolio valuation linked via `assetId`: market value, book value, method, source | `semt.002` | Daily |
 | **Corporate Actions** | Section 8 | 37 | Corporate action events for equity and bond: splits, mergers, dividends, calls, tenders | `seev.031` | On event / Daily |
 
@@ -380,78 +380,194 @@ For records where `securityType` = `BOND`, `CONVERTIBLE_BOND`, or `DEBENTURE`.
 | 11 | `lastCouponDate` | Date | Optional | Last coupon payment date before maturity | `"2034-03-15"` | reda.041 — `Debt/LastCpnDt` |
 | 12 | `businessDayConvention` | Enum | Optional | Business day adjustment rule | See [Appendix A.11](#a11-businessdayconvention) | reda.041 — `Debt/BizDayCnvtn` |
 | 13 | `interestComputationMethod` | String | Optional | Interest computation method description | `"30/360"` | reda.041 — `Debt/IntrstCmptnMtd` |
+| 14 | `couponType` | Enum | Required | Coupon structure type | `"FIXED"`, `"FLOATING"`, `"ZERO_COUPON"`, `"STEP_UP"`, `"STEP_DOWN"`, `"INFLATION_LINKED"`, `"VARIABLE"` | reda.041 — `Debt/IntrstTp` |
+| 15 | `originalFaceValue` | Decimal | Optional | Original face value at issuance (before amortization) | `1000.00` | reda.041 — `Debt/OrgnlFaceAmt` |
+| 16 | `currentFaceValue` | Decimal | Optional | Current face value (after amortization/partial redemption) | `750.00` | reda.041 — `Debt/CurFaceAmt` |
+| 17 | `amortizationType` | Enum | Optional | Amortization schedule type | `"BULLET"`, `"AMORTIZING"`, `"SINKING_FUND"`, `"CUSTOM"` | reda.041 — `Debt/AmrTp` |
+| 18 | `amortizationFactor` | Decimal | Optional | Current pool/amortization factor (0–1, where 1 = no amortization) | `0.75` | reda.041 — `Debt/Fctr` |
+| 19 | `inflationIndex` | String | Optional | Inflation index name (for inflation-linked bonds) | `"CPI"`, `"HICP"`, `"Thai_CPI"` | reda.041 — `Debt/InfltnIdx` |
+| 20 | `baseIndexValue` | Decimal | Optional | Base index value at issuance | `108.50` | reda.041 — `Debt/BaseIdxVal` |
+| 21 | `indexRatio` | Decimal | Optional | Current index ratio (current CPI / base CPI) | `1.0325` | reda.041 — `Debt/IdxRatio` |
+| 22 | `realYield` | Decimal | Optional | Real yield (inflation-adjusted, %) | `1.25` | reda.041 — `Debt/RealYld` |
 
-### 6.2 Bond Credit & Seniority
+### 6.2 Bond Tax & Regulatory
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 14 | `creditRating` | String | Optional | Primary credit rating | `"AA+"` | reda.041 — `Debt/CdtRtg/Rtg` |
-| 15 | `ratingAgency` | String | Optional | Rating agency name | `"S&P"`, `"Moody's"`, `"Fitch"` | reda.041 — `Debt/CdtRtg/RtgAgncy` |
-| 16 | `seniority` | Enum | Optional | Debt seniority ranking | See [Appendix A.12](#a12-senioritytype) | reda.041 — `Debt/SnrtyTp` |
-| 17 | `securedType` | Enum | Optional | Secured/unsecured classification | See [Appendix A.13](#a13-securedtype) | reda.041 — `Debt/ScrdTp` |
-| 18 | `guarantor` | String | Optional | Name of guarantor entity (if any) | `"US Government"` | reda.041 — `Debt/Guarntr/Nm` |
-| 19 | `covenants` | String | Optional | Summary of key covenants | `"Negative pledge, cross-default"` | reda.041 — `Debt/Cvnts` |
-| 20 | `defaultStatus` | Boolean | Optional | Whether the bond is currently in default | `false` | reda.041 — `Debt/DfltSts` |
+| 23 | `withholdingTaxRate` | Decimal | Optional | Withholding tax rate on coupon (%) | `15.00` | reda.041 — `Debt/TaxDtls/WhldgTaxRate` |
+| 24 | `taxExemptStatus` | Enum | Optional | Tax exemption status | `"TAXABLE"`, `"TAX_EXEMPT"`, `"PARTIALLY_EXEMPT"` | reda.041 — `Debt/TaxDtls/TaxXmptSts` |
+| 25 | `taxExemptInvestorTypes` | String | Optional | Investor types eligible for tax exemption | `"CENTRAL_BANK, SOVEREIGN_FUND"` | reda.041 — `Debt/TaxDtls/XmptInvstrTp` |
+| 26 | `secRegistrationNo` | String | Optional | Securities regulator registration number | `"SEC-TH-2024-001"` | reda.041 — `Debt/RgltryDtls/RegnNb` |
+| 27 | `regulatoryClassification` | String | Optional | Regulatory classification (e.g. BOT, SEC, MAS) | `"BOT_REGISTERED"` | reda.041 — `Debt/RgltryDtls/ClssfctnTp` |
 
-### 6.3 Bond Call/Put Features
+### 6.3 Bond Local Identifiers & Classification
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 21 | `callable` | Boolean | Optional | Whether the bond is callable | `true` | reda.041 — `Debt/CallFeatrs/CallInd` |
-| 22 | `callPrice` | Decimal | Conditional | Call price (% of face). Required if `callable` = `true` | `102.00` | reda.041 — `Debt/CallFeatrs/CallPric` |
-| 23 | `callDate` | Date | Conditional | First call date. Required if `callable` = `true` | `"2029-03-15"` | reda.041 — `Debt/CallFeatrs/CallDt` |
-| 24 | `puttable` | Boolean | Optional | Whether the bond is puttable | `false` | reda.041 — `Debt/PutFeatrs/PutInd` |
-| 25 | `putPrice` | Decimal | Conditional | Put price (% of face). Required if `puttable` = `true` | `100.00` | reda.041 — `Debt/PutFeatrs/PutPric` |
-| 26 | `putDate` | Date | Conditional | First put date. Required if `puttable` = `true` | `"2029-03-15"` | reda.041 — `Debt/PutFeatrs/PutDt` |
+| 28 | `localSymbol` | String | Optional | Local market symbol (e.g. ThaiBMA symbol) | `"LB256A"` | reda.041 — `SctyId/OthrId/Id` (LOCAL) |
+| 29 | `localSymbolSource` | String | Optional | Source of local symbol | `"THAIBMA"`, `"BURSA"`, `"SGX"` | reda.041 — `SctyId/OthrId/IdSrc` |
+| 30 | `localSectorClassification` | String | Optional | Local market sector classification | `"GOVERNMENT"`, `"STATE_ENTERPRISE"`, `"CORPORATE"`, `"FINANCIAL_INSTITUTION"` | reda.041 — `FinInstrmAttrbts/ClssfctnTp` |
+| 31 | `localSubSector` | String | Optional | Local market sub-sector | `"BANKING"`, `"ENERGY"`, `"PROPERTY"` | reda.041 — `FinInstrmAttrbts/SubClssfctnTp` |
 
-### 6.4 Bond Analytics & Metrics
+### 6.4 Bond Issuance Details
+
+| # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 32 | `issueSize` | Decimal | Optional | Total issuance size (face value) | `50000000000.00` | reda.041 — `Debt/TtlIssdNmnlAmt` |
+| 33 | `issueSizeCurrency` | String | Optional | Currency of issue size per ISO 4217 | `"THB"` | reda.041 — `Debt/TtlIssdNmnlAmt/Ccy` |
+| 34 | `issueMethod` | Enum | Optional | Method of issuance | `"AUCTION"`, `"PRIVATE_PLACEMENT"`, `"PUBLIC_OFFERING"`, `"BOOK_BUILDING"`, `"TAP_ISSUE"` | reda.041 — `Debt/IsseMtd` |
+| 35 | `leadManager` | String | Optional | Lead manager / bookrunner | `"Krungthai Bank"` | reda.041 — `Debt/LeadMgr/Nm` |
+| 36 | `leadManagerLei` | String | Optional | LEI of lead manager | `"549300R2YVKC5QQXMV07"` | reda.041 — `Debt/LeadMgr/LEI` |
+| 37 | `sellingGroup` | String | Optional | Selling group / co-managers | `"SCB, BBL, KBANK"` | reda.041 — `Debt/SellgGrp` |
+| 38 | `programName` | String | Optional | Issuance program name (for MTN, CP programs) | `"PTT Global Chemical MTN Programme"` | reda.041 — `Debt/PrgrmNm` |
+
+### 6.5 Bond Settlement & Custody
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 27 | `yieldToMaturity` | Decimal | Optional | Yield to maturity (%) | `5.10` | reda.041 — `Debt/YldToMtrty` |
-| 28 | `duration` | Decimal | Optional | Macaulay duration (years) | `7.25` | reda.041 — `Debt/Drtn` |
-| 29 | `convexity` | Decimal | Optional | Convexity measure | `62.30` | reda.041 — `Debt/Cnvxty` |
-| 30 | `minimumIncrement` | Decimal | Optional | Minimum trading increment | `1000.00` | reda.041 — `TradgDtls/MinIncrmt` |
-| 31 | `poolIdentifier` | String | Optional | Pool ID (for securitized bonds, e.g. MBS) | `"POOL-2024-001"` | reda.041 — `Debt/PoolId` |
-| 32 | `tranche` | String | Optional | Tranche identifier (for structured bonds) | `"A1"` | reda.041 — `Debt/Trnch` |
-| 33 | `series` | String | Optional | Series identifier | `"2024-1"` | reda.041 — `Debt/Srs` |
+| 39 | `csdCode` | String | Optional | Central Securities Depository code | `"TSD"`, `"EUROCLEAR"`, `"CLEARSTREAM"`, `"DTC"` | reda.041 — `SttlmDtls/CSD/Id` |
+| 40 | `csdAccountId` | String | Optional | CSD account identifier | `"TSD-ACC-001"` | reda.041 — `SttlmDtls/CSD/AcctId` |
+| 41 | `registrarAgent` | String | Optional | Bond registrar / transfer agent | `"Thailand Securities Depository"` | reda.041 — `SttlmDtls/Regar/Nm` |
+| 42 | `payingAgent` | String | Optional | Paying agent for coupon/principal payments | `"Bank of Thailand"` | reda.041 — `SttlmDtls/PngAgt/Nm` |
+| 43 | `settlementLocation` | String | Optional | Settlement location / market | `"THAILAND"`, `"EUROCLEAR"` | reda.041 — `SttlmDtls/SttlmPlc` |
 
-### 6.5 Bond Additional Data — Credit Analysis
+### 6.6 Bond ESG / Green Bond Classification
+
+| # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 44 | `greenBondFlag` | Boolean | Optional | Whether the bond is classified as a green/sustainable bond | `true` | reda.041 — `Debt/SstnbltyInd` |
+| 45 | `esgClassification` | Enum | Optional | ESG bond classification | `"GREEN"`, `"SOCIAL"`, `"SUSTAINABILITY"`, `"SUSTAINABILITY_LINKED"`, `"TRANSITION"`, `"BLUE"` | reda.041 — `Debt/SstnbltyClssfctn` |
+| 46 | `useOfProceeds` | String | Optional | Intended use of proceeds | `"Renewable energy, clean transportation"` | reda.041 — `Debt/UseOfPrcds` |
+| 47 | `externalReviewProvider` | String | Optional | External review / second-party opinion provider | `"Sustainalytics"`, `"CICERO"`, `"DNV"` | reda.041 — `Debt/XtrnlRvwPrvdr` |
+| 48 | `esgFramework` | String | Optional | Framework or standard followed | `"ICMA Green Bond Principles"`, `"CBI Standard"` | reda.041 — `Debt/SstnbltyFrmwrk` |
+
+### 6.7 Bond Credit & Seniority
+
+| # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 49 | `creditRating` | String | Optional | Primary credit rating | `"AA+"` | reda.041 — `Debt/CdtRtg/Rtg` |
+| 50 | `ratingAgency` | String | Optional | Rating agency name | `"S&P"`, `"Moody's"`, `"Fitch"` | reda.041 — `Debt/CdtRtg/RtgAgncy` |
+| 51 | `seniority` | Enum | Optional | Debt seniority ranking | See [Appendix A.12](#a12-senioritytype) | reda.041 — `Debt/SnrtyTp` |
+| 52 | `securedType` | Enum | Optional | Secured/unsecured classification | See [Appendix A.13](#a13-securedtype) | reda.041 — `Debt/ScrdTp` |
+| 53 | `guarantor` | String | Optional | Name of guarantor entity (if any) | `"US Government"` | reda.041 — `Debt/Guarntr/Nm` |
+| 54 | `covenants` | String | Optional | Summary of key covenants | `"Negative pledge, cross-default"` | reda.041 — `Debt/Cvnts` |
+| 55 | `defaultStatus` | Boolean | Optional | Whether the bond is currently in default | `false` | reda.041 — `Debt/DfltSts` |
+
+### 6.8 Bond Call/Put Features
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 56 | `callable` | Boolean | Optional | Whether the bond is callable | `true` | reda.041 — `Debt/CallFeatrs/CallInd` |
+| 57 | `callPrice` | Decimal | Conditional | Call price (% of face). Required if `callable` = `true` | `102.00` | reda.041 — `Debt/CallFeatrs/CallPric` |
+| 58 | `callDate` | Date | Conditional | First call date. Required if `callable` = `true` | `"2029-03-15"` | reda.041 — `Debt/CallFeatrs/CallDt` |
+| 59 | `puttable` | Boolean | Optional | Whether the bond is puttable | `false` | reda.041 — `Debt/PutFeatrs/PutInd` |
+| 60 | `putPrice` | Decimal | Conditional | Put price (% of face). Required if `puttable` = `true` | `100.00` | reda.041 — `Debt/PutFeatrs/PutPric` |
+| 61 | `putDate` | Date | Conditional | First put date. Required if `puttable` = `true` | `"2029-03-15"` | reda.041 — `Debt/PutFeatrs/PutDt` |
+
+### 6.9 Bond Analytics & Structured Products
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 62 | `yieldToMaturity` | Decimal | Optional | Yield to maturity (%) | `5.10` | reda.041 — `Debt/YldToMtrty` |
+| 63 | `duration` | Decimal | Optional | Macaulay duration (years) | `7.25` | reda.041 — `Debt/Drtn` |
+| 64 | `convexity` | Decimal | Optional | Convexity measure | `62.30` | reda.041 — `Debt/Cnvxty` |
+| 65 | `minimumIncrement` | Decimal | Optional | Minimum trading increment | `1000.00` | reda.041 — `TradgDtls/MinIncrmt` |
+| 66 | `poolIdentifier` | String | Optional | Pool ID (for securitized bonds, e.g. MBS) | `"POOL-2024-001"` | reda.041 — `Debt/PoolId` |
+| 67 | `tranche` | String | Optional | Tranche identifier (for structured bonds) | `"A1"` | reda.041 — `Debt/Trnch` |
+| 68 | `series` | String | Optional | Series identifier | `"2024-1"` | reda.041 — `Debt/Srs` |
+
+### 6.10 Bond Credit Analysis
 
 Provide if available. Critical for RM credit risk assessment.
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 34 | `creditRatingMoodys` | String | Optional | Moody's credit rating | `"Aa1"` | reda.041 — `Debt/CdtRtg/Rtg` (Moody's) |
-| 35 | `creditRatingSP` | String | Optional | S&P credit rating | `"AA+"` | reda.041 — `Debt/CdtRtg/Rtg` (S&P) |
-| 36 | `creditRatingFitch` | String | Optional | Fitch credit rating | `"AA+"` | reda.041 — `Debt/CdtRtg/Rtg` (Fitch) |
-| 37 | `creditSpread` | Decimal | Optional | Credit spread over benchmark (basis points) | `85.00` | semt.002 — `FinInstrmDtls/CdtSprd` |
-| 38 | `zSpread` | Decimal | Optional | Zero-volatility spread (basis points) | `92.00` | semt.002 — `FinInstrmDtls/ZSprd` |
-| 39 | `oas` | Decimal | Optional | Option-adjusted spread (basis points) | `78.00` | semt.002 — `FinInstrmDtls/OptnAdjstdSprd` |
-| 40 | `probabilityOfDefault` | Decimal | Optional | Probability of default (%) | `0.05` | — (supplementary) |
-| 41 | `lossGivenDefault` | Decimal | Optional | Loss given default (%) | `40.00` | — (supplementary) |
-| 42 | `recoveryRate` | Decimal | Optional | Expected recovery rate (%) | `60.00` | — (supplementary) |
+| 69 | `creditRatingMoodys` | String | Optional | Moody's credit rating | `"Aa1"` | reda.041 — `Debt/CdtRtg/Rtg` (Moody's) |
+| 70 | `creditRatingSP` | String | Optional | S&P credit rating | `"AA+"` | reda.041 — `Debt/CdtRtg/Rtg` (S&P) |
+| 71 | `creditRatingFitch` | String | Optional | Fitch credit rating | `"AA+"` | reda.041 — `Debt/CdtRtg/Rtg` (Fitch) |
+| 72 | `creditRatingTris` | String | Optional | TRIS Rating (Thai local agency) | `"AAA"` | reda.041 — `Debt/CdtRtg/Rtg` (TRIS) |
+| 73 | `creditRatingFitchThai` | String | Optional | Fitch Ratings (Thailand) local rating | `"AA+(tha)"` | reda.041 — `Debt/CdtRtg/Rtg` (Fitch Thai) |
+| 74 | `ratingOutlook` | Enum | Optional | Credit rating outlook | `"STABLE"`, `"POSITIVE"`, `"NEGATIVE"`, `"DEVELOPING"`, `"NOT_RATED"` | reda.041 — `Debt/CdtRtg/Otlk` |
+| 75 | `ratingDate` | Date | Optional | Date of the most recent rating action | `"2025-11-15"` | reda.041 — `Debt/CdtRtg/RtgDt` |
+| 76 | `creditSpread` | Decimal | Optional | Credit spread over benchmark (basis points) | `85.00` | semt.002 — `FinInstrmDtls/CdtSprd` |
+| 77 | `zSpread` | Decimal | Optional | Zero-volatility spread (basis points) | `92.00` | semt.002 — `FinInstrmDtls/ZSprd` |
+| 78 | `oas` | Decimal | Optional | Option-adjusted spread (basis points) | `78.00` | semt.002 — `FinInstrmDtls/OptnAdjstdSprd` |
+| 79 | `probabilityOfDefault` | Decimal | Optional | Probability of default (%) | `0.05` | — (supplementary) |
+| 80 | `lossGivenDefault` | Decimal | Optional | Loss given default (%) | `40.00` | — (supplementary) |
+| 81 | `recoveryRate` | Decimal | Optional | Expected recovery rate (%) | `60.00` | — (supplementary) |
 
-### 6.6 Bond Additional Data — Bond Metrics
+### 6.11 Bond Benchmark & Spread Analysis
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 43 | `macaulayDuration` | Decimal | Optional | Macaulay duration (years) | `7.25` | semt.002 — `FinInstrmDtls/Drtn` |
-| 44 | `modifiedDuration` | Decimal | Optional | Modified duration | `6.90` | semt.002 — `FinInstrmDtls/ModfdDrtn` |
-| 45 | `effectiveDuration` | Decimal | Optional | Effective duration (for bonds with optionality) | `6.50` | semt.002 — `FinInstrmDtls/FctvDrtn` |
-| 46 | `dv01` | Decimal | Optional | Dollar value of a basis point (per $1M face) | `690.00` | semt.002 — `FinInstrmDtls/DV01` |
-| 47 | `convexity` | Decimal | Optional | Convexity measure (additional analytics) | `62.30` | semt.002 — `FinInstrmDtls/Cnvxty` |
-| 48 | `yieldToWorst` | Decimal | Optional | Yield to worst (%) | `4.85` | semt.002 — `FinInstrmDtls/YldToWrst` |
-| 49 | `yieldToCall` | Decimal | Optional | Yield to call (%) | `4.90` | semt.002 — `FinInstrmDtls/YldToCall` |
-| 50 | `yieldToPut` | Decimal | Optional | Yield to put (%) | `5.00` | semt.002 — `FinInstrmDtls/YldToPut` |
-| 51 | `currentYield` | Decimal | Optional | Current yield (%) | `5.25` | semt.002 — `FinInstrmDtls/CurYld` |
-| 52 | `accruedInterest` | Decimal | Optional | Accrued interest per unit | `13.15` | semt.002 — `FinInstrmDtls/AcrdIntrst` |
+| 82 | `benchmarkBondId` | String | Optional | Reference benchmark bond ID (e.g. government bond) | `"TH-GOV-10Y"` | semt.002 — `FinInstrmDtls/BchmrkBnd/Id` |
+| 83 | `benchmarkBondIsin` | String | Optional | ISIN of the benchmark bond | `"TH0623A3C603"` | semt.002 — `FinInstrmDtls/BchmrkBnd/ISIN` |
+| 84 | `benchmarkSpread` | Decimal | Optional | Spread over benchmark bond (basis points) | `45.00` | semt.002 — `FinInstrmDtls/BchmrkSprd` |
+| 85 | `gSpread` | Decimal | Optional | G-spread: spread over interpolated government yield curve (bps) | `52.00` | semt.002 — `FinInstrmDtls/GSprd` |
+| 86 | `iSpread` | Decimal | Optional | I-spread: spread over swap curve (bps) | `48.00` | semt.002 — `FinInstrmDtls/ISprd` |
+| 87 | `assetSwapSpread` | Decimal | Optional | Asset swap spread (bps) | `55.00` | semt.002 — `FinInstrmDtls/AsstSwpSprd` |
 
-### 6.7 Bond Market Data Feed
+### 6.12 Bond Yield Curve Reference
 
-> **Source:** Real-time or end-of-day market data feed. These fields are updated intraday or at market close and are distinct from static reference data (Section 6.1–6.6) and portfolio valuation (Section 7).
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 88 | `interpolatedYield` | Decimal | Optional | Interpolated yield from reference curve (%) | `2.85` | semt.002 — `FinInstrmDtls/IntrpltdYld` |
+| 89 | `parYield` | Decimal | Optional | Par yield at matching tenor (%) | `2.80` | semt.002 — `FinInstrmDtls/ParYld` |
+| 90 | `zeroRate` | Decimal | Optional | Zero-coupon (spot) rate at matching tenor (%) | `2.82` | semt.002 — `FinInstrmDtls/ZeroRate` |
+| 91 | `forwardRate` | Decimal | Optional | Implied forward rate (%) | `3.10` | semt.002 — `FinInstrmDtls/FwdRate` |
+| 92 | `yieldCurveType` | Enum | Optional | Type of yield curve used | `"GOVERNMENT"`, `"CORPORATE_AAA"`, `"CORPORATE_AA"`, `"SWAP"` | semt.002 — `FinInstrmDtls/YldCrvTp` |
+| 93 | `yieldCurveDate` | Date | Optional | Date of the yield curve snapshot | `"2026-02-08"` | semt.002 — `FinInstrmDtls/YldCrvDt` |
 
-#### 6.7.1 Key Fields
+### 6.13 Bond Official Mark-to-Market
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 94 | `officialMtmPrice` | Decimal | Optional | Official mark-to-market price (% of face value) | `99.85` | semt.002 — `MktPric/OffclPric` |
+| 95 | `officialMtmYield` | Decimal | Optional | Official MTM yield (%) | `5.12` | semt.002 — `MktPric/OffclYld` |
+| 96 | `mtmSource` | String | Optional | Source of official MTM price | `"THAIBMA"`, `"BLOOMBERG_BVAL"`, `"REFINITIV"` | semt.002 — `MktPric/OffclPricSrc` |
+| 97 | `mtmDate` | Date | Optional | Date of the official MTM valuation | `"2026-02-08"` | semt.002 — `MktPric/OffclPricDt` |
+| 98 | `valuationYield` | Decimal | Optional | Yield used for NAV/portfolio valuation (%) | `5.10` | semt.002 — `MktPric/ValtnYld` |
+
+### 6.14 Bond Duration & Risk Metrics
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 99 | `macaulayDuration` | Decimal | Optional | Macaulay duration (years) | `7.25` | semt.002 — `FinInstrmDtls/Drtn` |
+| 100 | `modifiedDuration` | Decimal | Optional | Modified duration | `6.90` | semt.002 — `FinInstrmDtls/ModfdDrtn` |
+| 101 | `effectiveDuration` | Decimal | Optional | Effective duration (for bonds with optionality) | `6.50` | semt.002 — `FinInstrmDtls/FctvDrtn` |
+| 102 | `dv01` | Decimal | Optional | Dollar value of a basis point (per $1M face) | `690.00` | semt.002 — `FinInstrmDtls/DV01` |
+| 103 | `convexity` | Decimal | Optional | Convexity measure (additional analytics) | `62.30` | semt.002 — `FinInstrmDtls/Cnvxty` |
+| 104 | `yieldToWorst` | Decimal | Optional | Yield to worst (%) | `4.85` | semt.002 — `FinInstrmDtls/YldToWrst` |
+| 105 | `yieldToCall` | Decimal | Optional | Yield to call (%) | `4.90` | semt.002 — `FinInstrmDtls/YldToCall` |
+| 106 | `yieldToPut` | Decimal | Optional | Yield to put (%) | `5.00` | semt.002 — `FinInstrmDtls/YldToPut` |
+| 107 | `currentYield` | Decimal | Optional | Current yield (%) | `5.25` | semt.002 — `FinInstrmDtls/CurYld` |
+| 108 | `accruedInterest` | Decimal | Optional | Accrued interest per unit | `13.15` | semt.002 — `FinInstrmDtls/AcrdIntrst` |
+
+### 6.15 Bond Investor Holdings
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 109 | `foreignHoldingPct` | Decimal | Optional | Foreign investor holding (%) | `15.30` | semt.002 — `HldgDtls/FrgnHldgPct` |
+| 110 | `localInstitutionalPct` | Decimal | Optional | Local institutional investor holding (%) | `55.20` | semt.002 — `HldgDtls/LclInstlHldgPct` |
+| 111 | `retailHoldingPct` | Decimal | Optional | Retail investor holding (%) | `8.50` | semt.002 — `HldgDtls/RtlHldgPct` |
+| 112 | `centralBankHoldingPct` | Decimal | Optional | Central bank / sovereign holding (%) | `21.00` | semt.002 — `HldgDtls/CntrlBkHldgPct` |
+| 113 | `holdingsDate` | Date | Optional | Date of holdings data snapshot | `"2026-01-31"` | semt.002 — `HldgDtls/HldgDt` |
+
+### 6.16 Bond Repo & Lending
+
+| # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 114 | `repoEligible` | Boolean | Optional | Whether the bond is eligible for repo transactions | `true` | reda.041 — `Debt/RepoElgblty` |
+| 115 | `repoRate` | Decimal | Optional | General collateral repo rate (%) | `1.75` | semt.002 — `FinInstrmDtls/RepoRate` |
+| 116 | `specialnessSpread` | Decimal | Optional | Specialness spread over GC rate (bps) — indicates demand for specific bond | `25.00` | semt.002 — `FinInstrmDtls/SpclnssSprd` |
+| 117 | `lendingAvailability` | Enum | Optional | Securities lending availability | `"AVAILABLE"`, `"LIMITED"`, `"UNAVAILABLE"`, `"ON_SPECIAL"` | semt.002 — `FinInstrmDtls/LndgAvlblty` |
+| 118 | `lendingFee` | Decimal | Optional | Securities lending fee (bps) | `10.00` | semt.002 — `FinInstrmDtls/LndgFee` |
+
+### 6.17 Bond Market Data Feed
+
+> **Source:** Real-time or end-of-day market data feed. These fields are updated intraday or at market close and are distinct from static reference data (Section 6.1–6.16) and portfolio valuation (Section 7).
+
+#### 6.17.1 Key Fields
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -461,7 +577,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 4 | `currency` | String | Required | Price currency per ISO 4217 | `"USD"` | semt.002 — `MktPric/Ccy` |
 | 5 | `source` | String | Optional | Pricing source | `"Bloomberg"`, `"Reuters"` | semt.002 — `MktPric/SrcOfPric` |
 
-#### 6.7.2 Bond Prices
+#### 6.17.2 Bond Prices
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -477,7 +593,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 15 | `dirtyPrice` | Decimal | Optional | Dirty price (incl. accrued interest) | `101.05` | semt.002 — `MktPric/DrtyPric` |
 | 16 | `volumeWeightedAveragePrice` | Decimal | Optional | VWAP (% of face value) | `99.88` | semt.002 — `MktPric/VWAP` |
 
-#### 6.7.3 Bond Yields (Market Data)
+#### 6.17.3 Bond Yields (Market Data)
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -486,7 +602,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 19 | `midYield` | Decimal | Optional | Mid yield (%) | `5.25` | semt.002 — `MktPric/MdYld` |
 | 20 | `lastTradeYield` | Decimal | Optional | Last traded yield (%) | `5.26` | semt.002 — `MktPric/LastTradYld` |
 
-#### 6.7.4 Bond Volume & Liquidity
+#### 6.17.4 Bond Volume & Liquidity
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -495,13 +611,16 @@ Provide if available. Critical for RM credit risk assessment.
 | 23 | `numberOfTrades` | Int | Optional | Number of trades in session | `85` | semt.002 — `MktPric/NbOfTrds` |
 | 24 | `outstandingAmount` | Decimal | Optional | Total outstanding face value | `500000000.00` | reda.041 — `Debt/OutstndgAmt` |
 | 25 | `liquidityScore` | Decimal | Optional | Liquidity score (0–100) | `72.50` | — (supplementary) |
-| 26 | `lastUpdateTime` | DateTime | Optional | Last market data update time | `"2026-02-08T16:00:00Z"` | semt.002 — `MktPric/LastUpdtTm` |
+| 26 | `turnoverRatio` | Decimal | Optional | Turnover ratio (volume / outstanding, %) | `10.00` | semt.002 — `MktPric/TrnvrRatio` |
+| 27 | `bidAskSpreadAvg` | Decimal | Optional | Average bid-ask spread (bps, 30-day) | `8.50` | semt.002 — `MktPric/AvrgBdAskSprd` |
+| 28 | `daysTraded30d` | Int | Optional | Number of days traded in last 30 days | `22` | semt.002 — `MktPric/DysTrdd` |
+| 29 | `lastUpdateTime` | DateTime | Optional | Last market data update time | `"2026-02-08T16:00:00Z"` | semt.002 — `MktPric/LastUpdtTm` |
 
-### 6.8 Bond Cashflow Schedule
+### 6.18 Bond Cashflow Schedule
 
 > **Source:** Generated from bond terms at issuance or recalculated on coupon reset / amortisation events. Linked to the bond record via `assetId`. One row per scheduled cashflow.
 
-#### 6.8.1 Key Fields
+#### 6.18.1 Key Fields
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -509,7 +628,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 2 | `isin` | String | Required | ISIN of the bond (alternative key) | `"US912828Z784"` | reda.041 — `FinInstrmId/ISIN` |
 | 3 | `cashflowId` | String | Required | Unique identifier for this cashflow entry | `"CF-BD001-20240915-CPN"` | reda.041 — `CshFlwId` |
 
-#### 6.8.2 Cashflow Details
+#### 6.18.2 Cashflow Details
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -519,7 +638,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 7 | `currency` | String | Required | Payment currency per ISO 4217 | `"USD"` | reda.041 — `CshFlwCcy` |
 | 8 | `couponRate` | Decimal | Conditional | Applicable coupon rate for this period (%). Required if `cashflowType` = `COUPON` | `5.00` | reda.041 — `Debt/IntrstRate` |
 
-#### 6.8.3 Accrual Period
+#### 6.18.3 Accrual Period
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -528,7 +647,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 11 | `dayCountFraction` | Decimal | Optional | Day count fraction for this accrual period | `0.50` | reda.041 — `Debt/DayCntFrctn` |
 | 12 | `dayCountBasis` | Enum | Optional | Day count convention used | See [Appendix A.10](#a10-daycountbasis) | reda.041 — `Debt/DayCntBsis` |
 
-#### 6.8.4 Record & Payment Dates
+#### 6.18.4 Record & Payment Dates
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -537,7 +656,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 15 | `paymentDate` | Date | Optional | Actual payment settlement date (if different from `cashflowDate`) | `"2024-09-17"` | reda.041 — `PmtDt` |
 | 16 | `paymentStatus` | Enum | Optional | Status of the cashflow | `"SCHEDULED"`, `"CONFIRMED"`, `"PAID"`, `"MISSED"`, `"DEFERRED"` | reda.041 — `PmtSts` |
 
-#### 6.8.5 Principal & Notional
+#### 6.18.5 Principal & Notional
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -546,7 +665,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 19 | `principalAmount` | Decimal | Conditional | Principal repayment amount. Required if `cashflowType` ∈ {`PRINCIPAL`, `AMORTIZATION`, `SINKING_FUND`, `PARTIAL_REDEMPTION`} | `100.00` | reda.041 — `Debt/PrncplAmt` |
 | 20 | `redemptionPrice` | Decimal | Optional | Redemption price (% of face value) for call/put/maturity | `100.00` | reda.041 — `Debt/RedPric` |
 
-#### 6.8.6 Floating Rate (if applicable)
+#### 6.18.6 Floating Rate (if applicable)
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
