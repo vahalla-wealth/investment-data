@@ -6,7 +6,7 @@
 |---|---|
 | **Document Title** | Investment Module - Equity & Bond Specification |
 | **System** | Vahalla Wealth Management System |
-| **Document Version** | 1.5 |
+| **Document Version** | 1.6 |
 | **Date** | 2026-02-09 |
 | **Classification** | Confidential |
 | **Status** | Draft |
@@ -21,7 +21,8 @@
 | 1.2 | 2025-12-05 | Vahalla System Team | Added Bond Additional Data sections (credit analysis, bond metrics, call/put features); added Appendix A enum reference tables |
 | 1.3 | 2026-01-14 | Vahalla System Team | Added Equity & Bond Market Data Feed sections with OHLC, VWAP, bid/ask, volume; merged Asset Price into Market Data Feeds |
 | 1.4 | 2026-01-28 | Vahalla System Team | Added Equity Dividend Schedule, Bond Cashflow Schedule, and Corporate Actions entities; restructured field numbering per entity |
-| 1.5 | 2026-02-09 | Vahalla System Team | Added Entity Summary table (Section 3.5); added key fields (assetId, isin, timestamp) to all feed entities; renumbered all sections |
+| 1.5 | 2026-02-05 | Vahalla System Team | Added Entity Summary table (Section 3.5); added key fields (assetId, isin, timestamp) to all feed entities; renumbered all sections |
+| 1.6 | 2026-02-09 | Vahalla System Team | ThaiBMA alignment — added bond coupon type, amortization, inflation-linked, tax & regulatory, local identifiers (ThaiBMA symbol), issuance details, settlement & custody (TSD), ESG/green bond, local credit ratings (TRIS, Fitch Thai), benchmark & spread analysis, yield curve reference, official MTM pricing, investor holdings, repo & lending; added turnover metrics to Bond Market Data Feed |
 
 ---
 
