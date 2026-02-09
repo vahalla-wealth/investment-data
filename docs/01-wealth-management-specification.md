@@ -6,7 +6,7 @@
 |---|---|
 | **Document Title** | Wealth Management Module — Client, Account, Portfolio, Position, Transaction, Order & FX Deposit |
 | **System** | Vahalla Wealth Management System |
-| **Document Version** | 1.0 |
+| **Document Version** | 1.3 |
 | **Date** | 2026-02-09 |
 | **Classification** | Confidential |
 | **Status** | Draft |
@@ -17,6 +17,9 @@
 | Version | Date | Author | Description |
 |---|---|---|---|
 | 1.0 | 2025-06-09 | Vahalla System Team | Initial draft — Wealth Management domain specification |
+| 1.1 | 2025-09-15 | Vahalla System Team | Added Transaction & Order entities; added FX Deposit entity; expanded Account with margin and tax fields |
+| 1.2 | 2025-12-10 | Vahalla System Team | Added Portfolio risk metrics and allocation breakdown; added Position cost & valuation fields; added entity relationship diagram |
+| 1.3 | 2026-12-22 | Vahalla System Team | Added `valuationMethod` and `pricingSource` to Position; renumbered Position fields; updated cross-references to Equity & Bond specification (doc 02) |
 
 ---
 
