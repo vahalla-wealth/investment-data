@@ -390,42 +390,44 @@ graph TD
 | 15 | `marketValue` | Decimal | Optional | Current market value | `1855000.00` | semt.003 — `BalForAcct/HldgVal/Amt` |
 | 16 | `valuationCurrency` | String | Optional | Valuation currency per ISO 4217 | `"USD"` | semt.003 — `BalForAcct/HldgVal/Amt/@Ccy` |
 | 17 | `valuationDate` | DateTime | Optional | Valuation date | `"2026-02-08T16:00:00Z"` | semt.003 — `BalForAcct/PricDtls/PricDt` |
+| 18 | `valuationMethod` | Enum | Optional | Valuation methodology used | `"MARK_TO_MARKET"`, `"MARK_TO_MODEL"`, `"MARK_TO_MANAGEMENT"`, `"THEORETICAL_PRICING"`, `"VENDOR_PRICING"` | semt.003 — `BalForAcct/PricDtls/ValtnMtd` |
+| 19 | `pricingSource` | String | Optional | Source of pricing data used for valuation | `"Bloomberg"`, `"Reuters"`, `"THAIBMA"` | semt.003 — `BalForAcct/PricDtls/PricgSrc` |
 
 ### 8.4 Position P&L
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 18 | `unrealizedPnL` | Decimal | Optional | Unrealized profit/loss | `205000.00` | semt.003 — `BalForAcct/UnrlsdGnOrLoss` |
-| 19 | `unrealizedPnLPercent` | Decimal | Optional | Unrealized P&L (%) | `12.42` | — (supplementary) |
-| 20 | `realizedPnL` | Decimal | Optional | Realized profit/loss | `45000.00` | — (supplementary) |
-| 21 | `totalPnL` | Decimal | Optional | Total P&L | `250000.00` | — (supplementary) |
+| 20 | `unrealizedPnL` | Decimal | Optional | Unrealized profit/loss | `205000.00` | semt.003 — `BalForAcct/UnrlsdGnOrLoss` |
+| 21 | `unrealizedPnLPercent` | Decimal | Optional | Unrealized P&L (%) | `12.42` | — (supplementary) |
+| 22 | `realizedPnL` | Decimal | Optional | Realized profit/loss | `45000.00` | — (supplementary) |
+| 23 | `totalPnL` | Decimal | Optional | Total P&L | `250000.00` | — (supplementary) |
 
 ### 8.5 Position Income
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 22 | `accruedInterest` | Decimal | Optional | Accrued interest | `0.00` | semt.003 — `BalForAcct/AccrdIntrstAmt` |
-| 23 | `accruedDividend` | Decimal | Optional | Accrued dividend | `550.00` | — (supplementary) |
+| 24 | `accruedInterest` | Decimal | Optional | Accrued interest | `0.00` | semt.003 — `BalForAcct/AccrdIntrstAmt` |
+| 25 | `accruedDividend` | Decimal | Optional | Accrued dividend | `550.00` | — (supplementary) |
 
 ### 8.6 Position Weight & Settlement
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 24 | `portfolioWeight` | Decimal | Optional | Weight in portfolio (%) | `15.50` | — (supplementary) |
-| 25 | `settledQuantity` | Decimal | Optional | Settled quantity | `10000` | semt.003 — `BalForAcct/AvlblBal/Qty` |
-| 26 | `unsettledQuantity` | Decimal | Optional | Unsettled quantity | `0` | semt.003 — `BalForAcct/NotAvlblBal/Qty` |
+| 26 | `portfolioWeight` | Decimal | Optional | Weight in portfolio (%) | `15.50` | — (supplementary) |
+| 27 | `settledQuantity` | Decimal | Optional | Settled quantity | `10000` | semt.003 — `BalForAcct/AvlblBal/Qty` |
+| 28 | `unsettledQuantity` | Decimal | Optional | Unsettled quantity | `0` | semt.003 — `BalForAcct/NotAvlblBal/Qty` |
 
 ### 8.7 Position Dates & Relationships
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 27 | `openDate` | DateTime | Required | Position open date | `"2024-06-15T10:30:00Z"` | — (supplementary) |
-| 28 | `lastTradeDate` | DateTime | Optional | Last trade date | `"2026-01-20T14:00:00Z"` | — (supplementary) |
-| 29 | `maturityDate` | DateTime | Optional | Maturity date (bonds) | `null` | semt.003 — `FinInstrmAttrbts/MtrtyDt` |
-| 30 | `accountId` | ID | Required | Parent account identifier | `"ACC-001234"` | semt.003 — `SfkpgAcct/Id` |
-| 31 | `portfolioId` | ID | Optional | Parent portfolio identifier | `"PF-001234"` | semt.003 — `SfkpgAcct/Dsgnt` |
-| 32 | `createdAt` | DateTime | Required | Record creation timestamp | `"2024-06-15T10:30:00Z"` | — (supplementary) |
-| 33 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-08T16:00:00Z"` | — (supplementary) |
+| 29 | `openDate` | DateTime | Required | Position open date | `"2024-06-15T10:30:00Z"` | — (supplementary) |
+| 30 | `lastTradeDate` | DateTime | Optional | Last trade date | `"2026-01-20T14:00:00Z"` | — (supplementary) |
+| 31 | `maturityDate` | DateTime | Optional | Maturity date (bonds) | `null` | semt.003 — `FinInstrmAttrbts/MtrtyDt` |
+| 32 | `accountId` | ID | Required | Parent account identifier | `"ACC-001234"` | semt.003 — `SfkpgAcct/Id` |
+| 33 | `portfolioId` | ID | Optional | Parent portfolio identifier | `"PF-001234"` | semt.003 — `SfkpgAcct/Dsgnt` |
+| 34 | `createdAt` | DateTime | Required | Record creation timestamp | `"2024-06-15T10:30:00Z"` | — (supplementary) |
+| 35 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-08T16:00:00Z"` | — (supplementary) |
 
 ---
 

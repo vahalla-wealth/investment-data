@@ -114,8 +114,7 @@ This document defines the following entities. Each entity has its own field numb
 | **Bond** | Section 6.1–6.16 | 118 | Bond-specific fields: coupon, amortization, inflation-linked, tax, local identifiers, issuance, settlement, ESG, credit, call/put, analytics, benchmark, yield curve, MTM, duration, investor holdings, repo/lending | `reda.041`, `semt.002` | Static / Daily |
 | **Bond Market Data** | Section 6.17 | 29 | Real-time / EOD market data feed for bonds: prices, yields, clean/dirty, volume, liquidity, turnover, source | `semt.002` | Intraday / EOD |
 | **Bond Cashflow Schedule** | Section 6.18 | 25 | Projected coupon, principal, and redemption cashflows per bond: accrual, payment dates, floating rate | `reda.041` | On issuance / On change |
-| **Asset Valuation** | Section 7 | 8 | Portfolio valuation linked via `assetId`: market value, book value, method, source | `semt.002` | Daily |
-| **Corporate Actions** | Section 8 | 37 | Corporate action events for equity and bond: splits, mergers, dividends, calls, tenders | `seev.031` | On event / Daily |
+| **Corporate Actions** | Section 7 | 37 | Corporate action events for equity and bond: splits, mergers, dividends, calls, tenders | `seev.031` | On event / Daily |
 
 > **Note:** Field `#` restarts from 1 for each entity. When combining entities in a CSV file, use the field name (not `#`) as the unique column identifier.
 
@@ -274,7 +273,7 @@ Provide if available. Sourced from latest financial statements.
 
 ### 5.7 Equity Market Data Feed
 
-> **Source:** Real-time or end-of-day market data feed. These fields are updated intraday or at market close and are distinct from static reference data (Section 5.1–5.4) and portfolio valuation (Section 7).
+> **Source:** Real-time or end-of-day market data feed. These fields are updated intraday or at market close and are distinct from static reference data (Section 5.1–5.4). Portfolio-level valuation is handled by the Position entity ([01 — Wealth Management Specification](01-wealth-management-specification.md)).
 
 #### 5.7.1 Key Fields
 
@@ -566,7 +565,7 @@ Provide if available. Critical for RM credit risk assessment.
 
 ### 6.17 Bond Market Data Feed
 
-> **Source:** Real-time or end-of-day market data feed. These fields are updated intraday or at market close and are distinct from static reference data (Section 6.1–6.16) and portfolio valuation (Section 7).
+> **Source:** Real-time or end-of-day market data feed. These fields are updated intraday or at market close and are distinct from static reference data (Section 6.1–6.16). Portfolio-level valuation is handled by the Position entity ([01 — Wealth Management Specification](01-wealth-management-specification.md)).
 
 #### 6.17.1 Key Fields
 
@@ -678,30 +677,11 @@ Provide if available. Critical for RM credit risk assessment.
 
 ---
 
-## 7. Asset Valuation Data (Portfolio Valuation)
-
-Provided as a separate data feed, linked to securities via `assetId`. Used for portfolio reporting, NAV calculation, and P&L.
-
-> **Note:** Real-time and end-of-day **pricing** (OHLC, bid/ask, VWAP, volume) is now part of the Market Data Feed entities (Section 5.7 for equity, Section 6.7 for bonds).
-
-| # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
-|---|---|---|---|---|---|---|
-| 1 | `assetId` | String | Required | Reference to the security record ID (foreign key to Section 4 `id`) | `"SEC-001234"` | semt.002 — `FinInstrmId/OthrId/Id` |
-| 2 | `isin` | String | Required | ISIN of the security (alternative key) | `"US0378331005"` | semt.002 — `FinInstrmId/ISIN` |
-| 3 | `valuationDate` | Date | Required | Valuation date | `"2026-02-08"` | semt.002 — `ValtnDt` |
-| 4 | `marketValue` | Decimal | Required | Market value | `1855000.00` | semt.002 — `MktVal/Amt` |
-| 5 | `bookValue` | Decimal | Optional | Book/cost value | `1650000.00` | semt.002 — `BookVal/Amt` |
-| 6 | `currency` | String | Required | Valuation currency per ISO 4217 | `"USD"` | semt.002 — `MktVal/Ccy` |
-| 7 | `valuationMethod` | Enum | Optional | Valuation methodology used | See [Appendix A.14](#a14-valuationmethod) | semt.002 — `ValtnMtd` |
-| 8 | `pricingSource` | String | Optional | Source of pricing data | `"Bloomberg"` | semt.002 — `PricgSrc` |
-
----
-
-## 8. Corporate Actions
+## 7. Corporate Actions
 
 Corporate actions affect both equity and bond securities. This entity captures events that change the structure, ownership, or value of a security. Linked to the security record via `assetId`. One row per corporate action event.
 
-### 8.1 Key Fields
+### 7.1 Key Fields
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -709,7 +689,7 @@ Corporate actions affect both equity and bond securities. This entity captures e
 | 2 | `assetId` | String | Required | Reference to the security record ID (foreign key to Section 4 `id`) | `"SEC-EQ-001"` | seev.031 — `CorpActnGnlInf/FinInstrmId/OthrId/Id` |
 | 3 | `isin` | String | Required | ISIN of the affected security | `"US0378331005"` | seev.031 — `CorpActnGnlInf/FinInstrmId/ISIN` |
 
-### 8.2 Event Classification
+### 7.2 Event Classification
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -718,7 +698,7 @@ Corporate actions affect both equity and bond securities. This entity captures e
 | 6 | `status` | Enum | Required | Processing status | `"ANNOUNCED"`, `"PENDING"`, `"CONFIRMED"`, `"COMPLETED"`, `"CANCELLED"`, `"LAPSED"` | seev.031 — `CorpActnGnlInf/PrcgSts` |
 | 7 | `description` | String | Optional | Free-text description of the event | `"2-for-1 stock split effective March 15, 2026"` | seev.031 — `CorpActnGnlInf/AddtlInf` |
 
-### 8.3 Event Dates
+### 7.3 Event Dates
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -730,7 +710,7 @@ Corporate actions affect both equity and bond securities. This entity captures e
 | 13 | `electionDeadline` | Date | Optional | Deadline for voluntary elections | `"2026-03-10"` | seev.031 — `CorpActnDtls/ElctnDdln` |
 | 14 | `marketDeadline` | Date | Optional | Market-side election deadline | `"2026-03-12"` | seev.031 — `CorpActnDtls/MktDdln` |
 
-### 8.4 Financial Terms — Cash
+### 7.4 Financial Terms — Cash
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -740,7 +720,7 @@ Corporate actions affect both equity and bond securities. This entity captures e
 | 18 | `withholdingTaxRate` | Decimal | Optional | Withholding tax rate (%) | `15.00` | seev.031 — `CorpActnDtls/TaxRate` |
 | 19 | `offerPrice` | Decimal | Optional | Offer/tender price per share | `150.00` | seev.031 — `CorpActnDtls/OfferPric` |
 
-### 8.5 Financial Terms — Securities Movement
+### 7.5 Financial Terms — Securities Movement
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -750,7 +730,7 @@ Corporate actions affect both equity and bond securities. This entity captures e
 | 23 | `fractionalShareTreatment` | Enum | Optional | How fractional shares are handled | `"CASH_IN_LIEU"`, `"ROUND_UP"`, `"ROUND_DOWN"`, `"ROUND_NEAREST"` | seev.031 — `CorpActnDtls/FrctnlShrTrtmnt` |
 | 24 | `subscriptionPrice` | Decimal | Optional | Subscription price for rights issues | `"120.00"` | seev.031 — `CorpActnDtls/SbcptPric` |
 
-### 8.6 Counterparty & Conditions (Mergers / Acquisitions / Tenders)
+### 7.6 Counterparty & Conditions (Mergers / Acquisitions / Tenders)
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -761,7 +741,7 @@ Corporate actions affect both equity and bond securities. This entity captures e
 | 29 | `regulatoryApproval` | Boolean | Optional | Whether regulatory approval is required/obtained | `true` | seev.031 — `CorpActnDtls/RgltryApprvl` |
 | 30 | `conditions` | String | Optional | Summary of conditions for completion | `"Subject to shareholder and regulatory approval"` | seev.031 — `CorpActnDtls/Conds` |
 
-### 8.7 Bond-Specific Corporate Actions
+### 7.7 Bond-Specific Corporate Actions
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -770,7 +750,7 @@ Corporate actions affect both equity and bond securities. This entity captures e
 | 33 | `partialRedemptionFactor` | Decimal | Optional | Partial redemption factor (% of face value redeemed) | `25.00` | seev.031 — `CorpActnDtls/PrtlRedFctr` |
 | 34 | `consentFee` | Decimal | Optional | Consent solicitation fee (per unit) | `5.00` | seev.031 — `CorpActnDtls/CnsntFee` |
 
-### 8.8 Source & Audit
+### 7.8 Source & Audit
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -780,9 +760,9 @@ Corporate actions affect both equity and bond securities. This entity captures e
 
 ---
 
-## 9. Sample Data
+## 8. Sample Data
 
-### 9.1 Equity Example (JSON)
+### 8.1 Equity Example (JSON)
 
 ```json
 {
@@ -848,7 +828,7 @@ Corporate actions affect both equity and bond securities. This entity captures e
 }
 ```
 
-### 9.2 Bond Example (JSON)
+### 8.2 Bond Example (JSON)
 
 ```json
 {
@@ -935,7 +915,7 @@ Corporate actions affect both equity and bond securities. This entity captures e
 }
 ```
 
-### 9.3 Equity Example (CSV)
+### 8.3 Equity Example (CSV)
 
 > Full CSV reference with formatting rules: [02.1 — CSV Sample Data](02.1-sample-data-csv-equity-bond.md)
 
@@ -951,7 +931,7 @@ id,isin,cusip,sedol,ticker,name,assetClass,securityType,equityType,issuer,lei,fi
 SEC-EQ-001,US0378331005,037833100,2046251,AAPL,"Apple Inc. Common Stock",SECURITIES,EQUITY,COMMON,"Apple Inc.",HWUPKR0MPOU8FGXBT394,"APPLE INC/SH",ESVUFR,,USD,US,NASDAQ,XNAS,ACTIVE,BOOK_ENTRY,T_PLUS_2,1980-12-12,,,,2026-01-01T00:00:00Z,2026-02-08T16:00:00Z,"Information Technology","Consumer Electronics",2850000000000.00,15500000000,0.55,1.28,6.42,29.50,true,QUARTERLY,0.00001,,100,100,1.00,UNRESTRICTED,FULLY_PAID,BUY,42,30,10,2,210.00,225.00,394328000000.00,8.10,96995000000.00,10.20,130541000000.00,33.10,30.74,24.60,160.09,28.30,1.87,0.99,0.94,111443000000.00,47.20,7.50,22.30,7.40,2.80,15.40,3.39,58.30,2.15,182.50,175.20,183.10,176.00,195.00,170.00,3.45,54230000,62100000,60.50,0.07,99.93,120000000,1.90,0.80
 ```
 
-### 9.4 Bond Example (CSV)
+### 8.4 Bond Example (CSV)
 
 **Header Row:**
 
@@ -1148,7 +1128,7 @@ ISO 20022: `ValuationBasis1Code` — semt.002 — `ValtnMtd`
 
 ---
 
-## 10. Data Quality Requirements
+## 9. Data Quality Requirements
 
 | Requirement | Description |
 |---|---|
@@ -1162,7 +1142,7 @@ ISO 20022: `ValuationBasis1Code` — semt.002 — `ValtnMtd`
 
 ---
 
-## 11. Contact & Support
+## 10. Contact & Support
 
 For questions regarding this specification, please contact:
 
@@ -1174,22 +1154,22 @@ For questions regarding this specification, please contact:
 
 ---
 
-## 12. Required Data Files from Bank
+## 11. Required Data Files from Bank
 
 The following table lists all data files that the bank must provide to the Vahalla Wealth Management System. Files are grouped by specification document and delivery frequency.
 
-### 12.1 Equity & Bond Data Files (this document)
+### 11.1 Equity & Bond Data Files (this document)
 
 | # | File Name | Description | Frequency | Format | ISO 20022 Reference |
 |---|---|---|---|---|---|
 | 1 | `equity_master.csv` | Equity security master data — all fields from [Section 4](#4-common-security-identification-fields) and [Section 5](#5-equity-data-fields) | Daily | CSV / JSON | reda.041 |
 | 2 | `bond_master.csv` | Bond security master data — all fields from [Section 4](#4-common-security-identification-fields) and [Section 6](#6-bond-fixed-income-data-fields) | Daily | CSV / JSON | reda.041 |
-| 3 | `equity_pricing.csv` | End-of-day equity pricing & valuation data ([Section 7](#7-pricing--valuation-data)) | Daily | CSV / JSON | semt.002 |
-| 4 | `bond_pricing.csv` | End-of-day bond pricing & valuation data ([Section 7](#7-pricing--valuation-data)) | Daily | CSV / JSON | semt.002 |
+| 3 | `equity_pricing.csv` | End-of-day equity market data feed ([Section 5.7](#57-equity-market-data-feed)) | Daily | CSV / JSON | semt.002 |
+| 4 | `bond_pricing.csv` | End-of-day bond market data feed ([Section 6.17](#617-bond-market-data-feed)) | Daily | CSV / JSON | semt.002 |
 | 5 | `equity_analytics.csv` | Analyst ratings, financials, technicals ([Section 5](#5-equity-data-fields) additional) | Daily / Weekly | CSV / JSON | — (supplementary) |
 | 6 | `bond_analytics.csv` | Credit metrics, spread data, risk analytics ([Section 6](#6-bond-fixed-income-data-fields) additional) | Daily / Weekly | CSV / JSON | — (supplementary) |
 
-### 12.2 Wealth Management Data Files ([01 — Wealth Management Specification](01-wealth-management-specification.md))
+### 11.2 Wealth Management Data Files ([01 — Wealth Management Specification](01-wealth-management-specification.md))
 
 | # | File Name | Description | Frequency | Format | ISO 20022 Reference |
 |---|---|---|---|---|---|
@@ -1202,7 +1182,7 @@ The following table lists all data files that the bank must provide to the Vahal
 | 13 | `order.csv` | Order data — order details, quantity, price, execution | Daily | CSV / JSON | setr.001 |
 | 14 | `fx_deposit.csv` | FX deposit data — interest, term, maturity, rollover | Daily | CSV / JSON | camt.052 |
 
-### 12.3 Delivery Schedule
+### 11.3 Delivery Schedule
 
 | Delivery Type | Cutoff Time | Description |
 |---|---|---|
@@ -1211,7 +1191,7 @@ The following table lists all data files that the bank must provide to the Vahal
 | **Weekly** | Monday 06:00 UTC | Analytics and supplementary data (if not daily) |
 | **As Needed** | On change | Relationship manager updates, client onboarding |
 
-### 12.4 File Naming Convention
+### 11.4 File Naming Convention
 
 ```
 {entity}_{date}_{sequence}.{format}
@@ -1229,7 +1209,7 @@ The following table lists all data files that the bank must provide to the Vahal
 - `position_20260208_001.csv`
 - `transaction_20260208_001.json`
 
-### 12.5 Delivery Method
+### 11.5 Delivery Method
 
 | Method | Protocol | Description |
 |---|---|---|
