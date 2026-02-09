@@ -48,12 +48,14 @@ graph TD
     Account -->|holds| Position
     Account -->|records| Transaction
     Account -->|places| Order
-    Account -->|source fund| FXDeposit
+    Account -->|source of fund| Deposit
+    FXDeposit -.->|extends| Deposit
+    SavingDeposit -.->|extends| Deposit
     Portfolio -->|tracks| Position
     Order -->|generates| Transaction
     Position -->|references| Asset
-    Asset -->|is a| Equity
-    Asset -->|is a| Bond
+    Equity -.->|extends| Asset
+    Bond -.->|extends| Asset
 ```
 
 ### 2.2 Security Data Model (this document)
