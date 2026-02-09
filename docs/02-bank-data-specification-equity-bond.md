@@ -104,11 +104,13 @@ This document defines the following entities. Each entity has its own field numb
 | **Common Security** | Section 4 | 26 | Shared identification, classification, and timestamps for all securities | `reda.041` | Static / On change |
 | **Equity** | Section 5.1–5.6 | 61 | Equity-specific fields: fundamentals, analyst ratings, financials, valuation, technicals, ownership | `reda.041` | Static / Daily |
 | **Equity Market Data** | Section 5.7 | 18 | Real-time / EOD market data feed for equities: OHLC prices, VWAP, volume, liquidity | `semt.002` | Intraday / EOD |
+| **Equity Dividend Schedule** | Section 5.8 | 18 | Declared and projected dividends: amount, dates, tax, stock dividends, DRIP | `seev.031` | On declaration / Daily |
 | **Bond** | Section 6.1–6.6 | 52 | Bond-specific fields: coupon, credit, call/put, analytics, metrics | `reda.041`, `semt.002` | Static / Daily |
 | **Bond Market Data** | Section 6.7 | 24 | Real-time / EOD market data feed for bonds: prices, yields, clean/dirty, volume, liquidity | `semt.002` | Intraday / EOD |
 | **Bond Cashflow Schedule** | Section 6.8 | 25 | Projected coupon, principal, and redemption cashflows per bond: accrual, payment dates, floating rate | `reda.041` | On issuance / On change |
 | **Asset Price** | Section 7.1 | 8 | Separate price feed linked via `assetId`: last price, bid/ask, volume | `semt.003` | Intraday / EOD |
 | **Asset Valuation** | Section 7.2 | 7 | Portfolio valuation linked via `assetId`: market value, book value, method | `semt.002` | Daily |
+| **Corporate Actions** | Section 8 | 37 | Corporate action events for equity and bond: splits, mergers, dividends, calls, tenders | `seev.031` | On event / Daily |
 
 > **Note:** Field `#` restarts from 1 for each entity. When combining entities in a CSV file, use the field name (not `#`) as the unique column identifier.
 
@@ -301,6 +303,53 @@ Provide if available. Sourced from latest financial statements.
 | 16 | `numberOfTrades` | Int | Optional | Number of trades in session | `245000` | semt.002 — `MktPric/NbOfTrds` |
 | 17 | `turnover` | Decimal | Optional | Total turnover value (price × volume) | `10050000000.00` | semt.002 — `MktPric/Trnvr` |
 | 18 | `lastUpdateTime` | DateTime | Optional | Last market data update time | `"2026-02-08T16:00:00Z"` | semt.002 — `MktPric/LastUpdtTm` |
+
+### 5.8 Equity Dividend Schedule
+
+> **Source:** Generated from declared dividends and historical patterns. Linked to the equity record via `assetId`. One row per dividend event.
+
+#### 5.8.1 Key Fields
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 1 | `assetId` | String | Required | Reference to the equity record ID (foreign key to Section 4 `id`) | `"SEC-EQ-001"` | seev.031 — `CorpActnGnlInf/FinInstrmId/OthrId/Id` |
+| 2 | `isin` | String | Required | ISIN of the equity (alternative key) | `"US0378331005"` | seev.031 — `CorpActnGnlInf/FinInstrmId/ISIN` |
+| 3 | `dividendId` | String | Required | Unique identifier for this dividend entry | `"DIV-EQ001-20260315-CASH"` | seev.031 — `CorpActnGnlInf/EvtId` |
+
+#### 5.8.2 Dividend Details
+
+| # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 4 | `dividendType` | Enum | Required | Type of dividend | `"CASH"`, `"STOCK"`, `"SPECIAL"`, `"INTERIM"`, `"FINAL"`, `"RETURN_OF_CAPITAL"`, `"SCRIP"` | seev.031 — `CorpActnDtls/DvddTp` |
+| 5 | `amountPerShare` | Decimal | Required | Dividend amount per share | `0.24` | seev.031 — `CorpActnDtls/GrssDvddPerShr/Amt` |
+| 6 | `currency` | String | Required | Payment currency per ISO 4217 | `"USD"` | seev.031 — `CorpActnDtls/GrssDvddPerShr/Ccy` |
+| 7 | `netAmountPerShare` | Decimal | Optional | Net dividend per share (after withholding tax) | `0.204` | seev.031 — `CorpActnDtls/NetDvddPerShr/Amt` |
+| 8 | `withholdingTaxRate` | Decimal | Optional | Withholding tax rate (%) | `15.00` | seev.031 — `CorpActnDtls/TaxRate` |
+| 9 | `dividendYield` | Decimal | Optional | Annualised dividend yield at declaration (%) | `0.52` | seev.031 — `CorpActnDtls/DvddYld` |
+
+#### 5.8.3 Key Dates
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 10 | `declarationDate` | Date | Required | Date the dividend was declared | `"2026-01-30"` | seev.031 — `CorpActnDtls/AnncmntDt` |
+| 11 | `exDividendDate` | Date | Required | Ex-dividend date (shares trade without dividend after this date) | `"2026-02-07"` | seev.031 — `CorpActnDtls/ExDvddDt` |
+| 12 | `recordDate` | Date | Required | Record date for determining payment eligibility | `"2026-02-10"` | seev.031 — `CorpActnDtls/RcrdDt` |
+| 13 | `paymentDate` | Date | Required | Dividend payment date | `"2026-02-15"` | seev.031 — `CorpActnDtls/PmtDt` |
+
+#### 5.8.4 Stock Dividend (if applicable)
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 14 | `stockDividendRatio` | String | Conditional | Stock dividend ratio (e.g. "1:20" = 1 new share per 20 held). Required if `dividendType` = `STOCK` | `"1:20"` | seev.031 — `CorpActnDtls/ShrRatio` |
+| 15 | `stockDividendIsin` | String | Optional | ISIN of the shares distributed (if different from parent) | `"US0378331005"` | seev.031 — `CorpActnDtls/NewSctyISIN` |
+
+#### 5.8.5 Frequency & Status
+
+| # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 16 | `frequency` | Enum | Optional | Dividend payment frequency | See [Appendix A.6](#a6-paymentfrequency) | seev.031 — `CorpActnDtls/PmtFrqcy` |
+| 17 | `status` | Enum | Optional | Status of the dividend | `"DECLARED"`, `"CONFIRMED"`, `"PAID"`, `"CANCELLED"`, `"ESTIMATED"` | seev.031 — `CorpActnDtls/PrcgSts` |
+| 18 | `reinvestmentEligible` | Boolean | Optional | Whether DRIP (Dividend Reinvestment Plan) is available | `true` | seev.031 — `CorpActnDtls/DRIPInd` |
 
 ---
 
@@ -532,9 +581,92 @@ Provided as separate data feeds, linked to securities via `assetId`.
 
 ---
 
-## 8. Sample Data
+## 8. Corporate Actions
 
-### 8.1 Equity Example (JSON)
+Corporate actions affect both equity and bond securities. This entity captures events that change the structure, ownership, or value of a security. Linked to the security record via `assetId`. One row per corporate action event.
+
+### 8.1 Key Fields
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 1 | `corporateActionId` | String | Required | Unique identifier for this corporate action | `"CA-20260215-001"` | seev.031 — `CorpActnGnlInf/EvtId` |
+| 2 | `assetId` | String | Required | Reference to the security record ID (foreign key to Section 4 `id`) | `"SEC-EQ-001"` | seev.031 — `CorpActnGnlInf/FinInstrmId/OthrId/Id` |
+| 3 | `isin` | String | Required | ISIN of the affected security | `"US0378331005"` | seev.031 — `CorpActnGnlInf/FinInstrmId/ISIN` |
+
+### 8.2 Event Classification
+
+| # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 4 | `eventType` | Enum | Required | Type of corporate action event | `"CASH_DIVIDEND"`, `"STOCK_DIVIDEND"`, `"STOCK_SPLIT"`, `"REVERSE_SPLIT"`, `"RIGHTS_ISSUE"`, `"BONUS_ISSUE"`, `"MERGER"`, `"ACQUISITION"`, `"SPIN_OFF"`, `"TENDER_OFFER"`, `"EXCHANGE_OFFER"`, `"CAPITAL_RETURN"`, `"DELISTING"`, `"NAME_CHANGE"`, `"SYMBOL_CHANGE"`, `"BOND_CALL"`, `"BOND_PUT"`, `"BOND_EXCHANGE"`, `"CONSENT_SOLICITATION"`, `"COUPON_CHANGE"` | seev.031 — `CorpActnGnlInf/EvtTp` |
+| 5 | `mandatoryVoluntary` | Enum | Required | Whether the action is mandatory or voluntary | `"MANDATORY"`, `"VOLUNTARY"`, `"MANDATORY_WITH_CHOICE"` | seev.031 — `CorpActnGnlInf/MndtryVlntry` |
+| 6 | `status` | Enum | Required | Processing status | `"ANNOUNCED"`, `"PENDING"`, `"CONFIRMED"`, `"COMPLETED"`, `"CANCELLED"`, `"LAPSED"` | seev.031 — `CorpActnGnlInf/PrcgSts` |
+| 7 | `description` | String | Optional | Free-text description of the event | `"2-for-1 stock split effective March 15, 2026"` | seev.031 — `CorpActnGnlInf/AddtlInf` |
+
+### 8.3 Event Dates
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 8 | `announcementDate` | Date | Required | Date the action was announced | `"2026-01-15"` | seev.031 — `CorpActnDtls/AnncmntDt` |
+| 9 | `exDate` | Date | Conditional | Ex-date (security trades without entitlement after this date) | `"2026-03-13"` | seev.031 — `CorpActnDtls/ExDt` |
+| 10 | `recordDate` | Date | Conditional | Record date for determining eligibility | `"2026-03-14"` | seev.031 — `CorpActnDtls/RcrdDt` |
+| 11 | `effectiveDate` | Date | Required | Date the action takes effect | `"2026-03-15"` | seev.031 — `CorpActnDtls/FctvDt` |
+| 12 | `paymentDate` | Date | Optional | Payment/settlement date | `"2026-03-17"` | seev.031 — `CorpActnDtls/PmtDt` |
+| 13 | `electionDeadline` | Date | Optional | Deadline for voluntary elections | `"2026-03-10"` | seev.031 — `CorpActnDtls/ElctnDdln` |
+| 14 | `marketDeadline` | Date | Optional | Market-side election deadline | `"2026-03-12"` | seev.031 — `CorpActnDtls/MktDdln` |
+
+### 8.4 Financial Terms — Cash
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 15 | `cashAmount` | Decimal | Conditional | Cash amount per share/unit | `0.24` | seev.031 — `CorpActnDtls/CshMvmnt/GrssAmt` |
+| 16 | `cashCurrency` | String | Conditional | Cash payment currency per ISO 4217 | `"USD"` | seev.031 — `CorpActnDtls/CshMvmnt/Ccy` |
+| 17 | `netCashAmount` | Decimal | Optional | Net cash amount (after tax) | `0.204` | seev.031 — `CorpActnDtls/CshMvmnt/NetAmt` |
+| 18 | `withholdingTaxRate` | Decimal | Optional | Withholding tax rate (%) | `15.00` | seev.031 — `CorpActnDtls/TaxRate` |
+| 19 | `offerPrice` | Decimal | Optional | Offer/tender price per share | `150.00` | seev.031 — `CorpActnDtls/OfferPric` |
+
+### 8.5 Financial Terms — Securities Movement
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 20 | `ratio` | String | Conditional | Ratio for splits, mergers, rights (e.g. "2:1" = 2 new for 1 old) | `"2:1"` | seev.031 — `CorpActnDtls/SctiesMvmnt/Ratio` |
+| 21 | `newIsin` | String | Optional | ISIN of the new/resulting security | `"US0378331005"` | seev.031 — `CorpActnDtls/SctiesMvmnt/NewSctyISIN` |
+| 22 | `newSecurityName` | String | Optional | Name of the new/resulting security | `"Apple Inc. Common Stock (Post-Split)"` | seev.031 — `CorpActnDtls/SctiesMvmnt/NewSctyNm` |
+| 23 | `fractionalShareTreatment` | Enum | Optional | How fractional shares are handled | `"CASH_IN_LIEU"`, `"ROUND_UP"`, `"ROUND_DOWN"`, `"ROUND_NEAREST"` | seev.031 — `CorpActnDtls/FrctnlShrTrtmnt` |
+| 24 | `subscriptionPrice` | Decimal | Optional | Subscription price for rights issues | `"120.00"` | seev.031 — `CorpActnDtls/SbcptPric` |
+
+### 8.6 Counterparty & Conditions (Mergers / Acquisitions / Tenders)
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 25 | `acquirerName` | String | Optional | Name of the acquiring entity | `"Microsoft Corporation"` | seev.031 — `CorpActnDtls/Acqrr/Nm` |
+| 26 | `acquirerLei` | String | Optional | LEI of the acquiring entity | `"INR2EJN1ERAN0W5ZP974"` | seev.031 — `CorpActnDtls/Acqrr/LEI` |
+| 27 | `minimumAcceptance` | Decimal | Optional | Minimum acceptance threshold (%) | `90.00` | seev.031 — `CorpActnDtls/MinAccptnc` |
+| 28 | `prorationFactor` | Decimal | Optional | Proration factor if oversubscribed (%) | `85.50` | seev.031 — `CorpActnDtls/PrratnFctr` |
+| 29 | `regulatoryApproval` | Boolean | Optional | Whether regulatory approval is required/obtained | `true` | seev.031 — `CorpActnDtls/RgltryApprvl` |
+| 30 | `conditions` | String | Optional | Summary of conditions for completion | `"Subject to shareholder and regulatory approval"` | seev.031 — `CorpActnDtls/Conds` |
+
+### 8.7 Bond-Specific Corporate Actions
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 31 | `callPrice` | Decimal | Optional | Call/redemption price (% of face value) | `102.00` | seev.031 — `CorpActnDtls/CallPric` |
+| 32 | `newCouponRate` | Decimal | Optional | New coupon rate after coupon change (%) | `4.50` | seev.031 — `CorpActnDtls/NewIntrstRate` |
+| 33 | `partialRedemptionFactor` | Decimal | Optional | Partial redemption factor (% of face value redeemed) | `25.00` | seev.031 — `CorpActnDtls/PrtlRedFctr` |
+| 34 | `consentFee` | Decimal | Optional | Consent solicitation fee (per unit) | `5.00` | seev.031 — `CorpActnDtls/CnsntFee` |
+
+### 8.8 Source & Audit
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 35 | `source` | String | Optional | Data source for the corporate action | `"Bloomberg"`, `"DTCC"`, `"Euroclear"` | seev.031 — `CorpActnGnlInf/SrcOfCorpActn` |
+| 36 | `createdAt` | DateTime | Required | Record creation timestamp | `"2026-01-15T09:00:00Z"` | seev.031 — `CreDtTm` |
+| 37 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-08T14:00:00Z"` | seev.031 — `UpdDtTm` |
+
+---
+
+## 9. Sample Data
+
+### 9.1 Equity Example (JSON)
 
 ```json
 {
@@ -600,7 +732,7 @@ Provided as separate data feeds, linked to securities via `assetId`.
 }
 ```
 
-### 8.2 Bond Example (JSON)
+### 9.2 Bond Example (JSON)
 
 ```json
 {
@@ -687,7 +819,7 @@ Provided as separate data feeds, linked to securities via `assetId`.
 }
 ```
 
-### 8.3 Equity Example (CSV)
+### 9.3 Equity Example (CSV)
 
 > Full CSV reference with formatting rules: [02.1 — CSV Sample Data](02.1-sample-data-csv-equity-bond.md)
 
@@ -703,7 +835,7 @@ id,isin,cusip,sedol,ticker,name,assetClass,securityType,equityType,issuer,lei,fi
 SEC-EQ-001,US0378331005,037833100,2046251,AAPL,"Apple Inc. Common Stock",SECURITIES,EQUITY,COMMON,"Apple Inc.",HWUPKR0MPOU8FGXBT394,"APPLE INC/SH",ESVUFR,,USD,US,NASDAQ,XNAS,ACTIVE,BOOK_ENTRY,T_PLUS_2,1980-12-12,,,,2026-01-01T00:00:00Z,2026-02-08T16:00:00Z,"Information Technology","Consumer Electronics",2850000000000.00,15500000000,0.55,1.28,6.42,29.50,true,QUARTERLY,0.00001,,100,100,1.00,UNRESTRICTED,FULLY_PAID,BUY,42,30,10,2,210.00,225.00,394328000000.00,8.10,96995000000.00,10.20,130541000000.00,33.10,30.74,24.60,160.09,28.30,1.87,0.99,0.94,111443000000.00,47.20,7.50,22.30,7.40,2.80,15.40,3.39,58.30,2.15,182.50,175.20,183.10,176.00,195.00,170.00,3.45,54230000,62100000,60.50,0.07,99.93,120000000,1.90,0.80
 ```
 
-### 8.4 Bond Example (CSV)
+### 9.4 Bond Example (CSV)
 
 **Header Row:**
 
@@ -900,7 +1032,7 @@ ISO 20022: `ValuationBasis1Code` — semt.002 — `ValtnMtd`
 
 ---
 
-## 9. Data Quality Requirements
+## 10. Data Quality Requirements
 
 | Requirement | Description |
 |---|---|
@@ -914,7 +1046,7 @@ ISO 20022: `ValuationBasis1Code` — semt.002 — `ValtnMtd`
 
 ---
 
-## 10. Contact & Support
+## 11. Contact & Support
 
 For questions regarding this specification, please contact:
 
@@ -926,11 +1058,11 @@ For questions regarding this specification, please contact:
 
 ---
 
-## 11. Required Data Files from Bank
+## 12. Required Data Files from Bank
 
 The following table lists all data files that the bank must provide to the Vahalla Wealth Management System. Files are grouped by specification document and delivery frequency.
 
-### 11.1 Equity & Bond Data Files (this document)
+### 12.1 Equity & Bond Data Files (this document)
 
 | # | File Name | Description | Frequency | Format | ISO 20022 Reference |
 |---|---|---|---|---|---|
@@ -941,7 +1073,7 @@ The following table lists all data files that the bank must provide to the Vahal
 | 5 | `equity_analytics.csv` | Analyst ratings, financials, technicals ([Section 5](#5-equity-data-fields) additional) | Daily / Weekly | CSV / JSON | — (supplementary) |
 | 6 | `bond_analytics.csv` | Credit metrics, spread data, risk analytics ([Section 6](#6-bond-fixed-income-data-fields) additional) | Daily / Weekly | CSV / JSON | — (supplementary) |
 
-### 11.2 Wealth Management Data Files ([01 — Wealth Management Specification](01-wealth-management-specification.md))
+### 12.2 Wealth Management Data Files ([01 — Wealth Management Specification](01-wealth-management-specification.md))
 
 | # | File Name | Description | Frequency | Format | ISO 20022 Reference |
 |---|---|---|---|---|---|
@@ -954,7 +1086,7 @@ The following table lists all data files that the bank must provide to the Vahal
 | 13 | `order.csv` | Order data — order details, quantity, price, execution | Daily | CSV / JSON | setr.001 |
 | 14 | `fx_deposit.csv` | FX deposit data — interest, term, maturity, rollover | Daily | CSV / JSON | camt.052 |
 
-### 11.3 Delivery Schedule
+### 12.3 Delivery Schedule
 
 | Delivery Type | Cutoff Time | Description |
 |---|---|---|
@@ -963,7 +1095,7 @@ The following table lists all data files that the bank must provide to the Vahal
 | **Weekly** | Monday 06:00 UTC | Analytics and supplementary data (if not daily) |
 | **As Needed** | On change | Relationship manager updates, client onboarding |
 
-### 11.4 File Naming Convention
+### 12.4 File Naming Convention
 
 ```
 {entity}_{date}_{sequence}.{format}
@@ -981,7 +1113,7 @@ The following table lists all data files that the bank must provide to the Vahal
 - `position_20260208_001.csv`
 - `transaction_20260208_001.json`
 
-### 11.5 Delivery Method
+### 12.5 Delivery Method
 
 | Method | Protocol | Description |
 |---|---|---|
