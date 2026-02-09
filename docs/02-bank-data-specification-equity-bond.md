@@ -6,7 +6,7 @@
 |---|---|
 | **Document Title** | Investment Module - Equity & Bond Specification |
 | **System** | Vahalla Wealth Management System |
-| **Document Version** | 1.6 |
+| **Document Version** | 1.7 |
 | **Date** | 2026-02-09 |
 | **Classification** | Confidential |
 | **Status** | Draft |
@@ -22,7 +22,8 @@
 | 1.3 | 2026-01-14 | Vahalla System Team | Added Equity & Bond Market Data Feed sections with OHLC, VWAP, bid/ask, volume; merged Asset Price into Market Data Feeds |
 | 1.4 | 2026-01-28 | Vahalla System Team | Added Equity Dividend Schedule, Bond Cashflow Schedule, and Corporate Actions entities; restructured field numbering per entity |
 | 1.5 | 2026-02-05 | Vahalla System Team | Added Entity Summary table (Section 3.5); added key fields (assetId, isin, timestamp) to all feed entities; renumbered all sections |
-| 1.6 | 2026-02-09 | Vahalla System Team | ThaiBMA alignment — added bond coupon type, amortization, inflation-linked, tax & regulatory, local identifiers (ThaiBMA symbol), issuance details, settlement & custody (TSD), ESG/green bond, local credit ratings (TRIS, Fitch Thai), benchmark & spread analysis, yield curve reference, official MTM pricing, investor holdings, repo & lending; added turnover metrics to Bond Market Data Feed |
+| 1.6 | 2026-02-06 | Vahalla System Team | ThaiBMA alignment — added bond coupon type, amortization, inflation-linked, tax & regulatory, local identifiers (ThaiBMA symbol), issuance details, settlement & custody (TSD), ESG/green bond, local credit ratings (TRIS, Fitch Thai), benchmark & spread analysis, yield curve reference, official MTM pricing, investor holdings, repo & lending; added turnover metrics to Bond Market Data Feed |
+| 1.7 | 2026-02-09 | Vahalla System Team | Added Bond Secondary Market Trading entity (Section 6.17) — trade identification, classification (outright, repo, switch, when-issued), economics, counterparty, ThaiBMA trade reporting, repo-specific fields; removed Asset Valuation (merged into Position); updated entity diagrams |
 
 ---
 
@@ -77,8 +78,10 @@ graph TD
 
     subgraph BondDomain["Section 6 — Bond"]
         Bond["Bond<br/><i>118 fields</i>"]
+        BondSecondaryMarket["Secondary Market<br/><i>28 fields</i>"]
         BondMarketData["Bond Market Data<br/><i>29 fields</i>"]
         CashflowSchedule["Cashflow Schedule<br/><i>25 fields</i>"]
+        Bond -->|traded via| BondSecondaryMarket
         Bond -->|priced by| BondMarketData
         Bond -->|projects| CashflowSchedule
     end
@@ -147,8 +150,9 @@ This document defines the following entities. Each entity has its own field numb
 | **Equity Market Data** | Section 5.7 | 20 | Real-time / EOD market data feed for equities: OHLC prices, VWAP, volume, liquidity, source | `semt.002` | Intraday / EOD |
 | **Equity Dividend Schedule** | Section 5.8 | 18 | Declared and projected dividends: amount, dates, tax, stock dividends, DRIP | `seev.031` | On declaration / Daily |
 | **Bond** | Section 6.1–6.16 | 118 | Bond-specific fields: coupon, amortization, inflation-linked, tax, local identifiers, issuance, settlement, ESG, credit, call/put, analytics, benchmark, yield curve, MTM, duration, investor holdings, repo/lending | `reda.041`, `semt.002` | Static / Daily |
-| **Bond Market Data** | Section 6.17 | 29 | Real-time / EOD market data feed for bonds: prices, yields, clean/dirty, volume, liquidity, turnover, source | `semt.002` | Intraday / EOD |
-| **Bond Cashflow Schedule** | Section 6.18 | 25 | Projected coupon, principal, and redemption cashflows per bond: accrual, payment dates, floating rate | `reda.041` | On issuance / On change |
+| **Bond Secondary Market** | Section 6.17 | 28 | Secondary market trade data: trade type, counterparty, execution venue, economics, ThaiBMA reporting, repo-specific fields | `sese.023` | Per trade / Daily |
+| **Bond Market Data** | Section 6.18 | 29 | Real-time / EOD market data feed for bonds: prices, yields, clean/dirty, volume, liquidity, turnover, source | `semt.002` | Intraday / EOD |
+| **Bond Cashflow Schedule** | Section 6.19 | 25 | Projected coupon, principal, and redemption cashflows per bond: accrual, payment dates, floating rate | `reda.041` | On issuance / On change |
 | **Corporate Actions** | Section 7 | 37 | Corporate action events for equity and bond: splits, mergers, dividends, calls, tenders | `seev.031` | On event / Daily |
 
 > **Note:** Field `#` restarts from 1 for each entity. When combining entities in a CSV file, use the field name (not `#`) as the unique column identifier.
@@ -598,11 +602,73 @@ Provide if available. Critical for RM credit risk assessment.
 | 117 | `lendingAvailability` | Enum | Optional | Securities lending availability | `"AVAILABLE"`, `"LIMITED"`, `"UNAVAILABLE"`, `"ON_SPECIAL"` | semt.002 — `FinInstrmDtls/LndgAvlblty` |
 | 118 | `lendingFee` | Decimal | Optional | Securities lending fee (bps) | `10.00` | semt.002 — `FinInstrmDtls/LndgFee` |
 
-### 6.17 Bond Market Data Feed
+### 6.17 Bond Secondary Market Trading
 
-> **Source:** Real-time or end-of-day market data feed. These fields are updated intraday or at market close and are distinct from static reference data (Section 6.1–6.16). Portfolio-level valuation is handled by the Position entity ([01 — Wealth Management Specification](01-wealth-management-specification.md)).
+> **Source:** Secondary market trade data reported via ThaiBMA or other trade reporting platforms. One row per trade or aggregated per bond per day.
 
-#### 6.17.1 Key Fields
+#### 6.17.1 Trade Identification
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 119 | `tradeId` | String | Required | Unique secondary market trade identifier | `"TRD-BD001-20260208-001"` | sese.023 — `TradDtls/TradId` |
+| 120 | `tradeDate` | Date | Required | Trade execution date | `"2026-02-08"` | sese.023 — `TradDtls/TradDt` |
+| 121 | `tradeTime` | DateTime | Optional | Trade execution timestamp | `"2026-02-08T10:30:00+07:00"` | sese.023 — `TradDtls/TradDtTm` |
+| 122 | `settlementDate` | Date | Required | Settlement date | `"2026-02-10"` | sese.023 — `TradDtls/SttlmDt` |
+
+#### 6.17.2 Trade Classification
+
+| # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 123 | `tradeType` | Enum | Required | Type of secondary market trade | `"OUTRIGHT"`, `"REPO"`, `"REVERSE_REPO"`, `"SWITCH"`, `"WHEN_ISSUED"`, `"BUY_SELL_BACK"`, `"SELL_BUY_BACK"` | sese.023 — `TradDtls/TradTp` |
+| 124 | `executionVenue` | Enum | Optional | Where the trade was executed | `"OTC"`, `"EXCHANGE"`, `"ATS"`, `"ELECTRONIC_PLATFORM"`, `"VOICE_BROKER"` | sese.023 — `TradDtls/PlcOfTrad` |
+| 125 | `marketSide` | Enum | Required | Side of the trade | `"BUY"`, `"SELL"` | sese.023 — `TradDtls/Sd` |
+| 126 | `dealerType` | Enum | Optional | Classification of trade participants | `"DEALER_TO_DEALER"`, `"DEALER_TO_CLIENT"`, `"CLIENT_TO_CLIENT"` | sese.023 — `TradDtls/DlrTp` |
+
+#### 6.17.3 Trade Economics
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 127 | `tradePrice` | Decimal | Required | Traded price (% of face value) | `99.85` | sese.023 — `TradDtls/DealPric` |
+| 128 | `tradeYield` | Decimal | Optional | Yield at trade price (%) | `5.12` | sese.023 — `TradDtls/Yld` |
+| 129 | `tradeFaceValue` | Decimal | Required | Face value amount traded | `50000000.00` | sese.023 — `TradDtls/TradQty/FaceAmt` |
+| 130 | `tradeSettlementAmount` | Decimal | Required | Total settlement amount (dirty price × face value) | `50525000.00` | sese.023 — `TradDtls/SttlmAmt` |
+| 131 | `tradeCurrency` | String | Required | Trade currency per ISO 4217 | `"THB"` | sese.023 — `TradDtls/SttlmAmt/Ccy` |
+| 132 | `accruedInterestAtTrade` | Decimal | Optional | Accrued interest at trade date | `625000.00` | sese.023 — `TradDtls/AcrdIntrst` |
+
+#### 6.17.4 Counterparty
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 133 | `counterpartyName` | String | Optional | Name of the counterparty | `"Krungthai Bank"` | sese.023 — `TradDtls/CtrPty/Nm` |
+| 134 | `counterpartyLei` | String | Optional | LEI of the counterparty | `"549300R2YVKC5QQXMV07"` | sese.023 — `TradDtls/CtrPty/LEI` |
+| 135 | `counterpartyType` | Enum | Optional | Type of counterparty | `"BANK"`, `"INSURANCE"`, `"FUND_MANAGER"`, `"PENSION_FUND"`, `"CENTRAL_BANK"`, `"CORPORATE"`, `"RETAIL"` | sese.023 — `TradDtls/CtrPty/Tp` |
+| 136 | `brokerName` | String | Optional | Broker / intermediary name | `"Phatra Securities"` | sese.023 — `TradDtls/Brkr/Nm` |
+
+#### 6.17.5 Trade Reporting (ThaiBMA)
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 137 | `reportingPlatform` | String | Optional | Trade reporting platform | `"THAIBMA"`, `"TRACE"`, `"TRAX"`, `"MTS"` | sese.023 — `TradDtls/RptgPltfrm` |
+| 138 | `reportedTradeId` | String | Optional | Trade ID assigned by reporting platform | `"TBMA-20260208-12345"` | sese.023 — `TradDtls/RptdTradId` |
+| 139 | `reportingTimestamp` | DateTime | Optional | Time the trade was reported | `"2026-02-08T10:35:00+07:00"` | sese.023 — `TradDtls/RptgDtTm` |
+| 140 | `reportingStatus` | Enum | Optional | Status of trade report | `"REPORTED"`, `"CONFIRMED"`, `"REJECTED"`, `"AMENDED"`, `"CANCELLED"` | sese.023 — `TradDtls/RptgSts` |
+| 141 | `reportingDelay` | String | Optional | Reporting delay category | `"REAL_TIME"`, `"T_PLUS_15MIN"`, `"END_OF_DAY"` | sese.023 — `TradDtls/RptgDly` |
+
+#### 6.17.6 Repo-Specific Fields (if applicable)
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 142 | `repoTermType` | Enum | Conditional | Repo term type. Required if `tradeType` ∈ {`REPO`, `REVERSE_REPO`} | `"OVERNIGHT"`, `"TERM"`, `"OPEN"` | sese.023 — `TradDtls/RepoTrmTp` |
+| 143 | `repoRate` | Decimal | Conditional | Repo rate (%). Required if `tradeType` ∈ {`REPO`, `REVERSE_REPO`} | `1.75` | sese.023 — `TradDtls/RepoRate` |
+| 144 | `repoMaturityDate` | Date | Conditional | Repo maturity / repurchase date | `"2026-02-15"` | sese.023 — `TradDtls/RepoMtrtyDt` |
+| 145 | `repurchasePrice` | Decimal | Optional | Repurchase price (% of face value) | `99.88` | sese.023 — `TradDtls/RprcsPric` |
+| 146 | `haircut` | Decimal | Optional | Collateral haircut (%) | `2.00` | sese.023 — `TradDtls/Hrct` |
+
+### 6.18 Bond Market Data Feed
+
+> **Source:** Real-time or end-of-day market data feed. These fields are updated intraday or at market close and are distinct from static reference data (Section 6.1–6.17). Portfolio-level valuation is handled by the Position entity ([01 — Wealth Management Specification](01-wealth-management-specification.md)).
+
+#### 6.18.1 Key Fields
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -612,7 +678,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 4 | `currency` | String | Required | Price currency per ISO 4217 | `"USD"` | semt.002 — `MktPric/Ccy` |
 | 5 | `source` | String | Optional | Pricing source | `"Bloomberg"`, `"Reuters"` | semt.002 — `MktPric/SrcOfPric` |
 
-#### 6.17.2 Bond Prices
+#### 6.18.2 Bond Prices
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -628,7 +694,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 15 | `dirtyPrice` | Decimal | Optional | Dirty price (incl. accrued interest) | `101.05` | semt.002 — `MktPric/DrtyPric` |
 | 16 | `volumeWeightedAveragePrice` | Decimal | Optional | VWAP (% of face value) | `99.88` | semt.002 — `MktPric/VWAP` |
 
-#### 6.17.3 Bond Yields (Market Data)
+#### 6.18.3 Bond Yields (Market Data)
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -637,7 +703,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 19 | `midYield` | Decimal | Optional | Mid yield (%) | `5.25` | semt.002 — `MktPric/MdYld` |
 | 20 | `lastTradeYield` | Decimal | Optional | Last traded yield (%) | `5.26` | semt.002 — `MktPric/LastTradYld` |
 
-#### 6.17.4 Bond Volume & Liquidity
+#### 6.18.4 Bond Volume & Liquidity
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -651,11 +717,11 @@ Provide if available. Critical for RM credit risk assessment.
 | 28 | `daysTraded30d` | Int | Optional | Number of days traded in last 30 days | `22` | semt.002 — `MktPric/DysTrdd` |
 | 29 | `lastUpdateTime` | DateTime | Optional | Last market data update time | `"2026-02-08T16:00:00Z"` | semt.002 — `MktPric/LastUpdtTm` |
 
-### 6.18 Bond Cashflow Schedule
+### 6.19 Bond Cashflow Schedule
 
 > **Source:** Generated from bond terms at issuance or recalculated on coupon reset / amortisation events. Linked to the bond record via `assetId`. One row per scheduled cashflow.
 
-#### 6.18.1 Key Fields
+#### 6.19.1 Key Fields
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -663,7 +729,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 2 | `isin` | String | Required | ISIN of the bond (alternative key) | `"US912828Z784"` | reda.041 — `FinInstrmId/ISIN` |
 | 3 | `cashflowId` | String | Required | Unique identifier for this cashflow entry | `"CF-BD001-20240915-CPN"` | reda.041 — `CshFlwId` |
 
-#### 6.18.2 Cashflow Details
+#### 6.19.2 Cashflow Details
 
 | # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -673,7 +739,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 7 | `currency` | String | Required | Payment currency per ISO 4217 | `"USD"` | reda.041 — `CshFlwCcy` |
 | 8 | `couponRate` | Decimal | Conditional | Applicable coupon rate for this period (%). Required if `cashflowType` = `COUPON` | `5.00` | reda.041 — `Debt/IntrstRate` |
 
-#### 6.18.3 Accrual Period
+#### 6.19.3 Accrual Period
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -682,7 +748,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 11 | `dayCountFraction` | Decimal | Optional | Day count fraction for this accrual period | `0.50` | reda.041 — `Debt/DayCntFrctn` |
 | 12 | `dayCountBasis` | Enum | Optional | Day count convention used | See [Appendix A.10](#a10-daycountbasis) | reda.041 — `Debt/DayCntBsis` |
 
-#### 6.18.4 Record & Payment Dates
+#### 6.19.4 Record & Payment Dates
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -691,7 +757,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 15 | `paymentDate` | Date | Optional | Actual payment settlement date (if different from `cashflowDate`) | `"2024-09-17"` | reda.041 — `PmtDt` |
 | 16 | `paymentStatus` | Enum | Optional | Status of the cashflow | `"SCHEDULED"`, `"CONFIRMED"`, `"PAID"`, `"MISSED"`, `"DEFERRED"` | reda.041 — `PmtSts` |
 
-#### 6.18.5 Principal & Notional
+#### 6.19.5 Principal & Notional
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -700,7 +766,7 @@ Provide if available. Critical for RM credit risk assessment.
 | 19 | `principalAmount` | Decimal | Conditional | Principal repayment amount. Required if `cashflowType` ∈ {`PRINCIPAL`, `AMORTIZATION`, `SINKING_FUND`, `PARTIAL_REDEMPTION`} | `100.00` | reda.041 — `Debt/PrncplAmt` |
 | 20 | `redemptionPrice` | Decimal | Optional | Redemption price (% of face value) for call/put/maturity | `100.00` | reda.041 — `Debt/RedPric` |
 
-#### 6.18.6 Floating Rate (if applicable)
+#### 6.19.6 Floating Rate (if applicable)
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
@@ -1200,22 +1266,23 @@ The following table lists all data files that the bank must provide to the Vahal
 | 1 | `equity_master.csv` | Equity security master data — all fields from [Section 4](#4-common-security-identification-fields) and [Section 5](#5-equity-data-fields) | Daily | CSV / JSON | reda.041 |
 | 2 | `bond_master.csv` | Bond security master data — all fields from [Section 4](#4-common-security-identification-fields) and [Section 6](#6-bond-fixed-income-data-fields) | Daily | CSV / JSON | reda.041 |
 | 3 | `equity_pricing.csv` | End-of-day equity market data feed ([Section 5.7](#57-equity-market-data-feed)) | Daily | CSV / JSON | semt.002 |
-| 4 | `bond_pricing.csv` | End-of-day bond market data feed ([Section 6.17](#617-bond-market-data-feed)) | Daily | CSV / JSON | semt.002 |
-| 5 | `equity_analytics.csv` | Analyst ratings, financials, technicals ([Section 5](#5-equity-data-fields) additional) | Daily / Weekly | CSV / JSON | — (supplementary) |
-| 6 | `bond_analytics.csv` | Credit metrics, spread data, risk analytics ([Section 6](#6-bond-fixed-income-data-fields) additional) | Daily / Weekly | CSV / JSON | — (supplementary) |
+| 4 | `bond_pricing.csv` | End-of-day bond market data feed ([Section 6.18](#618-bond-market-data-feed)) | Daily | CSV / JSON | semt.002 |
+| 5 | `bond_secondary_market.csv` | Bond secondary market trades — trade type, counterparty, ThaiBMA reporting ([Section 6.17](#617-bond-secondary-market-trading)) | Daily | CSV / JSON | sese.023 |
+| 6 | `equity_analytics.csv` | Analyst ratings, financials, technicals ([Section 5](#5-equity-data-fields) additional) | Daily / Weekly | CSV / JSON | — (supplementary) |
+| 7 | `bond_analytics.csv` | Credit metrics, spread data, risk analytics ([Section 6](#6-bond-fixed-income-data-fields) additional) | Daily / Weekly | CSV / JSON | — (supplementary) |
 
 ### 11.2 Wealth Management Data Files ([01 — Wealth Management Specification](01-wealth-management-specification.md))
 
 | # | File Name | Description | Frequency | Format | ISO 20022 Reference |
 |---|---|---|---|---|---|
-| 7 | `client.csv` | Client master data — identification, KYC, classification | Daily | CSV / JSON | acmt.001 |
-| 8 | `relationship_manager.csv` | Relationship manager data | As needed | CSV / JSON | — (supplementary) |
-| 9 | `account.csv` | Account master data — identification, balance, margin, tax | Daily | CSV / JSON | acmt.001 |
-| 10 | `portfolio.csv` | Portfolio data — valuation, risk metrics, allocation | Daily | CSV / JSON | semt.003 |
-| 11 | `position.csv` | Position data — holdings, cost, valuation, P&L | Daily | CSV / JSON | semt.003 |
-| 12 | `transaction.csv` | Transaction data — trades, fees, settlement, counterparty | Daily | CSV / JSON | sese.023 |
-| 13 | `order.csv` | Order data — order details, quantity, price, execution | Daily | CSV / JSON | setr.001 |
-| 14 | `fx_deposit.csv` | FX deposit data — interest, term, maturity, rollover | Daily | CSV / JSON | camt.052 |
+| 8 | `client.csv` | Client master data — identification, KYC, classification | Daily | CSV / JSON | acmt.001 |
+| 9 | `relationship_manager.csv` | Relationship manager data | As needed | CSV / JSON | — (supplementary) |
+| 10 | `account.csv` | Account master data — identification, balance, margin, tax | Daily | CSV / JSON | acmt.001 |
+| 11 | `portfolio.csv` | Portfolio data — valuation, risk metrics, allocation | Daily | CSV / JSON | semt.003 |
+| 12 | `position.csv` | Position data — holdings, cost, valuation, P&L | Daily | CSV / JSON | semt.003 |
+| 13 | `transaction.csv` | Transaction data — trades, fees, settlement, counterparty | Daily | CSV / JSON | sese.023 |
+| 14 | `order.csv` | Order data — order details, quantity, price, execution | Daily | CSV / JSON | setr.001 |
+| 15 | `fx_deposit.csv` | FX deposit data — interest, term, maturity, rollover | Daily | CSV / JSON | camt.052 |
 
 ### 11.3 Delivery Schedule
 
