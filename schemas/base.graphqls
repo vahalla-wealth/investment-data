@@ -267,6 +267,11 @@ enum ValuationMethod {
   VENDOR_PRICING
 }
 
+enum MarketType {
+  PRIMARY
+  SECONDARY
+}
+
 enum CreditQualityStep {
   STEP_1
   STEP_2

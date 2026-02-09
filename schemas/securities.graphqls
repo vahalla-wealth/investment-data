@@ -295,6 +295,7 @@ type Bond implements Security & Asset {
   minimumIncrement: Decimal
   issuePrice: Decimal
   redemptionPrice: Decimal
+  marketType: MarketType
   seniority: SeniorityType
   securedType: SecuredType
   guarantor: String
