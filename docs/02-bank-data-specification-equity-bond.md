@@ -106,6 +106,7 @@ This document defines the following entities. Each entity has its own field numb
 | **Equity Market Data** | Section 5.7 | 18 | Real-time / EOD market data feed for equities: OHLC prices, VWAP, volume, liquidity | `semt.002` | Intraday / EOD |
 | **Bond** | Section 6.1–6.6 | 52 | Bond-specific fields: coupon, credit, call/put, analytics, metrics | `reda.041`, `semt.002` | Static / Daily |
 | **Bond Market Data** | Section 6.7 | 24 | Real-time / EOD market data feed for bonds: prices, yields, clean/dirty, volume, liquidity | `semt.002` | Intraday / EOD |
+| **Bond Cashflow Schedule** | Section 6.8 | 25 | Projected coupon, principal, and redemption cashflows per bond: accrual, payment dates, floating rate | `reda.041` | On issuance / On change |
 | **Asset Price** | Section 7.1 | 8 | Separate price feed linked via `assetId`: last price, bid/ask, volume | `semt.003` | Intraday / EOD |
 | **Asset Valuation** | Section 7.2 | 7 | Portfolio valuation linked via `assetId`: market value, book value, method | `semt.002` | Daily |
 
@@ -438,6 +439,65 @@ Provide if available. Critical for RM credit risk assessment.
 | 22 | `outstandingAmount` | Decimal | Optional | Total outstanding face value | `500000000.00` | reda.041 — `Debt/OutstndgAmt` |
 | 23 | `liquidityScore` | Decimal | Optional | Liquidity score (0–100) | `72.50` | — (supplementary) |
 | 24 | `lastUpdateTime` | DateTime | Optional | Last market data update time | `"2026-02-08T16:00:00Z"` | semt.002 — `MktPric/LastUpdtTm` |
+
+### 6.8 Bond Cashflow Schedule
+
+> **Source:** Generated from bond terms at issuance or recalculated on coupon reset / amortisation events. Linked to the bond record via `assetId`. One row per scheduled cashflow.
+
+#### 6.8.1 Key Fields
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 1 | `assetId` | String | Required | Reference to the bond record ID (foreign key to Section 4 `id`) | `"SEC-BD-001"` | reda.041 — `FinInstrmId/OthrId/Id` |
+| 2 | `isin` | String | Required | ISIN of the bond (alternative key) | `"US912828Z784"` | reda.041 — `FinInstrmId/ISIN` |
+| 3 | `cashflowId` | String | Required | Unique identifier for this cashflow entry | `"CF-BD001-20240915-CPN"` | reda.041 — `CshFlwId` |
+
+#### 6.8.2 Cashflow Details
+
+| # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 4 | `cashflowType` | Enum | Required | Type of cashflow | `"COUPON"`, `"PRINCIPAL"`, `"AMORTIZATION"`, `"CALL_REDEMPTION"`, `"PUT_REDEMPTION"`, `"SINKING_FUND"`, `"PARTIAL_REDEMPTION"` | reda.041 — `CshFlwTp` |
+| 5 | `cashflowDate` | Date | Required | Scheduled payment date | `"2024-09-15"` | reda.041 — `CshFlwDt` |
+| 6 | `amount` | Decimal | Required | Cashflow amount per unit of face value | `25.00` | reda.041 — `CshFlwAmt` |
+| 7 | `currency` | String | Required | Payment currency per ISO 4217 | `"USD"` | reda.041 — `CshFlwCcy` |
+| 8 | `couponRate` | Decimal | Conditional | Applicable coupon rate for this period (%). Required if `cashflowType` = `COUPON` | `5.00` | reda.041 — `Debt/IntrstRate` |
+
+#### 6.8.3 Accrual Period
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 9 | `accrualStartDate` | Date | Conditional | Start of accrual period. Required if `cashflowType` = `COUPON` | `"2024-03-15"` | reda.041 — `Debt/AcrlStrtDt` |
+| 10 | `accrualEndDate` | Date | Conditional | End of accrual period. Required if `cashflowType` = `COUPON` | `"2024-09-15"` | reda.041 — `Debt/AcrlEndDt` |
+| 11 | `dayCountFraction` | Decimal | Optional | Day count fraction for this accrual period | `0.50` | reda.041 — `Debt/DayCntFrctn` |
+| 12 | `dayCountBasis` | Enum | Optional | Day count convention used | See [Appendix A.10](#a10-daycountbasis) | reda.041 — `Debt/DayCntBsis` |
+
+#### 6.8.4 Record & Payment Dates
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 13 | `exDividendDate` | Date | Optional | Ex-dividend date (bond trades without accrued interest after this date) | `"2024-09-01"` | reda.041 — `ExDvddDt` |
+| 14 | `recordDate` | Date | Optional | Record date for determining payment eligibility | `"2024-09-03"` | reda.041 — `RcrdDt` |
+| 15 | `paymentDate` | Date | Optional | Actual payment settlement date (if different from `cashflowDate`) | `"2024-09-17"` | reda.041 — `PmtDt` |
+| 16 | `paymentStatus` | Enum | Optional | Status of the cashflow | `"SCHEDULED"`, `"CONFIRMED"`, `"PAID"`, `"MISSED"`, `"DEFERRED"` | reda.041 — `PmtSts` |
+
+#### 6.8.5 Principal & Notional
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 17 | `notionalBefore` | Decimal | Optional | Outstanding notional before this cashflow | `1000.00` | reda.041 — `Debt/OutstndgAmt` |
+| 18 | `notionalAfter` | Decimal | Optional | Outstanding notional after this cashflow | `1000.00` | reda.041 — `Debt/RmnngAmt` |
+| 19 | `principalAmount` | Decimal | Conditional | Principal repayment amount. Required if `cashflowType` ∈ {`PRINCIPAL`, `AMORTIZATION`, `SINKING_FUND`, `PARTIAL_REDEMPTION`} | `100.00` | reda.041 — `Debt/PrncplAmt` |
+| 20 | `redemptionPrice` | Decimal | Optional | Redemption price (% of face value) for call/put/maturity | `100.00` | reda.041 — `Debt/RedPric` |
+
+#### 6.8.6 Floating Rate (if applicable)
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 21 | `referenceRate` | String | Optional | Benchmark rate name (for floating-rate bonds) | `"SOFR"`, `"EURIBOR_3M"` | reda.041 — `Debt/RefRate` |
+| 22 | `referenceRateValue` | Decimal | Optional | Benchmark rate value at fixing (%) | `5.30` | reda.041 — `Debt/RefRateVal` |
+| 23 | `spread` | Decimal | Optional | Spread over reference rate (basis points) | `50.00` | reda.041 — `Debt/Sprd` |
+| 24 | `fixingDate` | Date | Optional | Rate fixing date | `"2024-03-13"` | reda.041 — `Debt/FxgDt` |
+| 25 | `allInRate` | Decimal | Optional | All-in rate (reference + spread, %) | `5.80` | reda.041 — `Debt/AllInRate` |
 
 ---
 
