@@ -20,6 +20,8 @@
 | 03 | [Bank Data Specification — Investment Funds](03-bank-data-specification-investment-funds.md) | Data fields, formats, ISO 20022 references for Mutual Funds, ETFs, Hedge Funds, REITs, etc. | Draft |
 | 03.1 | [↳ Sample Data — Investment Funds (CSV & JSON)](03.1-sample-data-csv-investment-funds.md) | CSV & JSON examples for ETF, Mutual Fund, and Hedge Fund records | Draft |
 | 03.2 | [↳ Sample Data — Fund Position, Transaction & Order (CSV & JSON)](03.2-sample-data-csv-fund-position-transaction.md) | Fund Position, Subscription, Redemption, Switch, and Distribution samples | Draft |
+| 04 | [Bank Data Specification — Money Market Instruments](04-bank-data-specification-money-market.md) | Data fields, formats, ISO 20022 references for T-Bills, CP, CDs, Repos, Term Deposits | Draft |
+| 04.1 | [↳ Sample Data — Money Market Instruments (CSV & JSON)](04.1-sample-data-csv-money-market.md) | CSV & JSON examples for Treasury Bill, Commercial Paper, CD, Repo, Term Deposit | Draft |
 
 ---
 
@@ -27,10 +29,10 @@
 
 | # | Document | Description | Status |
 |---|---|---|---|
-| 04 | Bank Data Specification — Derivatives | Data fields for Options, Swaps, Futures, Forwards | Planned |
-| 05 | Bank Data Specification — FX & Money Market | Data fields for FX Instruments and Money Market | Planned |
-| 06 | Bank Data Specification — Structured Products & Commodities | Data fields for Structured Products and Commodities | Planned |
-| 07 | Bank Data Specification — FX Deposit | Data fields for FX Deposit (Account Source Fund) | Planned |
+| 05 | Bank Data Specification — Derivatives | Data fields for Options, Swaps, Futures, Forwards | Planned |
+| 06 | Bank Data Specification — FX Instruments | Data fields for FX Instruments | Planned |
+| 07 | Bank Data Specification — Structured Products & Commodities | Data fields for Structured Products and Commodities | Planned |
+| 08 | Bank Data Specification — FX Deposit | Data fields for FX Deposit (Account Source Fund) | Planned |
 
 ---
 
