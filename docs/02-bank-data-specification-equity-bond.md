@@ -36,6 +36,8 @@ This document specifies the data fields, formats, and standards required from ba
 
 ## 2. Entity Relationship Overview
 
+### 2.1 Wealth Management Entities (doc 01)
+
 The following diagram illustrates the relationships between the core entities in the Vahalla Wealth Management System.
 
 ```mermaid
@@ -52,6 +54,37 @@ graph TD
     Position -->|references| Asset
     Asset -->|is a| Equity
     Asset -->|is a| Bond
+```
+
+### 2.2 Security Data Model (this document)
+
+```mermaid
+graph TD
+    Asset["Asset — Common Security<br/><i>26 shared fields (Section 4)</i>"]
+
+    Equity -.->|extends| Asset
+    Bond -.->|extends| Asset
+
+    subgraph EquityDomain["Section 5 — Equity"]
+        Equity["Equity<br/><i>61 fields</i>"]
+        EquityMarketData["Equity Market Data<br/><i>20 fields</i>"]
+        DividendSchedule["Dividend Schedule<br/><i>18 fields</i>"]
+        Equity -->|priced by| EquityMarketData
+        Equity -->|pays| DividendSchedule
+    end
+
+    subgraph BondDomain["Section 6 — Bond"]
+        Bond["Bond<br/><i>118 fields</i>"]
+        BondMarketData["Bond Market Data<br/><i>29 fields</i>"]
+        CashflowSchedule["Cashflow Schedule<br/><i>25 fields</i>"]
+        Bond -->|priced by| BondMarketData
+        Bond -->|projects| CashflowSchedule
+    end
+
+    CorporateAction["Corporate Actions<br/><i>37 fields</i>"]
+
+    CorporateAction -->|affects| Equity
+    CorporateAction -->|affects| Bond
 ```
 
 ---
