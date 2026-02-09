@@ -1283,6 +1283,7 @@ The following table lists all data files that the bank must provide to the Vahal
 | 13 | `transaction.csv` | Transaction data — trades, fees, settlement, counterparty | Daily | CSV / JSON | sese.023 |
 | 14 | `order.csv` | Order data — order details, quantity, price, execution | Daily | CSV / JSON | setr.001 |
 | 15 | `fx_deposit.csv` | FX deposit data — interest, term, maturity, rollover | Daily | CSV / JSON | camt.052 |
+| 16 | `saving_deposit.csv` | Saving deposit data — interest, term, insurance, withdrawal limits | Daily | CSV / JSON | camt.052 |
 
 ### 11.3 Delivery Schedule
 

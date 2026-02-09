@@ -4,9 +4,9 @@
 
 | | |
 |---|---|
-| **Document Title** | Wealth Management Module — Client, Account, Portfolio, Position, Transaction, Order & FX Deposit |
+| **Document Title** | Wealth Management Module — Client, Account, Portfolio, Position, Transaction, Order, FX Deposit & Saving Deposit |
 | **System** | Vahalla Wealth Management System |
-| **Document Version** | 1.3 |
+| **Document Version** | 1.4 |
 | **Date** | 2026-02-09 |
 | **Classification** | Confidential |
 | **Status** | Draft |
@@ -20,12 +20,13 @@
 | 1.1 | 2025-09-15 | Vahalla System Team | Added Transaction & Order entities; added FX Deposit entity; expanded Account with margin and tax fields |
 | 1.2 | 2025-12-10 | Vahalla System Team | Added Portfolio risk metrics and allocation breakdown; added Position cost & valuation fields; added entity relationship diagram |
 | 1.3 | 2026-12-22 | Vahalla System Team | Added `valuationMethod` and `pricingSource` to Position; renumbered Position fields; updated cross-references to Equity & Bond specification (doc 02) |
+| 1.4 | 2026-01-09 | Vahalla System Team | Added Saving Deposit entity (Section 12); updated Deposit inheritance model — FX Deposit and Saving Deposit extend common Deposit; updated entity diagram |
 
 ---
 
 ## 1. Purpose
 
-This document defines the data fields, formats, and standards for the **Wealth Management domain** of the Vahalla Investment Module. It covers the core operational entities that manage client relationships, accounts, portfolios, positions, transactions, orders, and FX deposits.
+This document defines the data fields, formats, and standards for the **Wealth Management domain** of the Vahalla Investment Module. It covers the core operational entities that manage client relationships, accounts, portfolios, positions, transactions, orders, FX deposits, and saving deposits.
 
 This specification is aligned with **ISO 20022** messaging standards and is intended for banking partners who provide data feeds for the wealth management layer.
 
@@ -44,7 +45,9 @@ graph TD
     POS["Position (semt.003)"]
     TXN["Transaction (sese.023)"]
     ORD["Order (setr.001)"]
+    DEP["Deposit"]
     FXD["FXDeposit (camt.052)"]
+    SVD["SavingDeposit (camt.052)"]
     AST["Asset (reda.041)"]
 
     RM -->|manages| CLI
@@ -53,7 +56,9 @@ graph TD
     ACC -->|holds| POS
     ACC -->|records| TXN
     ACC -->|places| ORD
-    ACC -->|source fund| FXD
+    ACC -->|source of fund| DEP
+    FXD -.->|extends| DEP
+    SVD -.->|extends| DEP
     PF -->|tracks| POS
     ORD -->|generates| TXN
     POS -->|references| AST
@@ -695,6 +700,100 @@ graph TD
 | 30 | `approvedBy` | ID | Optional | Approver identifier | `"RM-000"` | — (supplementary) |
 | 31 | `createdAt` | DateTime | Required | Record creation timestamp | `"2026-02-08T14:00:00Z"` | — (supplementary) |
 | 32 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-08T14:30:00Z"` | — (supplementary) |
+
+---
+
+## 12. Saving Deposit Data Fields
+
+### 12.1 Deposit Identification
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 1 | `id` | ID | Required | Unique saving deposit identifier | `"SVD-001234"` | camt.052 — `Ntry/NtryRef` |
+| 2 | `depositReference` | String | Required | Deposit reference number | `"SDEP-2026-001234"` | camt.052 — `Ntry/AcctSvcrRef` |
+| 3 | `depositType` | Enum | Required | Saving deposit type | `"SAVINGS"`, `"FIXED_SAVINGS"`, `"HIGH_YIELD_SAVINGS"`, `"RECURRING_DEPOSIT"`, `"FLEXI_DEPOSIT"` | camt.052 — `Ntry/BkTxCd/Prtry/Cd` |
+| 4 | `status` | Enum | Required | Deposit status | See [Appendix A.18](#a18-depositstatus) | camt.052 — `Ntry/Sts` |
+| 5 | `accountNumber` | String | Required | Saving account number | `"SAV-9876543210"` | camt.052 — `Acct/Id/IBAN` |
+
+### 12.2 Deposit Currency & Amount
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 6 | `currency` | String | Required | Deposit currency per ISO 4217 | `"THB"` | camt.052 — `Ntry/Amt/@Ccy` |
+| 7 | `principalAmount` | Decimal | Required | Principal / initial deposit amount | `500000.00` | camt.052 — `Ntry/Amt` |
+| 8 | `currentBalance` | Decimal | Optional | Current balance (principal + accrued interest) | `506250.00` | camt.052 — `Bal/Amt` |
+| 9 | `minimumBalance` | Decimal | Optional | Minimum required balance | `1000.00` | — (supplementary) |
+| 10 | `maximumBalance` | Decimal | Optional | Maximum insured / allowed balance | `50000000.00` | — (supplementary) |
+
+### 12.3 Deposit Interest
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 11 | `interestType` | Enum | Required | Interest type | See [Appendix A.21](#a21-interesttype) | camt.052 — `Ntry/NtryDtls/TxDtls/RltdAgts/IntrstTp` |
+| 12 | `interestRate` | Decimal | Required | Annual interest rate (%) | `1.50` | camt.052 — `Ntry/NtryDtls/TxDtls/Intrst/Rate` |
+| 13 | `tieredRates` | String | Optional | Tiered interest rate description (JSON or delimited) | `"0-100K:0.50;100K-1M:1.00;1M+:1.50"` | — (supplementary) |
+| 14 | `accruedInterest` | Decimal | Optional | Accrued interest to date | `6250.00` | camt.052 — `Ntry/NtryDtls/TxDtls/Intrst/AccrdAmt` |
+| 15 | `interestAmount` | Decimal | Optional | Total interest earned | `6250.00` | camt.052 — `Ntry/NtryDtls/TxDtls/Intrst/Amt` |
+| 16 | `interestCurrency` | String | Optional | Interest currency per ISO 4217 | `"THB"` | camt.052 — `Ntry/NtryDtls/TxDtls/Intrst/Amt/@Ccy` |
+| 17 | `interestPaymentFrequency` | Enum | Optional | Interest payment / crediting frequency | `"MONTHLY"`, `"QUARTERLY"`, `"SEMI_ANNUAL"`, `"ANNUAL"`, `"AT_MATURITY"` | camt.052 — `Ntry/NtryDtls/TxDtls/Intrst/PmtFrqcy` |
+| 18 | `compoundingFrequency` | Enum | Optional | Compounding frequency | `"DAILY"`, `"MONTHLY"`, `"QUARTERLY"`, `"ANNUAL"` | — (supplementary) |
+| 19 | `dayCountBasis` | Enum | Optional | Day count convention | `"ACT_365"` | camt.052 — `Ntry/NtryDtls/TxDtls/Intrst/DayCntBsis` |
+| 20 | `lastInterestPaymentDate` | DateTime | Optional | Last interest payment date | `"2026-01-31T00:00:00Z"` | — (supplementary) |
+| 21 | `nextInterestPaymentDate` | DateTime | Optional | Next interest payment date | `"2026-02-28T00:00:00Z"` | — (supplementary) |
+
+### 12.4 Deposit Term & Maturity
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 22 | `termType` | Enum | Required | Term type | `"OPEN_ENDED"`, `"FIXED_TERM"`, `"NOTICE_PERIOD"` | camt.052 — `Ntry/NtryDtls/TxDtls/RltdDts/TrmTp` |
+| 23 | `tenorDays` | Int | Optional | Tenor in days (for fixed-term saving) | `365` | camt.052 — `Ntry/NtryDtls/TxDtls/RltdDts/Tenor` |
+| 24 | `noticePeriodDays` | Int | Optional | Notice period in days (for notice deposits) | `30` | — (supplementary) |
+| 25 | `startDate` | DateTime | Required | Deposit start / opening date | `"2025-06-01T00:00:00Z"` | camt.052 — `Ntry/NtryDtls/TxDtls/RltdDts/StartDt` |
+| 26 | `maturityDate` | DateTime | Optional | Maturity date (if fixed-term) | `"2026-06-01T00:00:00Z"` | camt.052 — `Ntry/NtryDtls/TxDtls/RltdDts/MtrtyDt` |
+
+### 12.5 Deposit Withdrawal & Limits
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 27 | `withdrawalAllowed` | Boolean | Optional | Whether withdrawal is allowed without penalty | `true` | — (supplementary) |
+| 28 | `maxWithdrawalsPerMonth` | Int | Optional | Maximum withdrawals per month (0 = unlimited) | `0` | — (supplementary) |
+| 29 | `earlyWithdrawalPenaltyRate` | Decimal | Optional | Early withdrawal penalty rate (%) for fixed-term | `0.50` | — (supplementary) |
+| 30 | `minimumWithdrawalAmount` | Decimal | Optional | Minimum withdrawal amount | `100.00` | — (supplementary) |
+
+### 12.6 Deposit Insurance
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 31 | `depositInsured` | Boolean | Optional | Whether the deposit is covered by deposit insurance | `true` | — (supplementary) |
+| 32 | `insuranceScheme` | String | Optional | Deposit insurance scheme name | `"DPA"`, `"FDIC"`, `"FSCS"` | — (supplementary) |
+| 33 | `insuredAmount` | Decimal | Optional | Maximum insured amount per depositor | `5000000.00` | — (supplementary) |
+| 34 | `insuredCurrency` | String | Optional | Insurance amount currency per ISO 4217 | `"THB"` | — (supplementary) |
+
+### 12.7 Deposit Servicing Institution
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 35 | `depositBank` | String | Optional | Deposit bank name | `"Kasikornbank"` | camt.052 — `Acct/Svcr/FinInstnId/Nm` |
+| 36 | `depositBankLei` | String | Optional | Deposit bank LEI per ISO 17442 | `"549300FHO4JPMQKHN872"` | camt.052 — `Acct/Svcr/FinInstnId/LEI` |
+| 37 | `depositBankBic` | String | Optional | Deposit bank BIC per ISO 9362 | `"KASITHBKXXX"` | camt.052 — `Acct/Svcr/FinInstnId/BICFI` |
+| 38 | `branchCode` | String | Optional | Branch code | `"BKK-SIAM-001"` | camt.052 — `Acct/Svcr/BrnchId/Id` |
+
+### 12.8 Deposit Tax
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 39 | `withholdingTaxRate` | Decimal | Optional | Withholding tax rate on interest (%) | `15.00` | camt.052 — `Ntry/NtryDtls/TxDtls/Tax/WhldgTaxRate` |
+| 40 | `taxStatus` | Enum | Optional | Tax status | See [Appendix A.15](#a15-taxstatus) | camt.052 — `Ntry/NtryDtls/TxDtls/Tax/TaxSts` |
+
+### 12.9 Deposit Relationships & Metadata
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 41 | `accountId` | ID | Required | Parent account identifier | `"ACC-001234"` | camt.052 — `Acct/Id/Prtry/Id` |
+| 42 | `clientId` | ID | Required | Client identifier | `"CLI-001234"` | camt.052 — `Acct/Ownr/Id` |
+| 43 | `linkedFxDepositId` | ID | Optional | Linked FX deposit identifier (if converted) | `"FXD-001234"` | — (supplementary) |
+| 44 | `createdAt` | DateTime | Required | Record creation timestamp | `"2025-06-01T09:00:00Z"` | — (supplementary) |
+| 45 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-08T14:00:00Z"` | — (supplementary) |
 
 ---
 
