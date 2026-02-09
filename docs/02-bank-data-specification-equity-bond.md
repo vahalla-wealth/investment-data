@@ -95,6 +95,22 @@ graph TD
 - **Encoding:** UTF-8
 - **Frequency:** Daily end-of-day batch, or real-time via API
 
+### 3.5 Entity Summary
+
+This document defines the following entities. Each entity has its own field numbering (`#`) starting from 1. The **Common** fields (§4) are shared across all entities via the `Asset` and `Security` interfaces.
+
+| Entity / Object | Section | # Fields | Description | ISO 20022 Message | Frequency |
+|---|---|---|---|---|---|
+| **Common Security** | §4 | 26 | Shared identification, classification, and timestamps for all securities | `reda.041` | Static / On change |
+| **Equity** | §5.1–5.6 | 61 | Equity-specific fields: fundamentals, analyst ratings, financials, valuation, technicals, ownership | `reda.041` | Static / Daily |
+| **Equity Market Data** | §5.7 | 15 | Real-time / EOD market data feed for equities: OHLC prices, VWAP, volume, liquidity | `semt.002` | Intraday / EOD |
+| **Bond** | §6.1–6.6 | 52 | Bond-specific fields: coupon, credit, call/put, analytics, metrics | `reda.041`, `semt.002` | Static / Daily |
+| **Bond Market Data** | §6.7 | 21 | Real-time / EOD market data feed for bonds: prices, yields, clean/dirty, volume, liquidity | `semt.002` | Intraday / EOD |
+| **Asset Price** | §7.1 | 8 | Separate price feed linked via `assetId`: last price, bid/ask, volume | `semt.003` | Intraday / EOD |
+| **Asset Valuation** | §7.2 | 7 | Portfolio valuation linked via `assetId`: market value, book value, method | `semt.002` | Daily |
+
+> **Note:** Field `#` restarts from 1 for each entity. When combining entities in a CSV file, use the field name (not `#`) as the unique column identifier.
+
 ---
 
 ## 4. Common Security Identification Fields
