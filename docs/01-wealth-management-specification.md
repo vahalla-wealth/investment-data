@@ -6,8 +6,8 @@
 |---|---|
 | **Document Title** | Wealth Management Module — Client, Account, Portfolio, Position, Transaction, Order, FX Deposit & Saving Deposit |
 | **System** | Vahalla Wealth Management System |
-| **Document Version** | 1.4 |
-| **Date** | 2026-02-09 |
+| **Document Version** | 1.5 |
+| **Date** | 2026-02-12 |
 | **Classification** | Confidential |
 | **Status** | Draft |
 | **Prepared By** | Vahalla System Team |
@@ -21,6 +21,7 @@
 | 1.2 | 2025-12-10 | Vahalla System Team | Added Portfolio risk metrics and allocation breakdown; added Position cost & valuation fields; added entity relationship diagram |
 | 1.3 | 2026-12-22 | Vahalla System Team | Added `valuationMethod` and `pricingSource` to Position; renumbered Position fields; updated cross-references to Equity & Bond specification (doc 02) |
 | 1.4 | 2026-01-09 | Vahalla System Team | Added Saving Deposit entity (Section 12); updated Deposit inheritance model — FX Deposit and Saving Deposit extend common Deposit; updated entity diagram |
+| 1.5 | 2026-02-12 | Vahalla System Team | Revised Position entity to consolidate all product types (Equity, Bond, Funds, Money Market, Derivatives, FX, Structured Products, Commodities); added Position sections 8.6–8.9 (Notional & Contract, FX, Risk Metrics/Greeks, Margin & Collateral); added `currency`, `quantityType`, `couponRate`, `yield`, `faceValue` fields; expanded Portfolio asset allocation (Section 7.4) to 10 product-type weights; added Appendix A.24 PositionAssetClass and A.25 PositionInstrumentType enums; updated entity diagram |
 
 ---
 
@@ -30,7 +31,14 @@ This document defines the data fields, formats, and standards for the **Wealth M
 
 This specification is aligned with **ISO 20022** messaging standards and is intended for banking partners who provide data feeds for the wealth management layer.
 
-For security master data (Equity & Bond fields), refer to [02 — Bank Data Specification — Equity & Bond](02-bank-data-specification-equity-bond.md).
+For security master data, refer to the asset class specification documents:
+- [02 — Equity & Bond](02-bank-data-specification-equity-bond.md)
+- [03 — Investment Funds](03-bank-data-specification-investment-funds.md)
+- [04 — Money Market Instruments](04-bank-data-specification-money-market.md)
+- [05 — Derivatives](05-bank-data-specification-derivatives.md)
+- [06 — Foreign Exchange Instruments](06-bank-data-specification-foreign-exchange.md)
+- [07 — Structured Products](07-bank-data-specification-structured-products.md)
+- [07.2 — Commodities](07.2-bank-data-specification-commodities.md)
 
 ---
 
@@ -48,7 +56,17 @@ graph TD
     DEP["Deposit"]
     FXD["FXDeposit (camt.052)"]
     SVD["SavingDeposit (camt.052)"]
-    AST["Asset (reda.041)"]
+
+    subgraph "Asset Classes (Position references)"
+        EQ["Equity (doc 02)"]
+        BD["Bond (doc 02)"]
+        FND["Investment Fund (doc 03)"]
+        MM["Money Market (doc 04)"]
+        DRV["Derivative (doc 05)"]
+        FX["FX Instrument (doc 06)"]
+        SP["Structured Product (doc 07)"]
+        CMD["Commodity (doc 07.2)"]
+    end
 
     RM -->|manages| CLI
     CLI -->|owns| ACC
@@ -61,7 +79,14 @@ graph TD
     SVD -.->|extends| DEP
     PF -->|tracks| POS
     ORD -->|generates| TXN
-    POS -->|references| AST
+    POS -->|references| EQ
+    POS -->|references| BD
+    POS -->|references| FND
+    POS -->|references| MM
+    POS -->|references| DRV
+    POS -->|references| FX
+    POS -->|references| SP
+    POS -->|references| CMD
 ```
 
 ---
@@ -327,41 +352,49 @@ graph TD
 
 ### 7.4 Portfolio Asset Allocation
 
+> Allocation weights should sum to 100%. All weights are expressed as percentages.
+
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 20 | `equityWeight` | Decimal | Optional | Equity allocation (%) | `60.00` | — (supplementary) |
-| 21 | `fixedIncomeWeight` | Decimal | Optional | Fixed income allocation (%) | `25.00` | — (supplementary) |
-| 22 | `cashWeight` | Decimal | Optional | Cash allocation (%) | `10.00` | — (supplementary) |
-| 23 | `alternativesWeight` | Decimal | Optional | Alternatives allocation (%) | `5.00` | — (supplementary) |
+| 20 | `equityWeight` | Decimal | Optional | Equity allocation (%) | `40.00` | — (supplementary) |
+| 21 | `fixedIncomeWeight` | Decimal | Optional | Fixed income / bond allocation (%) | `20.00` | — (supplementary) |
+| 22 | `fundsWeight` | Decimal | Optional | Investment funds allocation (%) — mutual funds, ETFs, hedge funds | `10.00` | — (supplementary) |
+| 23 | `moneyMarketWeight` | Decimal | Optional | Money market allocation (%) — T-bills, CP, CDs, repos | `5.00` | — (supplementary) |
+| 24 | `derivativesWeight` | Decimal | Optional | Derivatives allocation (%) — options, swaps, futures, forwards | `5.00` | — (supplementary) |
+| 25 | `fxWeight` | Decimal | Optional | FX instruments allocation (%) — spot, forward, swap, NDF, options | `3.00` | — (supplementary) |
+| 26 | `structuredProductsWeight` | Decimal | Optional | Structured products allocation (%) | `5.00` | — (supplementary) |
+| 27 | `commoditiesWeight` | Decimal | Optional | Commodities allocation (%) — physical, futures, ETCs | `5.00` | — (supplementary) |
+| 28 | `cashWeight` | Decimal | Optional | Cash & deposits allocation (%) | `5.00` | — (supplementary) |
+| 29 | `alternativesWeight` | Decimal | Optional | Other alternatives allocation (%) — PE, VC, real assets | `2.00` | — (supplementary) |
 
 ### 7.5 Portfolio Investment Guidelines
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 24 | `targetReturn` | Decimal | Optional | Target return (%) | `8.00` | — (supplementary) |
-| 25 | `riskBudget` | Decimal | Optional | Risk budget (%) | `15.00` | — (supplementary) |
-| 26 | `maxSinglePositionWeight` | Decimal | Optional | Max single position weight (%) | `10.00` | — (supplementary) |
-| 27 | `maxSectorWeight` | Decimal | Optional | Max sector weight (%) | `25.00` | — (supplementary) |
-| 28 | `maxCountryWeight` | Decimal | Optional | Max country weight (%) | `40.00` | — (supplementary) |
+| 30 | `targetReturn` | Decimal | Optional | Target return (%) | `8.00` | — (supplementary) |
+| 31 | `riskBudget` | Decimal | Optional | Risk budget (%) | `15.00` | — (supplementary) |
+| 32 | `maxSinglePositionWeight` | Decimal | Optional | Max single position weight (%) | `10.00` | — (supplementary) |
+| 33 | `maxSectorWeight` | Decimal | Optional | Max sector weight (%) | `25.00` | — (supplementary) |
+| 34 | `maxCountryWeight` | Decimal | Optional | Max country weight (%) | `40.00` | — (supplementary) |
 
 ### 7.6 Portfolio Compliance
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 29 | `investmentPolicyCompliant` | Boolean | Optional | Investment policy compliance flag | `true` | — (supplementary) |
-| 30 | `lastComplianceCheckDate` | DateTime | Optional | Last compliance check date | `"2026-02-01T00:00:00Z"` | — (supplementary) |
-| 31 | `complianceBreaches` | Int | Optional | Number of compliance breaches | `0` | — (supplementary) |
+| 35 | `investmentPolicyCompliant` | Boolean | Optional | Investment policy compliance flag | `true` | — (supplementary) |
+| 36 | `lastComplianceCheckDate` | DateTime | Optional | Last compliance check date | `"2026-02-01T00:00:00Z"` | — (supplementary) |
+| 37 | `complianceBreaches` | Int | Optional | Number of compliance breaches | `0` | — (supplementary) |
 
 ### 7.7 Portfolio Relationships & Metadata
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 32 | `accountId` | ID | Required | Parent account identifier | `"ACC-001234"` | semt.003 — `SfkpgAcct/AcctOwnr` |
-| 33 | `inceptionDate` | DateTime | Optional | Portfolio inception date | `"2024-01-15T00:00:00Z"` | — (supplementary) |
-| 34 | `lastRebalanceDate` | DateTime | Optional | Last rebalance date | `"2026-01-15T00:00:00Z"` | — (supplementary) |
-| 35 | `nextRebalanceDate` | DateTime | Optional | Next scheduled rebalance date | `"2026-04-15T00:00:00Z"` | — (supplementary) |
-| 36 | `createdAt` | DateTime | Required | Record creation timestamp | `"2024-01-15T09:00:00Z"` | — (supplementary) |
-| 37 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-08T14:00:00Z"` | — (supplementary) |
+| 38 | `accountId` | ID | Required | Parent account identifier | `"ACC-001234"` | semt.003 — `SfkpgAcct/AcctOwnr` |
+| 39 | `inceptionDate` | DateTime | Optional | Portfolio inception date | `"2024-01-15T00:00:00Z"` | — (supplementary) |
+| 40 | `lastRebalanceDate` | DateTime | Optional | Last rebalance date | `"2026-01-15T00:00:00Z"` | — (supplementary) |
+| 41 | `nextRebalanceDate` | DateTime | Optional | Next scheduled rebalance date | `"2026-04-15T00:00:00Z"` | — (supplementary) |
+| 42 | `createdAt` | DateTime | Required | Record creation timestamp | `"2024-01-15T09:00:00Z"` | — (supplementary) |
+| 43 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-08T14:00:00Z"` | — (supplementary) |
 
 ---
 
@@ -369,73 +402,132 @@ graph TD
 
 ### 8.1 Position Identification
 
-| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+> **Scope:** A Position record represents a holding of **any** product type across all asset classes. The `assetClass` and `securityType` fields classify the holding; conditional fields in subsequent sections apply based on these values.
+
+| # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
 | 1 | `id` | ID | Required | Unique position identifier | `"POS-001234"` | semt.003 — `BalForAcct/SfkpgPlc/Id` |
-| 2 | `assetId` | ID | Required | Reference to security/asset record | `"SEC-EQ-001"` | semt.003 — `FinInstrmId/OthrId/Id` |
-| 3 | `assetClass` | Enum | Required | Asset class | `"SECURITIES"` | semt.003 — `FinInstrmId/ClssfctnTp` |
-| 4 | `securityType` | Enum | Required | Security type (from security master) | `"EQUITY"` | semt.003 — `FinInstrmAttrbts/ClssfctnTp` |
-| 5 | `isin` | String | Optional | ISIN of the held asset | `"US0378331005"` | semt.003 — `FinInstrmId/ISIN` |
-| 6 | `ticker` | String | Optional | Ticker symbol | `"AAPL"` | semt.003 — `FinInstrmId/TckrSymb` |
-| 7 | `assetName` | String | Required | Asset name | `"Apple Inc. Common Stock"` | semt.003 — `FinInstrmId/Nm` |
+| 2 | `assetId` | ID | Required | Reference to security/asset record in the relevant master (doc 02–07.2) | `"SEC-EQ-001"`, `"DRV-OPT-001"`, `"FX-001"`, `"CMD-001"` | semt.003 — `FinInstrmId/OthrId/Id` |
+| 3 | `assetClass` | Enum | Required | Asset class | See [Appendix A.24](#a24-positionassetclass) | semt.003 — `FinInstrmId/ClssfctnTp` |
+| 4 | `securityType` | Enum | Required | Instrument type within the asset class | See [Appendix A.25](#a25-positioninstrumenttype) | semt.003 — `FinInstrmAttrbts/ClssfctnTp` |
+| 5 | `isin` | String | Optional | ISIN of the held asset (where applicable) | `"US0378331005"` | semt.003 — `FinInstrmId/ISIN` |
+| 6 | `ticker` | String | Optional | Ticker symbol | `"AAPL"`, `"CLM6"`, `"EUR/USD"` | semt.003 — `FinInstrmId/TckrSymb` |
+| 7 | `assetName` | String | Required | Asset / instrument name | `"Apple Inc."`, `"WTI Crude Jun-26"`, `"EUR/USD FX Forward"` | semt.003 — `FinInstrmId/Nm` |
+| 8 | `currency` | String | Required | Position denomination currency per ISO 4217 | `"USD"` | semt.003 — `FinInstrmAttrbts/DnmtnCcy` |
 
 ### 8.2 Position Quantity
 
-| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+| # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 8 | `quantity` | Decimal | Required | Holding quantity | `10000` | semt.003 — `BalForAcct/AggtBal/ShrtLngPos/Qty` |
-| 9 | `side` | Enum | Required | Position side | See [Appendix A.8](#a8-positionside) | semt.003 — `BalForAcct/AggtBal/ShrtLngPos/Ind` |
-| 10 | `status` | Enum | Required | Position status | See [Appendix A.9](#a9-positionstatus) | — (supplementary) |
+| 9 | `quantity` | Decimal | Required | Holding quantity (shares, units, contracts, lots, notional units) | `10000`, `50`, `1000000.00` | semt.003 — `BalForAcct/AggtBal/ShrtLngPos/Qty` |
+| 10 | `quantityType` | Enum | Optional | Quantity type qualifier | `"SHARES"`, `"UNITS"`, `"CONTRACTS"`, `"FACE_VALUE"`, `"NOTIONAL"`, `"LOTS"`, `"TROY_OZ"`, `"BARRELS"` | semt.003 — `BalForAcct/AggtBal/QtyTp` |
+| 11 | `side` | Enum | Required | Position side | See [Appendix A.8](#a8-positionside) | semt.003 — `BalForAcct/AggtBal/ShrtLngPos/Ind` |
+| 12 | `status` | Enum | Required | Position status | See [Appendix A.9](#a9-positionstatus) | — (supplementary) |
 
 ### 8.3 Position Cost & Valuation
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 11 | `averageCost` | Decimal | Required | Average cost per unit | `165.00` | semt.003 — `BalForAcct/AvrgCostPricPerUnit` |
-| 12 | `costBasis` | Decimal | Required | Total cost basis (quantity × averageCost) | `1650000.00` | semt.003 — `BalForAcct/AcqstnDt/CostVal` |
-| 13 | `costCurrency` | String | Required | Cost currency per ISO 4217 | `"USD"` | semt.003 — `BalForAcct/AcqstnDt/CostVal/@Ccy` |
-| 14 | `currentPrice` | Decimal | Optional | Current market price | `185.50` | semt.003 — `BalForAcct/PricDtls/MktPric/Val` |
-| 15 | `marketValue` | Decimal | Optional | Current market value | `1855000.00` | semt.003 — `BalForAcct/HldgVal/Amt` |
-| 16 | `valuationCurrency` | String | Optional | Valuation currency per ISO 4217 | `"USD"` | semt.003 — `BalForAcct/HldgVal/Amt/@Ccy` |
-| 17 | `valuationDate` | DateTime | Optional | Valuation date | `"2026-02-08T16:00:00Z"` | semt.003 — `BalForAcct/PricDtls/PricDt` |
-| 18 | `valuationMethod` | Enum | Optional | Valuation methodology used | `"MARK_TO_MARKET"`, `"MARK_TO_MODEL"`, `"MARK_TO_MANAGEMENT"`, `"THEORETICAL_PRICING"`, `"VENDOR_PRICING"` | semt.003 — `BalForAcct/PricDtls/ValtnMtd` |
-| 19 | `pricingSource` | String | Optional | Source of pricing data used for valuation | `"Bloomberg"`, `"Reuters"`, `"THAIBMA"` | semt.003 — `BalForAcct/PricDtls/PricgSrc` |
+| 13 | `averageCost` | Decimal | Optional | Average cost per unit | `165.00` | semt.003 — `BalForAcct/AvrgCostPricPerUnit` |
+| 14 | `costBasis` | Decimal | Optional | Total cost basis (quantity × averageCost) | `1650000.00` | semt.003 — `BalForAcct/AcqstnDt/CostVal` |
+| 15 | `costCurrency` | String | Optional | Cost currency per ISO 4217 | `"USD"` | semt.003 — `BalForAcct/AcqstnDt/CostVal/@Ccy` |
+| 16 | `currentPrice` | Decimal | Optional | Current market price / NAV per unit | `185.50` | semt.003 — `BalForAcct/PricDtls/MktPric/Val` |
+| 17 | `marketValue` | Decimal | Optional | Current market value | `1855000.00` | semt.003 — `BalForAcct/HldgVal/Amt` |
+| 18 | `valuationCurrency` | String | Optional | Valuation currency per ISO 4217 | `"USD"` | semt.003 — `BalForAcct/HldgVal/Amt/@Ccy` |
+| 19 | `valuationDate` | DateTime | Optional | Valuation date | `"2026-02-08T16:00:00Z"` | semt.003 — `BalForAcct/PricDtls/PricDt` |
+| 20 | `valuationMethod` | Enum | Optional | Valuation methodology | `"MARK_TO_MARKET"`, `"MARK_TO_MODEL"`, `"MARK_TO_MANAGEMENT"`, `"THEORETICAL_PRICING"`, `"VENDOR_PRICING"` | semt.003 — `BalForAcct/PricDtls/ValtnMtd` |
+| 21 | `pricingSource` | String | Optional | Source of pricing data | `"Bloomberg"`, `"Reuters"`, `"THAIBMA"`, `"LME"`, `"LBMA"` | semt.003 — `BalForAcct/PricDtls/PricgSrc` |
 
 ### 8.4 Position P&L
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 20 | `unrealizedPnL` | Decimal | Optional | Unrealized profit/loss | `205000.00` | semt.003 — `BalForAcct/UnrlsdGnOrLoss` |
-| 21 | `unrealizedPnLPercent` | Decimal | Optional | Unrealized P&L (%) | `12.42` | — (supplementary) |
-| 22 | `realizedPnL` | Decimal | Optional | Realized profit/loss | `45000.00` | — (supplementary) |
-| 23 | `totalPnL` | Decimal | Optional | Total P&L | `250000.00` | — (supplementary) |
+| 22 | `unrealizedPnL` | Decimal | Optional | Unrealized profit/loss | `205000.00` | semt.003 — `BalForAcct/UnrlsdGnOrLoss` |
+| 23 | `unrealizedPnLPercent` | Decimal | Optional | Unrealized P&L (%) | `12.42` | — (supplementary) |
+| 24 | `realizedPnL` | Decimal | Optional | Realized profit/loss | `45000.00` | — (supplementary) |
+| 25 | `totalPnL` | Decimal | Optional | Total P&L | `250000.00` | — (supplementary) |
 
-### 8.5 Position Income
+### 8.5 Position Income & Accruals
 
-| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
-|---|---|---|---|---|---|---|
-| 24 | `accruedInterest` | Decimal | Optional | Accrued interest | `0.00` | semt.003 — `BalForAcct/AccrdIntrstAmt` |
-| 25 | `accruedDividend` | Decimal | Optional | Accrued dividend | `550.00` | — (supplementary) |
-
-### 8.6 Position Weight & Settlement
+> Applicable to: Equity (dividends), Bond & Money Market (interest/coupon), Funds (distributions), Derivatives (premium), Deposits (interest).
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 26 | `portfolioWeight` | Decimal | Optional | Weight in portfolio (%) | `15.50` | — (supplementary) |
-| 27 | `settledQuantity` | Decimal | Optional | Settled quantity | `10000` | semt.003 — `BalForAcct/AvlblBal/Qty` |
-| 28 | `unsettledQuantity` | Decimal | Optional | Unsettled quantity | `0` | semt.003 — `BalForAcct/NotAvlblBal/Qty` |
+| 26 | `accruedInterest` | Decimal | Optional | Accrued interest (bonds, money market, deposits, swaps) | `12500.00` | semt.003 — `BalForAcct/AccrdIntrstAmt` |
+| 27 | `accruedDividend` | Decimal | Optional | Accrued dividend (equity, funds) | `550.00` | — (supplementary) |
+| 28 | `couponRate` | Decimal | Optional | Coupon / interest rate (%) — bonds, money market, deposits | `5.25` | semt.003 — `FinInstrmAttrbts/IntrstRate` |
+| 29 | `yield` | Decimal | Optional | Current yield (%) — bonds, money market | `5.10` | semt.003 — `FinInstrmAttrbts/Yld` |
+| 30 | `faceValue` | Decimal | Optional | Face / par value — bonds, money market, structured products | `1000000.00` | semt.003 — `FinInstrmAttrbts/FaceAmt` |
 
-### 8.7 Position Dates & Relationships
+### 8.6 Position — Notional & Contract Fields
+
+> Applicable to: Derivatives (options, swaps, futures, forwards), FX instruments, Structured Products, Commodities.
+
+| # | Field Name | Data Type | Required | Description | Allowed Values / Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 31 | `notionalAmount` | Decimal | Conditional | Notional / nominal amount. Required for derivatives, FX, structured products | `10000000.00` | semt.003 — `FinInstrmAttrbts/NtnlAmt` |
+| 32 | `notionalCurrency` | String | Conditional | Notional currency per ISO 4217 | `"USD"` | semt.003 — `FinInstrmAttrbts/NtnlAmt/@Ccy` |
+| 33 | `contractCount` | Decimal | Conditional | Number of contracts. Required for futures, listed options | `50` | semt.003 — `BalForAcct/AggtBal/NbOfCtrcts` |
+| 34 | `contractSize` | Decimal | Optional | Contract size / multiplier | `1000.00` | semt.003 — `FinInstrmAttrbts/CtrctSz` |
+| 35 | `contractUnit` | String | Optional | Contract unit of measure | `"BARRELS"`, `"TROY_OUNCES"`, `"LOTS"` | semt.003 — `FinInstrmAttrbts/CtrctUnt` |
+| 36 | `strikePrice` | Decimal | Conditional | Strike price. Required for options | `75.00` | semt.003 — `FinInstrmAttrbts/StrkPric` |
+| 37 | `expirationDate` | Date | Optional | Expiration / expiry date (options, futures, warrants) | `"2026-06-20"` | semt.003 — `FinInstrmAttrbts/XpryDt` |
+| 38 | `maturityDate` | Date | Optional | Maturity date (bonds, swaps, forwards, money market, deposits, structured products) | `"2031-06-15"` | semt.003 — `FinInstrmAttrbts/MtrtyDt` |
+
+### 8.7 Position — FX Fields
+
+> Applicable to: FX Spot, Forward, Swap, NDF, Option, Cross-Currency Swap positions.
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 29 | `openDate` | DateTime | Required | Position open date | `"2024-06-15T10:30:00Z"` | — (supplementary) |
-| 30 | `lastTradeDate` | DateTime | Optional | Last trade date | `"2026-01-20T14:00:00Z"` | — (supplementary) |
-| 31 | `maturityDate` | DateTime | Optional | Maturity date (bonds) | `null` | semt.003 — `FinInstrmAttrbts/MtrtyDt` |
-| 32 | `accountId` | ID | Required | Parent account identifier | `"ACC-001234"` | semt.003 — `SfkpgAcct/Id` |
-| 33 | `portfolioId` | ID | Optional | Parent portfolio identifier | `"PF-001234"` | semt.003 — `SfkpgAcct/Dsgnt` |
-| 34 | `createdAt` | DateTime | Required | Record creation timestamp | `"2024-06-15T10:30:00Z"` | — (supplementary) |
-| 35 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-08T16:00:00Z"` | — (supplementary) |
+| 39 | `currencyPair` | String | Conditional | Currency pair. Required when `assetClass` = `FX` | `"EUR/USD"` | semt.003 — `FinInstrmAttrbts/CcyPair` |
+| 40 | `baseCurrencyAmount` | Decimal | Optional | Base currency amount | `1000000.00` | semt.003 — `FinInstrmAttrbts/BaseCcyAmt` |
+| 41 | `quoteCurrencyAmount` | Decimal | Optional | Quote currency amount | `1085000.00` | semt.003 — `FinInstrmAttrbts/QtCcyAmt` |
+| 42 | `exchangeRate` | Decimal | Optional | Contracted exchange rate | `1.0850` | semt.003 — `FinInstrmAttrbts/XchgRate` |
+| 43 | `spotRate` | Decimal | Optional | Current spot rate | `1.0870` | semt.003 — `FinInstrmAttrbts/SpotRate` |
+
+### 8.8 Position — Risk Metrics (Greeks)
+
+> Applicable to: Options (equity, FX, commodity), Structured Products with embedded options, Derivatives with optionality.
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 44 | `delta` | Decimal | Optional | Delta — sensitivity to underlying price | `0.55` | — (supplementary) |
+| 45 | `gamma` | Decimal | Optional | Gamma — rate of change of delta | `0.03` | — (supplementary) |
+| 46 | `vega` | Decimal | Optional | Vega — sensitivity to volatility | `0.15` | — (supplementary) |
+| 47 | `theta` | Decimal | Optional | Theta — time decay per day | `-0.05` | — (supplementary) |
+| 48 | `rho` | Decimal | Optional | Rho — sensitivity to interest rate | `0.02` | — (supplementary) |
+| 49 | `impliedVolatility` | Decimal | Optional | Implied volatility (%) | `25.50` | — (supplementary) |
+| 50 | `daysToExpiry` | Int | Optional | Days to expiration | `128` | — (supplementary) |
+
+### 8.9 Position — Margin & Collateral
+
+> Applicable to: Futures, Options (exchange-traded), Repos, Margin accounts.
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 51 | `initialMargin` | Decimal | Optional | Initial margin requirement | `60000.00` | semt.003 — `BalForAcct/Mrgn/InitlMrgn` |
+| 52 | `maintenanceMargin` | Decimal | Optional | Maintenance margin requirement | `54000.00` | semt.003 — `BalForAcct/Mrgn/MntncMrgn` |
+| 53 | `marginCurrency` | String | Optional | Margin currency per ISO 4217 | `"USD"` | semt.003 — `BalForAcct/Mrgn/MrgnCcy` |
+
+### 8.10 Position Weight & Settlement
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 54 | `portfolioWeight` | Decimal | Optional | Weight in portfolio (%) | `15.50` | — (supplementary) |
+| 55 | `settledQuantity` | Decimal | Optional | Settled quantity | `10000` | semt.003 — `BalForAcct/AvlblBal/Qty` |
+| 56 | `unsettledQuantity` | Decimal | Optional | Unsettled quantity | `0` | semt.003 — `BalForAcct/NotAvlblBal/Qty` |
+
+### 8.11 Position Dates & Relationships
+
+| # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
+|---|---|---|---|---|---|---|
+| 57 | `openDate` | DateTime | Required | Position open date | `"2024-06-15T10:30:00Z"` | — (supplementary) |
+| 58 | `lastTradeDate` | DateTime | Optional | Last trade date | `"2026-01-20T14:00:00Z"` | — (supplementary) |
+| 59 | `accountId` | ID | Required | Parent account identifier | `"ACC-001234"` | semt.003 — `SfkpgAcct/Id` |
+| 60 | `portfolioId` | ID | Optional | Parent portfolio identifier | `"PF-001234"` | semt.003 — `SfkpgAcct/Dsgnt` |
+| 61 | `createdAt` | DateTime | Required | Record creation timestamp | `"2024-06-15T10:30:00Z"` | — (supplementary) |
+| 62 | `updatedAt` | DateTime | Required | Last update timestamp | `"2026-02-08T16:00:00Z"` | — (supplementary) |
 
 ---
 
@@ -1058,6 +1150,112 @@ graph TD
 | `FOK` | Fill or kill | setr.001 — `TmInForce/FIKI` |
 | `OPG` | At the opening | setr.001 — `TmInForce/OPEN` |
 | `CLO` | At the close | setr.001 — `TmInForce/CLOS` |
+
+### A.24 PositionAssetClass
+
+> Used in Position field `assetClass` ([Section 8.1](#81-position-identification)). Maps to the corresponding security master specification document.
+
+| Value | Description | Master Document |
+|---|---|---|
+| `EQUITY` | Equity / common stock / preferred stock | [02 — Equity & Bond](02-bank-data-specification-equity-bond.md) |
+| `FIXED_INCOME` | Bond / fixed income | [02 — Equity & Bond](02-bank-data-specification-equity-bond.md) |
+| `INVESTMENT_FUND` | Mutual fund, ETF, hedge fund, REIT, PE fund | [03 — Investment Funds](03-bank-data-specification-investment-funds.md) |
+| `MONEY_MARKET` | T-bill, commercial paper, CD, repo, term deposit | [04 — Money Market](04-bank-data-specification-money-market.md) |
+| `DERIVATIVE` | Option, swap, future, forward | [05 — Derivatives](05-bank-data-specification-derivatives.md) |
+| `FX` | FX spot, forward, swap, NDF, option, cross-currency swap | [06 — Foreign Exchange](06-bank-data-specification-foreign-exchange.md) |
+| `STRUCTURED_PRODUCT` | Capital-protected note, autocallable, reverse convertible | [07 — Structured Products](07-bank-data-specification-structured-products.md) |
+| `COMMODITY` | Precious metals, energy, agricultural, base metals (spot, futures, physical) | [07.2 — Commodities](07.2-bank-data-specification-commodities.md) |
+| `CASH` | Cash balance / deposit | — |
+| `OTHER` | Other / unclassified | — |
+
+### A.25 PositionInstrumentType
+
+> Used in Position field `securityType` ([Section 8.1](#81-position-identification)). Granular instrument type within each asset class.
+
+**Equity & Fixed Income:**
+
+| Value | Description |
+|---|---|
+| `COMMON_STOCK` | Common stock / ordinary shares |
+| `PREFERRED_STOCK` | Preferred stock |
+| `DEPOSITORY_RECEIPT` | ADR / GDR |
+| `GOVERNMENT_BOND` | Government / sovereign bond |
+| `CORPORATE_BOND` | Corporate bond |
+| `MUNICIPAL_BOND` | Municipal bond |
+| `CONVERTIBLE_BOND` | Convertible bond |
+| `INFLATION_LINKED_BOND` | Inflation-linked bond |
+
+**Investment Funds:**
+
+| Value | Description |
+|---|---|
+| `MUTUAL_FUND` | Mutual fund |
+| `ETF` | Exchange Traded Fund |
+| `HEDGE_FUND` | Hedge fund |
+| `REIT` | Real Estate Investment Trust |
+| `PRIVATE_EQUITY_FUND` | Private equity fund |
+| `VENTURE_CAPITAL_FUND` | Venture capital fund |
+| `INDEX_FUND` | Index fund |
+| `MONEY_MARKET_FUND` | Money market fund |
+
+**Money Market:**
+
+| Value | Description |
+|---|---|
+| `TREASURY_BILL` | Treasury bill |
+| `COMMERCIAL_PAPER` | Commercial paper |
+| `CERTIFICATE_OF_DEPOSIT` | Certificate of deposit |
+| `REPO` | Repurchase agreement |
+| `REVERSE_REPO` | Reverse repurchase agreement |
+| `TERM_DEPOSIT` | Term deposit |
+| `BANKERS_ACCEPTANCE` | Bankers' acceptance |
+| `DISCOUNT_NOTE` | Discount note |
+
+**Derivatives:**
+
+| Value | Description |
+|---|---|
+| `OPTION` | Option (equity, index, commodity, FX) |
+| `SWAP` | Swap (IRS, CDS, equity, commodity, total return) |
+| `FUTURE` | Exchange-traded future |
+| `FORWARD` | OTC forward contract |
+| `WARRANT` | Warrant |
+| `CDS` | Credit default swap |
+
+**FX Instruments:**
+
+| Value | Description |
+|---|---|
+| `FX_SPOT` | FX spot transaction |
+| `FX_FORWARD` | FX forward |
+| `FX_SWAP` | FX swap |
+| `FX_NDF` | Non-deliverable forward |
+| `FX_OPTION` | FX / currency option |
+| `CROSS_CURRENCY_SWAP` | Cross-currency swap |
+
+**Structured Products:**
+
+| Value | Description |
+|---|---|
+| `CAPITAL_PROTECTED_NOTE` | Capital-protected note |
+| `AUTOCALLABLE` | Autocallable note |
+| `REVERSE_CONVERTIBLE` | Reverse convertible |
+| `PARTICIPATION_CERTIFICATE` | Participation certificate |
+| `STRUCTURED_DEPOSIT` | Structured deposit |
+| `LEVERAGE_PRODUCT` | Leverage product |
+
+**Commodities:**
+
+| Value | Description |
+|---|---|
+| `COMMODITY_SPOT` | Commodity spot / physical |
+| `COMMODITY_FUTURE` | Commodity future |
+| `COMMODITY_FORWARD` | Commodity forward |
+| `COMMODITY_SWAP` | Commodity swap |
+| `COMMODITY_OPTION` | Commodity option |
+| `COMMODITY_ETF` | Commodity ETF |
+| `COMMODITY_ETC` | Exchange Traded Commodity |
+| `PHYSICAL_COMMODITY` | Physical commodity holding |
 
 ---
 
