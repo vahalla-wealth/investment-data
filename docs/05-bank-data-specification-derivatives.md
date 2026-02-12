@@ -4,7 +4,7 @@
 |---|---|
 | **Document** | Bank Data Specification — Derivatives |
 | **System** | Vahalla Wealth Management System |
-| **Version** | 1.0 |
+| **Version** | 1.5 |
 | **Classification** | Confidential |
 | **Maintained By** | Vahalla System Team |
 
@@ -12,7 +12,12 @@
 
 | Version | Date | Author | Changes |
 |---|---|---|---|
-| 1.0 | 2026-02-12 | Vahalla System Team | Initial release — Derivative, Option, Swap, Future, Forward |
+| 1.0 | 2025-07-01 | Vahalla System Team | Initial draft — Generic OTC Derivative and Option entity field tables with common identification, underlying asset, settlement, and counterparty sections |
+| 1.1 | 2025-09-18 | Vahalla System Team | Added Swap entity (IRS, CDS, Equity Swap, Commodity Swap) with fixed/floating leg, payment, collateral, and margin fields; added Appendix A enum reference tables |
+| 1.2 | 2025-11-25 | Vahalla System Team | Added Future and Forward entities with contract specifications, delivery, exchange trading, and margin fields; added Option Greeks and volatility sections |
+| 1.3 | 2026-01-15 | Vahalla System Team | Added Derivative Lifecycle Event Log, Underlying Asset Details, and Risk Metrics supporting entities; added regulatory reporting fields (EMIR, Dodd-Frank, MiFIR); expanded clearing and valuation sections |
+| 1.4 | 2026-02-01 | Vahalla System Team | Added Entity Relationship diagram; added Entity Summary table; added pricing details and contract/clearing subsections for all instrument types |
+| 1.5 | 2026-02-12 | Vahalla System Team | Added sample data sections (JSON & CSV for IRS Swap and Equity Option); added data quality requirements and delivery specifications; final field renumbering |
 
 ---
 

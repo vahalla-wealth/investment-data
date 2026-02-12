@@ -6,8 +6,8 @@
 |---|---|
 | **Document Title** | Investment Module — Investment Funds Specification |
 | **System** | Vahalla Wealth Management System |
-| **Document Version** | 1.0 |
-| **Date** | 2026-02-09 |
+| **Document Version** | 1.5 |
+| **Date** | 2026-02-12 |
 | **Classification** | Confidential |
 | **Status** | Draft |
 | **Prepared By** | Vahalla System Team |
@@ -16,7 +16,12 @@
 
 | Version | Date | Author | Description |
 |---|---|---|---|
-| 1.0 | 2025-07-09 | Vahalla System Team | Initial draft — Investment Funds specification |
+| 1.0 | 2025-06-01 | Vahalla System Team | Initial draft — Investment Funds specification with fund identification, classification, NAV, share class, fee structure, and performance fields |
+| 1.1 | 2025-08-15 | Vahalla System Team | Added Fund Manager, Custodian, and Distributor entity sections; added subscription/redemption processing fields; added Appendix A enum reference tables |
+| 1.2 | 2025-10-20 | Vahalla System Team | Added Fund Position, Transaction & Order entities; added switch and distribution processing; added fund-level risk metrics (Sharpe, Sortino, max drawdown) |
+| 1.3 | 2025-12-10 | Vahalla System Team | Added Hedge Fund and Private Equity specific fields (lock-up, gate, side pocket, vintage year, IRR); added REIT-specific fields (FFO, occupancy, cap rate); expanded regulatory reporting (UCITS, AIFMD, MiFID II) |
+| 1.4 | 2026-01-22 | Vahalla System Team | Added Fund Market Data Feed and Fund Cashflow Schedule entities; added benchmark comparison fields; added ESG scoring and sustainability classification |
+| 1.5 | 2026-02-12 | Vahalla System Team | Added sample data sections (JSON & CSV); added Entity Summary table; added data quality requirements and delivery specifications; final field renumbering |
 
 ---
 

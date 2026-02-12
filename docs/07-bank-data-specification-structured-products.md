@@ -6,7 +6,7 @@
 |---|---|
 | **Document Title** | Investment Module - Structured Products Specification |
 | **System** | Vahalla Wealth Management System |
-| **Document Version** | 1.0 |
+| **Document Version** | 1.5 |
 | **Date** | 2026-02-12 |
 | **Classification** | Confidential |
 | **Status** | Draft |
@@ -16,7 +16,12 @@
 
 | Version | Date | Author | Description |
 |---|---|---|---|
-| 1.0 | 2026-02-12 | Vahalla System Team | Initial draft — Structured Products specification with product identification, underlying assets, capital protection, participation, barriers, autocall, coupon, payoff, pricing, settlement, trading, risk, regulatory, tax, fees, callable/puttable, conversion, distribution, performance, market data feed, coupon schedule, barrier observation log, and autocall scenario log entities |
+| 1.0 | 2025-08-01 | Vahalla System Team | Initial draft — Structured Products specification with product identification, underlying assets, capital protection, participation, and barrier fields |
+| 1.1 | 2025-10-10 | Vahalla System Team | Added autocall, coupon, and payoff structure sections; added pricing, settlement, and trading fields; added Appendix A enum reference tables |
+| 1.2 | 2025-12-15 | Vahalla System Team | Added risk metrics, regulatory reporting, tax, fees, callable/puttable, conversion, distribution, and performance sections; added credit and counterparty fields |
+| 1.3 | 2026-01-20 | Vahalla System Team | Added Market Data Feed, Coupon Schedule, Barrier Observation Log, and Autocall Scenario Log supporting entities; added Entity Relationship diagram and Entity Summary table |
+| 1.4 | 2026-02-05 | Vahalla System Team | Added day count convention and documentation sections; expanded barrier types (European, American, continuous); added knock-in/knock-out observation frequency fields |
+| 1.5 | 2026-02-12 | Vahalla System Team | Added sample data sections (JSON & CSV); added data quality requirements and delivery specifications; final field renumbering |
 
 ---
 

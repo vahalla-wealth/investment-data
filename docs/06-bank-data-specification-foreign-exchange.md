@@ -6,7 +6,7 @@
 |---|---|
 | **Document Title** | Investment Module - Foreign Exchange Instruments Specification |
 | **System** | Vahalla Wealth Management System |
-| **Document Version** | 1.0 |
+| **Document Version** | 1.5 |
 | **Date** | 2026-02-12 |
 | **Classification** | Confidential |
 | **Status** | Draft |
@@ -16,7 +16,12 @@
 
 | Version | Date | Author | Description |
 |---|---|---|---|
-| 1.0 | 2026-02-12 | Vahalla System Team | Initial draft — FX Instruments specification with trade identification, currency pair, execution, notional & amounts, exchange rates, settlement, NDF, FX swap, option, barrier option, counterparty, trading venue, clearing, valuation, regulatory, master agreement, collateral, risk metrics, market data, lifecycle, cross-currency swap, documentation, fees, credit support entities |
+| 1.0 | 2025-07-15 | Vahalla System Team | Initial draft — FX Instruments specification with trade identification, currency pair, execution, notional & amounts, exchange rates, and settlement fields for FX Spot and Forward |
+| 1.1 | 2025-09-25 | Vahalla System Team | Added NDF and FX Swap leg fields; added option and barrier option sections (vanilla, knock-in, knock-out); added counterparty and trading venue sections; added Appendix A enum reference tables |
+| 1.2 | 2025-11-30 | Vahalla System Team | Added clearing, valuation, and regulatory reporting sections; added master agreement and collateral fields; added risk metrics (Greeks, VaR) and market data inline fields |
+| 1.3 | 2026-01-18 | Vahalla System Team | Added FX Market Data Feed, Forward Curve, Settlement Log, Cashflow Schedule, Lifecycle Event Log, and Fixing Log supporting entities; added cross-currency swap and documentation sections |
+| 1.4 | 2026-02-03 | Vahalla System Team | Added Entity Relationship diagram; added fees & credit support sections; added Entity Summary table; expanded day count and calendar conventions |
+| 1.5 | 2026-02-12 | Vahalla System Team | Added sample data sections (JSON & CSV for FX Forward); added data quality requirements and delivery specifications; final field renumbering |
 
 ---
 

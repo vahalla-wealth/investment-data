@@ -6,8 +6,8 @@
 |---|---|
 | **Document Title** | Investment Module — Money Market Instruments Specification |
 | **System** | Vahalla Wealth Management System |
-| **Document Version** | 1.0 |
-| **Date** | 2025-07-09 |
+| **Document Version** | 1.5 |
+| **Date** | 2026-02-12 |
 | **Classification** | Confidential |
 | **Status** | Draft |
 | **Prepared By** | Vahalla System Team |
@@ -16,7 +16,12 @@
 
 | Version | Date | Author | Description |
 |---|---|---|---|
-| 1.0 | 2025-07-09 | Vahalla System Team | Initial draft — Money Market Instruments specification |
+| 1.0 | 2025-06-15 | Vahalla System Team | Initial draft — Money Market Instruments specification with T-Bill, Commercial Paper, Certificate of Deposit identification and pricing fields |
+| 1.1 | 2025-08-28 | Vahalla System Team | Added Repo/Reverse Repo entity with collateral, haircut, and margin fields; added Term Deposit entity; added Appendix A enum reference tables |
+| 1.2 | 2025-11-05 | Vahalla System Team | Added Bankers' Acceptance and Discount Note fields; added counterparty and credit quality sections; added yield calculation fields (discount yield, money market yield, bond-equivalent yield) |
+| 1.3 | 2026-01-10 | Vahalla System Team | Added Money Market Market Data Feed entity; added maturity ladder and liquidity metrics; added regulatory reporting fields (SFTR, MMSR); expanded settlement and custody sections |
+| 1.4 | 2026-01-30 | Vahalla System Team | Added Cashflow Schedule and Interest Accrual entities; added rollover and renewal tracking; added Entity Summary table |
+| 1.5 | 2026-02-12 | Vahalla System Team | Added sample data sections (JSON & CSV); added data quality requirements and delivery specifications; final field renumbering |
 
 ---
 
