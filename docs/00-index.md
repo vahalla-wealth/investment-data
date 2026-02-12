@@ -22,6 +22,14 @@
 | 03.2 | [↳ Sample Data — Fund Position, Transaction & Order (CSV & JSON)](03.2-sample-data-csv-fund-position-transaction.md) | Fund Position, Subscription, Redemption, Switch, and Distribution samples | Draft |
 | 04 | [Bank Data Specification — Money Market Instruments](04-bank-data-specification-money-market.md) | Data fields, formats, ISO 20022 references for T-Bills, CP, CDs, Repos, Term Deposits | Draft |
 | 04.1 | [↳ Sample Data — Money Market Instruments (CSV & JSON)](04.1-sample-data-csv-money-market.md) | CSV & JSON examples for Treasury Bill, Commercial Paper, CD, Repo, Term Deposit | Draft |
+| 05 | [Bank Data Specification — Derivatives](05-bank-data-specification-derivatives.md) | Data fields, formats, ISO 20022 references for Options, Swaps, Futures, Forwards | Draft |
+| 05.1 | [↳ Sample Data — Derivatives (CSV & JSON)](05.1-sample-data-csv-derivatives.md) | CSV & JSON examples for Option, Swap, Future, Forward, Lifecycle, Underlying, Risk Metrics | Draft |
+| 06 | [Bank Data Specification — Foreign Exchange Instruments](06-bank-data-specification-foreign-exchange.md) | Data fields, formats, ISO 20022 references for FX Spot, Forward, Swap, NDF, Options, Cross-Currency Swaps | Draft |
+| 06.1 | [↳ Sample Data — Foreign Exchange (CSV & JSON)](06.1-sample-data-csv-foreign-exchange.md) | CSV & JSON examples for FX Trade, Market Data, Forward Curve, Settlement, Cashflow, Lifecycle, Fixing | Draft |
+| 07 | [Bank Data Specification — Structured Products](07-bank-data-specification-structured-products.md) | Data fields, formats, ISO 20022 references for Structured Products (autocallables, reverse convertibles, capital-protected notes, etc.) | Draft |
+| 07.1 | [↳ Sample Data — Structured Products (CSV & JSON)](07.1-sample-data-csv-structured-products.md) | CSV & JSON examples for Structured Product, Coupon Schedule, Barrier Observation, Autocall Scenario | Draft |
+| 07.2 | [Bank Data Specification — Commodities](07.2-bank-data-specification-commodities.md) | Data fields, formats, ISO 20022 references for Precious Metals, Base Metals, Energy, Agricultural, Livestock commodities | Draft |
+| 07.2.1 | [↳ Sample Data — Commodities (CSV & JSON)](07.2.1-sample-data-csv-commodities.md) | CSV & JSON examples for Commodity Master, Price, Delivery, Storage, Quality, Forward Curve, Inventory, Spread | Draft |
 
 ---
 
@@ -29,9 +37,6 @@
 
 | # | Document | Description | Status |
 |---|---|---|---|
-| 05 | Bank Data Specification — Derivatives | Data fields for Options, Swaps, Futures, Forwards | Planned |
-| 06 | Bank Data Specification — FX Instruments | Data fields for FX Instruments | Planned |
-| 07 | Bank Data Specification — Structured Products & Commodities | Data fields for Structured Products and Commodities | Planned |
 | 08 | Bank Data Specification — FX Deposit | Data fields for FX Deposit (Account Source Fund) | Planned |
 
 ---
