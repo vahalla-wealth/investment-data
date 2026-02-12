@@ -267,6 +267,100 @@ enum ValuationMethod {
   VENDOR_PRICING
 }
 
+# ============================================================================
+# Position-specific Enums (Wealth Management doc A.24, A.25)
+# ============================================================================
+
+enum PositionAssetClass {
+  EQUITY
+  FIXED_INCOME
+  INVESTMENT_FUND
+  MONEY_MARKET
+  DERIVATIVE
+  FX
+  STRUCTURED_PRODUCT
+  COMMODITY
+  CASH
+  OTHER
+}
+
+enum PositionInstrumentType {
+  # Equity & Fixed Income
+  COMMON_STOCK
+  PREFERRED_STOCK
+  DEPOSITORY_RECEIPT
+  GOVERNMENT_BOND
+  CORPORATE_BOND
+  MUNICIPAL_BOND
+  CONVERTIBLE_BOND
+  INFLATION_LINKED_BOND
+
+  # Investment Funds
+  MUTUAL_FUND
+  ETF
+  HEDGE_FUND
+  REIT
+  PRIVATE_EQUITY_FUND
+  VENTURE_CAPITAL_FUND
+  INDEX_FUND
+  MONEY_MARKET_FUND
+
+  # Money Market
+  TREASURY_BILL
+  COMMERCIAL_PAPER
+  CERTIFICATE_OF_DEPOSIT
+  REPO
+  REVERSE_REPO
+  TERM_DEPOSIT
+  BANKERS_ACCEPTANCE
+  DISCOUNT_NOTE
+
+  # Derivatives
+  OPTION
+  SWAP
+  FUTURE
+  FORWARD
+  WARRANT
+  CDS
+
+  # FX Instruments
+  FX_SPOT
+  FX_FORWARD
+  FX_SWAP
+  FX_NDF
+  FX_OPTION
+  CROSS_CURRENCY_SWAP
+
+  # Structured Products
+  CAPITAL_PROTECTED_NOTE
+  AUTOCALLABLE
+  REVERSE_CONVERTIBLE
+  PARTICIPATION_CERTIFICATE
+  STRUCTURED_DEPOSIT
+  LEVERAGE_PRODUCT
+
+  # Commodities
+  COMMODITY_SPOT
+  COMMODITY_FUTURE
+  COMMODITY_FORWARD
+  COMMODITY_SWAP
+  COMMODITY_OPTION
+  COMMODITY_ETF
+  COMMODITY_ETC
+  PHYSICAL_COMMODITY
+}
+
+enum QuantityType {
+  SHARES
+  UNITS
+  CONTRACTS
+  FACE_VALUE
+  NOTIONAL
+  LOTS
+  TROY_OZ
+  BARRELS
+}
+
 enum MarketType {
   PRIMARY
   SECONDARY

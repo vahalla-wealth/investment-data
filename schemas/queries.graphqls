@@ -73,7 +73,7 @@ type Query {
   portfolios(accountId: ID!, limit: Int, offset: Int): [Portfolio!]! @auth
   
   position(id: ID!): Position @auth
-  positions(accountId: ID, portfolioId: ID, assetClass: AssetClass, limit: Int, offset: Int): [Position!]! @auth
+  positions(accountId: ID, portfolioId: ID, assetClass: PositionAssetClass, securityType: PositionInstrumentType, limit: Int, offset: Int): [Position!]! @auth
   
   transaction(id: ID!): Transaction @auth
   transactions(accountId: ID!, transactionType: TransactionType, status: TransactionStatus, fromDate: Time, toDate: Time, limit: Int, offset: Int): [Transaction!]! @auth

@@ -384,11 +384,17 @@ type Portfolio {
   maxDrawdown: Decimal
   valueAtRisk: Decimal
   
-  # ISO20022 Asset Allocation
+  # ISO20022 Asset Allocation (all weights in %)
   equityWeight: Decimal
   fixedIncomeWeight: Decimal
-  cashWeight: Decimal
-  alternativesWeight: Decimal
+  fundsWeight: Decimal # Investment funds (mutual funds, ETFs, hedge funds)
+  moneyMarketWeight: Decimal # Money market (T-bills, CP, CDs, repos)
+  derivativesWeight: Decimal # Derivatives (options, swaps, futures, forwards)
+  fxWeight: Decimal # FX instruments (spot, forward, swap, NDF, options)
+  structuredProductsWeight: Decimal # Structured products
+  commoditiesWeight: Decimal # Commodities (physical, futures, ETCs)
+  cashWeight: Decimal # Cash & deposits
+  alternativesWeight: Decimal # Other alternatives (PE, VC, real assets)
   
   # ISO20022 Investment Guidelines
   targetReturn: Decimal
@@ -421,50 +427,84 @@ type Portfolio {
 type Position {
   id: ID!
   
-  # ISO20022 Position Identification
-  assetId: ID!
-  assetClass: AssetClass!
+  # 8.1 Position Identification
+  assetId: ID! # Reference to security/asset record in relevant master (doc 02–07.2)
+  assetClass: PositionAssetClass! # See doc Appendix A.24
+  securityType: PositionInstrumentType! # See doc Appendix A.25
   isin: String
   ticker: String
   assetName: String!
+  currency: String! # Position denomination currency (ISO 4217)
   
-  # ISO20022 Quantity
-  quantity: Decimal!
+  # 8.2 Position Quantity
+  quantity: Decimal! # Holding quantity (shares, units, contracts, lots, notional units)
+  quantityType: QuantityType # SHARES, UNITS, CONTRACTS, FACE_VALUE, NOTIONAL, LOTS, TROY_OZ, BARRELS
   side: PositionSide!
   status: PositionStatus!
   
-  # ISO20022 Cost & Valuation
-  averageCost: Decimal!
-  costBasis: Decimal! # quantity * averageCost
-  costCurrency: String!
-  currentPrice: Decimal
+  # 8.3 Position Cost & Valuation
+  averageCost: Decimal
+  costBasis: Decimal # quantity × averageCost
+  costCurrency: String
+  currentPrice: Decimal # Current market price / NAV per unit
   marketValue: Decimal
   valuationCurrency: String
   valuationDate: Time
+  valuationMethod: ValuationMethod
+  pricingSource: String
   
-  # ISO20022 P&L
+  # 8.4 Position P&L
   unrealizedPnL: Decimal
   unrealizedPnLPercent: Decimal
   realizedPnL: Decimal
   totalPnL: Decimal
   
-  # ISO20022 Income
-  accruedInterest: Decimal
-  accruedDividend: Decimal
+  # 8.5 Position Income & Accruals
+  accruedInterest: Decimal # Bonds, money market, deposits, swaps
+  accruedDividend: Decimal # Equity, funds
+  couponRate: Decimal # Coupon / interest rate (%) — bonds, money market, deposits
+  yield: Decimal # Current yield (%) — bonds, money market
+  faceValue: Decimal # Face / par value — bonds, money market, structured products
   
-  # ISO20022 Weight & Exposure
+  # 8.6 Position — Notional & Contract Fields (derivatives, FX, commodities, structured products)
+  notionalAmount: Decimal # Required for derivatives, FX, structured products
+  notionalCurrency: String
+  contractCount: Decimal # Number of contracts (futures, listed options)
+  contractSize: Decimal # Contract size / multiplier
+  contractUnit: String # Unit of measure (BARRELS, TROY_OUNCES, LOTS)
+  strikePrice: Decimal # Required for options
+  expirationDate: Time # Options, futures, warrants
+  maturityDate: Time # Bonds, swaps, forwards, money market, deposits, structured products
+  
+  # 8.7 Position — FX Fields (FX spot, forward, swap, NDF, option, cross-currency swap)
+  currencyPair: String # Required when assetClass = FX
+  baseCurrencyAmount: Decimal
+  quoteCurrencyAmount: Decimal
+  exchangeRate: Decimal # Contracted exchange rate
+  spotRate: Decimal # Current spot rate
+  
+  # 8.8 Position — Risk Metrics / Greeks (options, structured products with optionality)
+  delta: Decimal
+  gamma: Decimal
+  vega: Decimal
+  theta: Decimal
+  rho: Decimal
+  impliedVolatility: Decimal
+  daysToExpiry: Int
+  
+  # 8.9 Position — Margin & Collateral (futures, exchange-traded options, repos, margin accounts)
+  initialMargin: Decimal
+  maintenanceMargin: Decimal
+  marginCurrency: String
+  
+  # 8.10 Position Weight & Settlement
   portfolioWeight: Decimal # % of portfolio
-  
-  # ISO20022 Settlement
   settledQuantity: Decimal
   unsettledQuantity: Decimal
   
-  # ISO20022 Dates
+  # 8.11 Position Dates & Relationships
   openDate: Time!
   lastTradeDate: Time
-  maturityDate: Time
-  
-  # Relationships
   accountId: ID!
   portfolioId: ID
   
@@ -490,7 +530,8 @@ type Transaction {
   
   # ISO20022 Instrument
   assetId: ID
-  assetClass: AssetClass
+  assetClass: PositionAssetClass
+  securityType: PositionInstrumentType
   isin: String
   assetName: String
   
@@ -636,7 +677,8 @@ type Order {
   
   # ISO20022 Instrument
   assetId: ID!
-  assetClass: AssetClass!
+  assetClass: PositionAssetClass!
+  securityType: PositionInstrumentType!
   isin: String
   assetName: String!
   

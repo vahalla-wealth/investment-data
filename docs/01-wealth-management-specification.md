@@ -553,11 +553,11 @@ graph TD
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 7 | `assetId` | ID | Optional | Reference to security/asset record | `"SEC-EQ-001"` | sese.023 — `FinInstrmId/OthrId/Id` |
-| 8 | `assetClass` | Enum | Optional | Asset class | `"SECURITIES"` | sese.023 — `FinInstrmId/ClssfctnTp` |
-| 9 | `securityType` | Enum | Optional | Security type (from security master) | `"EQUITY"` | sese.023 — `FinInstrmAttrbts/ClssfctnTp` |
+| 7 | `assetId` | ID | Optional | Reference to security/asset record | `"SEC-EQ-001"`, `"DRV-OPT-001"`, `"CMD-001"` | sese.023 — `FinInstrmId/OthrId/Id` |
+| 8 | `assetClass` | Enum | Optional | Asset class | See [Appendix A.24](#a24-positionassetclass) | sese.023 — `FinInstrmId/ClssfctnTp` |
+| 9 | `securityType` | Enum | Optional | Instrument type | See [Appendix A.25](#a25-positioninstrumenttype) | sese.023 — `FinInstrmAttrbts/ClssfctnTp` |
 | 10 | `isin` | String | Optional | ISIN of the traded asset | `"US0378331005"` | sese.023 — `FinInstrmId/ISIN` |
-| 11 | `assetName` | String | Optional | Asset name | `"Apple Inc. Common Stock"` | sese.023 — `FinInstrmId/Nm` |
+| 11 | `assetName` | String | Optional | Asset name | `"Apple Inc."`, `"WTI Crude Jun-26"` | sese.023 — `FinInstrmId/Nm` |
 
 ### 9.4 Transaction Quantity & Price
 
@@ -747,11 +747,11 @@ graph TD
 
 | # | Field Name | Data Type | Required | Description | Example | ISO 20022 Reference |
 |---|---|---|---|---|---|---|
-| 8 | `assetId` | ID | Required | Reference to security/asset record | `"SEC-EQ-001"` | setr.001 — `FinInstrmId/OthrId/Id` |
-| 9 | `assetClass` | Enum | Required | Asset class | `"SECURITIES"` | setr.001 — `FinInstrmId/ClssfctnTp` |
-| 10 | `securityType` | Enum | Required | Security type (from security master) | `"EQUITY"` | setr.001 — `FinInstrmAttrbts/ClssfctnTp` |
+| 8 | `assetId` | ID | Required | Reference to security/asset record | `"SEC-EQ-001"`, `"DRV-FUT-001"`, `"FX-001"` | setr.001 — `FinInstrmId/OthrId/Id` |
+| 9 | `assetClass` | Enum | Required | Asset class | See [Appendix A.24](#a24-positionassetclass) | setr.001 — `FinInstrmId/ClssfctnTp` |
+| 10 | `securityType` | Enum | Required | Instrument type | See [Appendix A.25](#a25-positioninstrumenttype) | setr.001 — `FinInstrmAttrbts/ClssfctnTp` |
 | 11 | `isin` | String | Optional | ISIN of the ordered asset | `"US0378331005"` | setr.001 — `FinInstrmId/ISIN` |
-| 12 | `assetName` | String | Required | Asset name | `"Apple Inc. Common Stock"` | setr.001 — `FinInstrmId/Nm` |
+| 12 | `assetName` | String | Required | Asset name | `"Apple Inc."`, `"EUR/USD FX Forward"` | setr.001 — `FinInstrmId/Nm` |
 
 ### 11.4 Order Quantity & Price
 
